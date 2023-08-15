@@ -1,5 +1,5 @@
 <template>
-    <div class="card">
+    <div class="card" ref="detailElement">
         <div>
             <img v-if="activity" :src="getImageLocation" alt="category">
             <h2>{{ activity?.title }}</h2>
@@ -7,39 +7,60 @@
             <p>{{ activity?.description }}</p>
         </div>
         <div class="detail-footer">
-            <button>Edit</button>
-            <button @click="emits('cancel-show')">Cancel</button>
+            <button @click="handleEdit">Edit</button>
+            <button @click="handleCancelShow">Cancel</button>
         </div>
     </div>
-    <ActivityForm v-if="isFormVisible" />
+    <ActivityForm v-if="isFormVisible" @cancel-form="handleCancelEdit" @submit-form="handleSubmitEdit" />
 </template>
 
 
 <script setup lang="ts">
 import ActivityForm from '@/components/activities/ActivityForm.vue';
 import type { Activity } from '@/models/activity';
-import { ref, type ComputedRef, type Ref, computed, onBeforeMount, toRef, watch } from 'vue';
+import { ref, type ComputedRef, type Ref, computed, onBeforeMount, watch } from 'vue';
+import { useRouter } from 'vue-router';
 
 
 const props = defineProps<{
     activityId: string
 }>();
 
-const emits = defineEmits(['cancel-show']);
+const router = useRouter();
 
 const activity: Ref<Activity | undefined> = ref();
 
-const isFormVisible: ComputedRef<boolean> = computed(() => {
-    return true;
-});
+const isFormVisible: Ref<boolean> = ref(false);
 
 const getImageLocation: ComputedRef<string> = computed(() => {
     return `/src/assets/categoryImages/${activity.value?.category}.jpg`;
 });
 
-watch(props, async (current, prev) => {    
-     await fetchData(current.activityId);
+watch(props, async (current) => {
+    await fetchData(current.activityId);
 });
+
+
+const detailElement = ref<HTMLDivElement | null>();
+
+const handleEdit = () => {
+    isFormVisible.value = true;
+    if (detailElement.value) {
+        window.scrollTo({ top: detailElement.value.scrollHeight + 70, behavior: 'smooth' });
+    }
+}
+
+const handleCancelShow = () => {
+    router.push('/activities');
+}
+
+const handleCancelEdit = () => {
+    isFormVisible.value = false;
+}
+
+const handleSubmitEdit = (activityObject: Activity) => {
+    console.log('hooray')
+}
 
 const fetchData = async (activityId: string) => {
     fetch(`https://localhost:5000/api/activities/${activityId}`)

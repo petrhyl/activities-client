@@ -13,7 +13,6 @@
 import { onBeforeMount, ref, type Ref } from 'vue';
 import { type Activity } from "@/models/activity";
 import ActivityList from '@/components/activities/ActivityList.vue';
-import { onBeforeRouteUpdate } from 'vue-router';
 
 
 const activities: Ref<Activity[]> = ref([]);
@@ -29,6 +28,9 @@ const fetchData = async () => {
     })
     .then(data => {
       activities.value = data;
+    })
+    .catch((err) => {
+      console.log(err);
     });
 };
 
@@ -40,7 +42,7 @@ onBeforeMount(async () => {
 <style>
 .activities {
   display: grid;
-  grid-template-columns: 0.6fr 0.4fr;
+  grid-template-columns: 0.65fr 0.35fr;
   column-gap: 25px;
   margin-top: 25px;
 }

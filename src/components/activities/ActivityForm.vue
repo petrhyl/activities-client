@@ -1,5 +1,5 @@
 <template>
-    <form class="card" @submit="handleSubmitForm">
+    <form class="card" @submit.prevent="handleSubmitForm">
         <div class="form-component">
             <label for="title">Title</label>
             <input type="text" name="title" class="form-input-element" id="activity-title-input"
@@ -40,10 +40,17 @@
 
 <script setup lang="ts">
 import type { Activity } from '@/models/activity';
-import { reactive, ref, type Ref } from 'vue';
+import { DeprecationTypes, onMounted, reactive, ref, type Ref } from 'vue';
 
 
-const emits = defineEmits(['cancel-form', 'submit-form']);
+const props = defineProps<{
+    activityToEdit: Activity | undefined
+}>();
+
+const emits = defineEmits<{
+    (e: 'cancel-form'): void
+    (e: 'submit-form', activityObject: Activity): void
+}>();
 
 const isFormValid: Ref<boolean> = ref(true);
 
@@ -56,11 +63,9 @@ const formInputs = reactive({
     venue: ''
 });
 
-let prop: keyof typeof formInputs;
+let formProp: keyof typeof formInputs;
 
-const handleSubmitForm = (ev: Event) => {
-    ev.preventDefault();
-
+const handleSubmitForm = () => {
     if (!isFormValidated()) {
         return;
     }
@@ -74,18 +79,19 @@ const handleSubmitForm = (ev: Event) => {
         venue: formInputs.venue
     }
 
-    for (prop in formInputs) {
-        formInputs[prop] = '';
-    }
 
     emits('submit-form', activity);
+
+    for (formProp in formInputs) {
+        formInputs[formProp] = '';
+    }
 }
 
 const isFormValidated = () => {
     let isSomeEmpty = false;
-    
-    for (prop in formInputs) {
-        if (formInputs[prop].trim() === '') {
+
+    for (formProp in formInputs) {
+        if (formInputs[formProp].trim() === '') {
             isSomeEmpty = true;
         }
     }
@@ -94,6 +100,17 @@ const isFormValidated = () => {
 
     return !isSomeEmpty;
 }
+
+onMounted(() => {
+    if (props.activityToEdit) {
+        formInputs.title = props.activityToEdit.title;
+        formInputs.description = props.activityToEdit.description;
+        formInputs.category = props.activityToEdit.category;
+        formInputs.beginDate = new Date(props.activityToEdit.beginDate).toISOString();
+        formInputs.city = props.activityToEdit.city;
+        formInputs.venue = props.activityToEdit.venue;
+    }
+});
 
 </script>
 
@@ -118,7 +135,7 @@ form {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     outline: none;
     border-radius: 5px;
-    border: 1px solid gray;
+    border: 1px solid #bebebe;
     padding: 7px 10px;
 }
 
@@ -162,4 +179,5 @@ input[type='button'] {
 
 input[type='submit'] {
     background-color: #b7ffe7;
-}</style>
+}
+</style>

@@ -1,8 +1,7 @@
 <template>
   <div class="activities">
-    <KeepAlive>
+    <p v-if="errorMessage !== ''">{{ errorMessage }}</p>
       <ActivityList :activities="activities" />
-    </KeepAlive>
     <div class="grid-column">
       <RouterView />
     </div>
@@ -16,6 +15,7 @@ import ActivityList from '@/components/activities/ActivityList.vue';
 
 
 const activities: Ref<Activity[]> = ref([]);
+const errorMessage: Ref<string> = ref('');
 
 const fetchData = async () => {
   fetch('https://localhost:5000/api/activities')
@@ -30,7 +30,7 @@ const fetchData = async () => {
       activities.value = data;
     })
     .catch((err) => {
-      console.log(err);
+      errorMessage.value = err && err.message ? err.message : 'Cannot load activities!';
     });
 };
 

@@ -3,7 +3,7 @@
         <div>
             <img v-if="activity" :src="getImageLocation" alt="category">
             <h2>{{ activity?.title }}</h2>
-            <div class="date">{{ activity?.beginDate }}</div>
+            <div class="date">{{ activityDateTimeString }}</div>
             <p>{{ activity?.description }}</p>
         </div>
         <div class="detail-footer">
@@ -11,7 +11,8 @@
             <button @click="handleCancelShow">Cancel</button>
         </div>
     </div>
-    <ActivityForm v-if="isFormVisible" @cancel-form="handleCancelEdit" @submit-form="handleSubmitEdit" />
+    <p v-if="errorMessage !== ''" class="error-message">{{ errorMessage }}</p>
+    <ActivityForm v-if="isFormVisible" @cancel-form="handleCancelEdit" @submit-form="handleSubmitEdit" :activity-to-edit="activity" />
 </template>
 
 
@@ -29,12 +30,22 @@ const props = defineProps<{
 const router = useRouter();
 
 const activity: Ref<Activity | undefined> = ref();
-
 const isFormVisible: Ref<boolean> = ref(false);
+const errorMessage: Ref<string> = ref('');
 
 const getImageLocation: ComputedRef<string> = computed(() => {
     return `/src/assets/categoryImages/${activity.value?.category}.jpg`;
 });
+const activityDateTimeString: ComputedRef<string> = computed(()=>{
+    let d: Date;
+    if (activity.value?.beginDate) {
+        d = new Date(activity.value.beginDate);
+
+        return `${d.toLocaleDateString()} ${d.toLocaleTimeString()}`;
+    }
+
+    return '';
+})
 
 watch(props, async (current) => {
     await fetchData(current.activityId);
@@ -58,8 +69,8 @@ const handleCancelEdit = () => {
     isFormVisible.value = false;
 }
 
-const handleSubmitEdit = (activityObject: Activity) => {
-    console.log('hooray')
+const handleSubmitEdit = async (activityObject: Activity) => {
+    await updatedActivityOnServer(activityObject);
 }
 
 const fetchData = async (activityId: string) => {
@@ -75,13 +86,34 @@ const fetchData = async (activityId: string) => {
             activity.value = data;
         })
         .catch((err) => {
-            console.log(err.message);
+            errorMessage.value = err && err.message !== '' ? err.message : 'The activity details could not be loaded!';
         });
 };
+
+const updatedActivityOnServer = async (activityObject: Activity) => {
+    activityObject.id = props.activityId;
+    console.log(activityObject);
+    fetch(`https://localhost:5000/api/activities/${props.activityId}`, {
+        method: 'PUT',
+        body: JSON.stringify(activityObject),
+        headers: {
+            'content-type': 'application/json'
+        }
+    }).then(async res => {
+        if (!res.ok) {
+            throw new Error('The activity could not be updated!');
+        }
+
+        await fetchData(props.activityId);
+    }).catch((err) => {
+        errorMessage.value = err && err.message !== '' ? err.message : 'The activity could not be updated!';
+    });
+}
 
 onBeforeMount(async () => {
     await fetchData(props.activityId);
 });
+
 </script>
 
 
@@ -126,5 +158,12 @@ button:hover {
 
 button:active {
     outline: none;
+}
+
+.error-message{
+    font-size: 13pt;
+    font-weight: 600;
+    text-align: center;
+    color: #98002b;
 }
 </style>

@@ -11,25 +11,24 @@ export const router = createRouter({
             redirect: { name: 'activities' }
         }, {
             path: '/activities',
-            name: 'activities',
+            name: RouteNames.ACTIVITIES,
             component: Activities,
             children: [
                 {
                     path: ':activityId',
-                    name: 'activityDetail',
+                    name: RouteNames.ACTIVITY_DETAIL,
                     props: true,
                     component: () => import('@/pages/ActivityDetails.vue')
                 }
             ]
-        }, {
+        },{
             path: '/create-new',
-            name: 'createActivity',
+            name: RouteNames.CREATE_ACTIVITY,
             component: () => import('@/pages/CreateActivity.vue')
         }
     ],
     scrollBehavior(to, position) {
         const endpointRouteName = to.name;
-        console.log(endpointRouteName);
         if (endpointRouteName && endpointRouteName === RouteNames.ACTIVITY_DETAIL) {
             return { left: 0, top: 0, behavior: "smooth" };
         }

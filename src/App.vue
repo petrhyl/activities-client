@@ -29,8 +29,8 @@ main{
 
 .card{
     background-color: aliceblue;
-    box-shadow: 2px 2px 6px 2px #b5b5b5;
-    border-radius: 7px;
+    box-shadow: 1px 1px 4px 1px #c8c8c8;
+    border-radius: 5px;
     padding: 10px 10px;
 }
 

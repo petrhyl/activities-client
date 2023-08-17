@@ -1,6 +1,6 @@
 <template>
     <h2>{{ activity.title }}</h2>
-    <div class="activity-date">{{ activity.beginDate }}</div>
+    <div class="activity-date">{{ dateTimeString }}</div>
     <div class="activity-content">
         <p>{{ activity.description }}</p>
         <span>{{ activity.city }}</span>
@@ -24,7 +24,12 @@ const props = defineProps<{
 
 const getRouteLink: ComputedRef<string> = computed(()=>{
     return `/activities/${props.activity.id}`
-})
+});
+
+const dateTimeString: ComputedRef<string> = computed(()=>{
+    const d: Date = new Date(props.activity.beginDate);
+    return `${d.toLocaleDateString()} ${d.toLocaleTimeString()}`;
+});
 </script>
 
 

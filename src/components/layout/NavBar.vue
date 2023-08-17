@@ -1,22 +1,24 @@
 <template>
-<nav>
-    <header>
-        <img src="@/assets/logo.png" alt="logo" />
-        <h1>Reactivities</h1>
-    </header>
-    <menu>
-        <RouterLink to="/activities">Show Activities</RouterLink>
-        <RouterLink to="/create-new">Create New Activity</RouterLink>
-    </menu>
-</nav>
+    <nav>
+        <header>
+            <img src="@/assets/logo.png" alt="logo" />
+            <h1>Reactivities</h1>
+        </header>
+        <menu>
+            <RouterLink :to="{ name: RouteNames.ACTIVITIES }">Show Activities</RouterLink>
+            <RouterLink :to="{ name: RouteNames.CREATE_ACTIVITY }">Create New Activity</RouterLink>
+        </menu>
+    </nav>
 </template>
 
 <script setup lang="ts">
+import RouteNames from '@/router/routeNames';
+
 
 </script>
 
 <style scoped>
-nav{
+nav {
     width: 100%;
     height: 70px;
     display: flex;
@@ -24,28 +26,28 @@ nav{
     background: linear-gradient(80deg, #b7ffe7 10%, #1c7db4 75%, #92d7ff 100%);
 }
 
-header{
+header {
     display: flex;
 }
 
-h1{
+h1 {
     font-family: Geneva, Verdana, sans-serif;
     font-size: 22pt;
     color: #3e1126;
     margin: auto;
 }
 
-menu{
+menu {
     display: flex;
     align-items: center;
     column-gap: 35px;
 }
 
-img{
+img {
     margin-right: 25px;
 }
 
-a{
+a {
     height: fit-content;
     font-size: 16pt;
     font-family: 'Franklin Gothic Medium', sans-serif;
@@ -55,7 +57,7 @@ a{
     transition: all 170ms ease-out;
 }
 
-a:hover{
+a:hover {
     color: #eee5c5;
     transform: scale(1.1);
 }

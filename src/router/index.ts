@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Activities from "@/pages/Activities.vue";
-import RouteNames from "./routeNames";
+import RouteNames from "@/utils/constanses/RouteNames";
 
 
 export const router = createRouter({

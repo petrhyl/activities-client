@@ -7,26 +7,34 @@
     </div>
     <div class="activity-footer">
         <span class="activity-category">{{ activity.category }}</span>
-        <RouterLink :to="getRouteLink">View</RouterLink>
+        <div class="activity-footer-buttons">
+            <RouterLink :to="getRouteLink" :class="{ button: true, disabled: isDeleting }">View</RouterLink>
+            <button @click="emits('on-delete', activity.id!)" :class="{ button: true, disabled: isDeleting }" :disabled="isDeleting">Delete</button>
+        </div>
     </div>
 </template>
 
 
 <script setup lang="ts">
-import type { Activity } from '@/models/activity';
+import type { Activity } from '@/models/Activity';
 import { computed, type ComputedRef } from 'vue';
 import { RouterLink } from 'vue-router';
 
 
 const props = defineProps<{
-    activity: Activity
+    activity: Activity,
+    isDeleting: boolean
 }>();
 
-const getRouteLink: ComputedRef<string> = computed(()=>{
+const emits = defineEmits<{
+    (e: 'on-delete', activityId: string): void
+}>();
+
+const getRouteLink: ComputedRef<string> = computed(() => {
     return `/activities/${props.activity.id}`
 });
 
-const dateTimeString: ComputedRef<string> = computed(()=>{
+const dateTimeString: ComputedRef<string> = computed(() => {
     const d: Date = new Date(props.activity.beginDate);
     return `${d.toLocaleDateString()} ${d.toLocaleTimeString()}`;
 });
@@ -34,38 +42,61 @@ const dateTimeString: ComputedRef<string> = computed(()=>{
 
 
 <style scoped>
-h2{
+h2 {
     margin: 5px 0 15px 20px;
 }
 
-.activity-content p{
+.activity-content p {
     margin-bottom: 5px;
 }
 
-.activity-footer{
+.activity-footer {
     width: 100%;
     display: flex;
     justify-content: space-between;
     margin-top: 15px;
 }
 
-.activity-footer a{
+.activity-footer-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 10px;
+}
+
+.button {
     font-size: 14pt;
     font-weight: 600;
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', sans-serif;
-    text-decoration: none;
-    color: rgb(110, 2, 134);
-    background: linear-gradient(90deg, #b7ffe7 10%, #8bd3fd);
-    outline: none;
-    border: none;
+    letter-spacing: 1px;
+    text-align: center;
     border-radius: 5px;
     padding: 7px 20px;
     cursor: pointer;
 }
 
-.activity-category{
+.activity-footer-buttons a {
+    text-decoration: none;
+    color: rgb(110, 2, 134);
+    background: linear-gradient(90deg, #b7ffe7 10%, #8bd3fd);
+}
+
+.activity-footer-buttons button {
+    color: #806a6a;
+    background-color: #b8cad4;
+    outline: none;
+    border: none;
+}
+
+.activity-category {
     padding: 7px 12px;
     border: 1px solid gray;
     border-radius: 5px;
+}
+
+a.disabled,
+button.disabled{
+    pointer-events: none;
+    background-color: #c5c5c5;
+    color: #9f9f9f;
 }
 </style>

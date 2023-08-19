@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import RouteNames from '@/router/routeNames';
+import RouteNames from '@/utils/constanses/RouteNames';
 
 
 </script>
@@ -61,4 +61,4 @@ a:hover {
     color: #eee5c5;
     transform: scale(1.1);
 }
-</style>
+</style>@/utils/constanses/RouteNames

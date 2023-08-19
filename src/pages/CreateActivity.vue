@@ -3,50 +3,49 @@
         <div v-if="isResponded" :class="{ response: true, error: !isSuccessResponse, success: isSuccessResponse }">
             {{ responseMessage }}
         </div>
-        <ActivityForm @cancel-form="handleCancelForm" @submit-form="handleCreateActivity" :activity-to-edit="undefined" />
+        <ActivityForm
+            @cancel-form="handleCancelForm"
+            @submit-form="handleCreateActivity"
+            :activity-to-edit="null"
+            :is-submitting="isSubmittingData" />
     </div>
 </template>
 
 <script setup lang="ts">
 import ActivityForm from '@/components/activities/ActivityForm.vue';
-import type { Activity } from '@/models/activity';
-import RouteNames from '@/router/routeNames';
+import type { Activity } from '@/models/Activity';
+import { useActivityStore } from '@/stores/activities';
+import RouteNames from '@/utils/constanses/RouteNames';
 import { ref, type Ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 
 const router = useRouter();
+const activityStore = useActivityStore();
 
 const isResponded: Ref<boolean> = ref(false);
 const isSuccessResponse: Ref<boolean> = ref(true);
 const responseMessage: Ref<string> = ref('');
+const isSubmittingData: Ref<boolean> = ref(false);
 
 const handleCancelForm = () => {
     router.push({ name: RouteNames.ACTIVITIES });
 }
 
 const handleCreateActivity = async (activity: Activity) => {
+    isSubmittingData.value = true;
     await createActivityOnServer(activity);
 }
 
 const createActivityOnServer = async (activity: Activity) => {
-    fetch('https://localhost:5000/api/activities', {
-        method: 'POST',
-        body: JSON.stringify(activity),
-        headers: {
-            'content-type': 'application/json'
-        }
-    }).then(res => {
-        if (!res.ok) {
-            throw new Error('Activity could not be created!');
-        }
+    const response = await activityStore.createActivity(activity);
 
-        isSuccessResponse.value = true;
-        responseMessage.value = 'The activity was successfully created!'
-    }).catch(err => {
-        isSuccessResponse.value = false;
-        responseMessage.value = err ? err.message : 'Activity could not be created!';
-    }).finally(() => isResponded.value = true);
+    if (!response.isSuccessful && response.errorMessage) {
+        responseMessage.value = response.errorMessage;
+    }
+
+    isResponded.value = true;
+    isSubmittingData.value = false;
 }
 </script>
 

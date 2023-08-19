@@ -1,25 +1,37 @@
 <template>
-    <div class="card" ref="detailElement">
+    <LoadingComponent v-if="!isLoaded" />
+    <div class="card activity-detail" ref="detailElement">
         <div>
-            <img v-if="activity" :src="getImageLocation" alt="category">
-            <h2>{{ activity?.title }}</h2>
+            <img v-if="getActivity" :src="getImageLocation" alt="category">
+            <h2>{{ getActivity?.title }}</h2>
             <div class="date">{{ activityDateTimeString }}</div>
-            <p>{{ activity?.description }}</p>
+            <div>{{ getActivity?.city }}</div>
+            <div>{{ getActivity?.venue }}</div>
+            <p>category: {{ getActivity?.category }}</p>
+            <p>{{ getActivity?.description }}</p>
         </div>
         <div class="detail-footer">
-            <button @click="handleEdit">Edit</button>
+            <button @click="handleEdit" :disabled="isSubmittingData">Edit</button>
             <button @click="handleCancelShow">Cancel</button>
         </div>
     </div>
     <p v-if="errorMessage !== ''" class="error-message">{{ errorMessage }}</p>
-    <ActivityForm v-if="isFormVisible" @cancel-form="handleCancelEdit" @submit-form="handleSubmitEdit" :activity-to-edit="activity" />
+    <ActivityForm
+        v-if="isFormVisible"
+        @cancel-form="handleCancelEdit"
+        @submit-form="handleSubmitEdit"
+        :activity-to-edit="getActivity"
+        :is-submitting="isSubmittingData" />
 </template>
 
 
 <script setup lang="ts">
 import ActivityForm from '@/components/activities/ActivityForm.vue';
-import type { Activity } from '@/models/activity';
-import { ref, type ComputedRef, type Ref, computed, onBeforeMount, watch } from 'vue';
+import LoadingComponent from '@/components/layout/LoadingComponent.vue';
+import type { Activity } from '@/models/Activity';
+import { useActivityStore } from '@/stores/activities';
+import { storeToRefs } from 'pinia';
+import { ref, type ComputedRef, type Ref, computed, onBeforeMount, watch, inject } from 'vue';
 import { useRouter } from 'vue-router';
 
 
@@ -28,18 +40,21 @@ const props = defineProps<{
 }>();
 
 const router = useRouter();
+const activityStore = useActivityStore();
 
-const activity: Ref<Activity | undefined> = ref();
+const { getActivity } = storeToRefs(activityStore);
 const isFormVisible: Ref<boolean> = ref(false);
 const errorMessage: Ref<string> = ref('');
+const isLoaded: Ref<boolean> = ref(false);
+const isSubmittingData: Ref<boolean> = ref(false);
 
 const getImageLocation: ComputedRef<string> = computed(() => {
-    return `/src/assets/categoryImages/${activity.value?.category}.jpg`;
+    return `/src/assets/categoryImages/${getActivity.value?.category}.jpg`;
 });
-const activityDateTimeString: ComputedRef<string> = computed(()=>{
+const activityDateTimeString: ComputedRef<string> = computed(() => {
     let d: Date;
-    if (activity.value?.beginDate) {
-        d = new Date(activity.value.beginDate);
+    if (getActivity.value?.beginDate) {
+        d = new Date(getActivity.value?.beginDate);
 
         return `${d.toLocaleDateString()} ${d.toLocaleTimeString()}`;
     }
@@ -48,9 +63,53 @@ const activityDateTimeString: ComputedRef<string> = computed(()=>{
 })
 
 watch(props, async (current) => {
-    await fetchData(current.activityId);
+    isLoaded.value = false;
+    handleCancelEdit();
+    loadActivity(current.activityId)
 });
 
+onBeforeMount(async () => {
+    await loadActivity(props.activityId);
+});
+
+const refreshList = inject('refreshList') as () => {};
+
+
+const loadActivity = async (id: string) => {
+    errorMessage.value = '';
+    const response = await activityStore.loadSingleActivity(id);
+    if (!response.isSuccessful && response.errorMessage) {
+        errorMessage.value = response.errorMessage;
+    }
+
+    isLoaded.value = true;
+}
+
+const isFormValid = (activityObject: Activity) => {
+    let isValid = true;
+
+    if (activityObject.title.trim() === '') {
+        isValid = false;
+    }
+
+    if (activityObject.description.trim() === '') {
+        isValid = false;
+    }
+
+    if (activityObject.city.trim() === '') {
+        isValid = false;
+    }
+
+    if (activityObject.category.trim() === '') {
+        isValid = false;
+    }
+
+    if (activityObject.beginDate === new Date(0) || new Date(activityObject.beginDate).toString() === 'Invalid Date') {
+        isValid = false;
+    }
+
+    return isValid;
+}
 
 const detailElement = ref<HTMLDivElement | null>();
 
@@ -70,49 +129,32 @@ const handleCancelEdit = () => {
 }
 
 const handleSubmitEdit = async (activityObject: Activity) => {
-    await updatedActivityOnServer(activityObject);
-}
+    isSubmittingData.value = true;
 
-const fetchData = async (activityId: string) => {
-    fetch(`https://localhost:5000/api/activities/${activityId}`)
-        .then(res => {
-            if (!res.ok) {
-                throw new Error('Cannot load the activity details!');
-            }
+    if (isFormValid(activityObject)) {
+        activityObject.id = props.activityId;
 
-            return res.json();
-        })
-        .then(data => {
-            activity.value = data;
-        })
-        .catch((err) => {
-            errorMessage.value = err && err.message !== '' ? err.message : 'The activity details could not be loaded!';
-        });
-};
+        let response = await activityStore.updateActivity(activityObject);
+        if (!response.isSuccessful && response.errorMessage) {
+            errorMessage.value = response.errorMessage;
 
-const updatedActivityOnServer = async (activityObject: Activity) => {
-    activityObject.id = props.activityId;
-    console.log(activityObject);
-    fetch(`https://localhost:5000/api/activities/${props.activityId}`, {
-        method: 'PUT',
-        body: JSON.stringify(activityObject),
-        headers: {
-            'content-type': 'application/json'
-        }
-    }).then(async res => {
-        if (!res.ok) {
-            throw new Error('The activity could not be updated!');
+            return;
         }
 
-        await fetchData(props.activityId);
-    }).catch((err) => {
-        errorMessage.value = err && err.message !== '' ? err.message : 'The activity could not be updated!';
-    });
-}
+        refreshList();
 
-onBeforeMount(async () => {
-    await fetchData(props.activityId);
-});
+        loadActivity(props.activityId);
+
+        if (errorMessage.value !== '') {
+            return;
+        }
+
+        isFormVisible.value = false;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    isSubmittingData.value = false;
+}
 
 </script>
 
@@ -122,6 +164,10 @@ img {
     width: 100%;
     height: auto;
     border-radius: 5px;
+}
+
+.activity-detail {
+    position: relative;
 }
 
 .detail-footer {
@@ -160,7 +206,7 @@ button:active {
     outline: none;
 }
 
-.error-message{
+.error-message {
     font-size: 13pt;
     font-weight: 600;
     text-align: center;

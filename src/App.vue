@@ -12,6 +12,8 @@ import NavBar from './components/layout/NavBar.vue';
 </script>
 
 <style>
+/* @import url('@/styles/style.css'); */
+
 * {
   box-sizing: border-box;
 }

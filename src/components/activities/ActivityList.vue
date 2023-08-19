@@ -1,26 +1,45 @@
 <template>
 <ul class="card">
     <li v-for="activity in props.activities" :key="activity.id">
-        <ActivityComponent :activity="activity" :key="activity.id" />
+        <ActivityComponent 
+        :activity="activity" 
+        :key="activity.id"
+         @on-delete="handleDeleteActivity"
+         :is-deleting="isDeletingActivity && deletingActivityId === activity.id" />
     </li>
 </ul>
 </template>
 
 <script setup lang="ts">
-import type { Activity } from '@/models/activity';
+import type { Activity } from '@/models/Activity';
 import  ActivityComponent  from "./ActivityComponent.vue";
+import { ref, type Ref } from 'vue';
 
 
 const props = defineProps<{
-    activities: Activity[]
+    activities: Activity[],
+    isDeletingActivity: boolean
 }>();
+
+const deletingActivityId: Ref<string> = ref('');
+
+const emits = defineEmits<{
+    (e : 'on-delete-item', idItem: string): void
+}>();
+
+const handleDeleteActivity = (activityId : string) =>{
+    deletingActivityId.value = activityId;
+    emits('on-delete-item', activityId);
+}
+
 </script>
+
 
 <style scoped>
 ul{
     width: 100%;
     list-style: none;    
-    margin: 0 0 auto 0;
+    margin: 0 0 20px 0;
 }
 
 li{    

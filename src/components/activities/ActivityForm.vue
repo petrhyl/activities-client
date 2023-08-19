@@ -31,7 +31,7 @@
                 v-model.lazy="formInputs.venue">
         </div>
         <div class="form-container">
-            <input type="submit" value="Submit">
+            <input type="submit" value="Submit" :class="{ disabled: isSubmitting}" :disabled="isSubmitting" >
             <input type="button" value="Cancel" @click="emits('cancel-form')">
         </div>
     </form>
@@ -39,20 +39,20 @@
 
 
 <script setup lang="ts">
-import type { Activity } from '@/models/activity';
-import { DeprecationTypes, onMounted, reactive, ref, type Ref } from 'vue';
+import { DateToISOStringWithoutSeconds } from '@/utils/stateUndependentFunctions';
+import type { Activity } from '@/models/Activity';
+import { onMounted, reactive } from 'vue';
 
 
 const props = defineProps<{
-    activityToEdit: Activity | undefined
+    activityToEdit: Activity | null,
+    isSubmitting: boolean
 }>();
 
 const emits = defineEmits<{
     (e: 'cancel-form'): void
     (e: 'submit-form', activityObject: Activity): void
 }>();
-
-const isFormValid: Ref<boolean> = ref(true);
 
 const formInputs = reactive({
     title: '',
@@ -66,19 +66,20 @@ const formInputs = reactive({
 let formProp: keyof typeof formInputs;
 
 const handleSubmitForm = () => {
-    if (!isFormValidated()) {
-        return;
+    let date = new Date(formInputs.beginDate);
+
+    if (date.toString() === 'Invalid Date') {
+        date = new Date(0);
     }
 
     const activity: Activity = {
         title: formInputs.title,
         description: formInputs.description,
         category: formInputs.category,
-        beginDate: new Date(formInputs.beginDate),
+        beginDate: date,
         city: formInputs.city,
         venue: formInputs.venue
     }
-
 
     emits('submit-form', activity);
 
@@ -87,26 +88,12 @@ const handleSubmitForm = () => {
     }
 }
 
-const isFormValidated = () => {
-    let isSomeEmpty = false;
-
-    for (formProp in formInputs) {
-        if (formInputs[formProp].trim() === '') {
-            isSomeEmpty = true;
-        }
-    }
-
-    isFormValid.value = !isSomeEmpty;
-
-    return !isSomeEmpty;
-}
-
 onMounted(() => {
     if (props.activityToEdit) {
         formInputs.title = props.activityToEdit.title;
         formInputs.description = props.activityToEdit.description;
         formInputs.category = props.activityToEdit.category;
-        formInputs.beginDate = new Date(props.activityToEdit.beginDate).toISOString();
+        formInputs.beginDate = DateToISOStringWithoutSeconds(props.activityToEdit.beginDate);
         formInputs.city = props.activityToEdit.city;
         formInputs.venue = props.activityToEdit.venue;
     }
@@ -179,5 +166,10 @@ input[type='button'] {
 
 input[type='submit'] {
     background-color: #b7ffe7;
+}
+
+input.disabled{
+    background-color: #969696;
+    border-color: #969696;
 }
 </style>

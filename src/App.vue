@@ -30,13 +30,13 @@ main{
 }
 
 .card{
-    background-color: aliceblue;
+    background-color: #f1f7fd;
     box-shadow: 1px 1px 4px 1px #c8c8c8;
     border-radius: 5px;
-    padding: 10px 10px;
+    padding: 12px 15px;
 }
 
-h2{
+h2, h3{
   font-family: 'Gill Sans', Calibri, 'Trebuchet MS', sans-serif;
 }
 </style>

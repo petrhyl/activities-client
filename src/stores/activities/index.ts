@@ -4,7 +4,7 @@ import { defineStore } from "pinia";
 import { computed, ref, type Ref } from "vue";
 
 export const useActivityStore = defineStore('activityStore', () => {
-    
+
     const activities: Ref<Activity[]> = ref([]);
     const activity: Ref<Activity | null> = ref(null);
     const errorMessage: Ref<string> = ref('');
@@ -59,7 +59,7 @@ export const useActivityStore = defineStore('activityStore', () => {
             body: activityObject,
             id: activityObject.id
         };
-        
+
         const isSuccessful = await fetchData(fetchParams);
 
         return { isSuccessful, errorMessage: !isSuccessful ? errorMessage.value : null }
@@ -103,6 +103,15 @@ export const useActivityStore = defineStore('activityStore', () => {
 
     const getActivities = computed(() => activities.value);
 
+    const getGroupedByDateActivities = computed(() => {
+        return Object.entries(
+            activities.value.reduce((orderedActivities , singleActivity ) => {
+                const date = new Date(singleActivity.beginDate).toLocaleDateString();
+                orderedActivities[date] = orderedActivities[date] ? [...orderedActivities[date], singleActivity] : [singleActivity];
+                return orderedActivities;
+            }, {} as {[key: string]: Activity[]})
+        );
+    });
 
     interface FetchDataParams {
         method: HttpVerbs,
@@ -193,7 +202,8 @@ export const useActivityStore = defineStore('activityStore', () => {
         createActivity,
         deleteActivity,
         getActivity,
-        getActivities
+        getActivities,
+        getGroupedByDateActivities
     }
 });
 

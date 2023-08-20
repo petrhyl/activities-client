@@ -1,9 +1,11 @@
 <template>
   <div class="activities">
     <div class="grid-column">
-      <LoadingComponent v-if="!isLoaded" />
       <p v-if="errorMessage !== ''">{{ errorMessage }}</p>
-      <ActivityList :activities="getActivities" @on-delete-item="handleDeleteActivity"
+      <LoadingComponent v-if="!isLoaded" />
+      <ActivityGroupedList
+        :grouped-activities="getGroupedByDateActivities"
+        @on-delete-activity="handleDeleteActivity"
         :is-deleting-activity="isActivityDeleting" />
     </div>
     <div class="grid-column">
@@ -13,19 +15,19 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, ref, watch, type Ref, provide, type InjectionKey } from 'vue';
-import ActivityList from '@/components/activities/ActivityList.vue';
+import { onBeforeMount, ref, type Ref, provide } from 'vue';
 import { useActivityStore } from '@/stores/activities';
 import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router';
 import RouteNames from '@/utils/constanses/RouteNames';
 import LoadingComponent from '@/components/layout/LoadingComponent.vue';
+import ActivityGroupedList from '@/components/activities/ActivityGroupedList.vue';
 
 
 const activityStore = useActivityStore();
 const router = useRouter();
 
-const { getActivities } = storeToRefs(activityStore);
+const { getGroupedByDateActivities } = storeToRefs(activityStore);
 const errorMessage: Ref<string> = ref('');
 const isLoaded: Ref<boolean> = ref(false);
 const isActivityDeleting: Ref<boolean> = ref(false);

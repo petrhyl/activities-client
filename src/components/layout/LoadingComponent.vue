@@ -30,9 +30,12 @@ const props = withDefaults(defineProps<{
     z-index: 100;
 }
 
-.icon{
+.loading-component .icon{
     width: 50px;
     height: 50px;
+    min-width: 30px;
+    min-height: 30px;
     background: linear-gradient(50deg, #b7ffe7, #1c7db4, #92d7ff);
+    border-radius: 5px;
 }
 </style>

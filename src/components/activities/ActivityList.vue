@@ -1,5 +1,5 @@
 <template>
-<ul class="card">
+<ul class="card activity-list">
     <li v-for="activity in props.activities" :key="activity.id">
         <ActivityComponent 
         :activity="activity" 
@@ -39,12 +39,11 @@ const handleDeleteActivity = (activityId : string) =>{
 ul{
     width: 100%;
     list-style: none;    
-    margin: 0 0 20px 0;
+    margin: 0 0 15px 0;
 }
 
 li{    
     margin-bottom: 10px;
-    padding: 0 0 10px 0;
-    border-bottom: 2px solid #b8bdca;
+    padding: 0;    
 }
 </style>

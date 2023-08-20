@@ -1,15 +1,36 @@
 <template>
-    <h2>{{ activity.title }}</h2>
-    <div class="activity-date">{{ dateTimeString }}</div>
-    <div class="activity-content">
-        <p>{{ activity.description }}</p>
-        <span>{{ activity.city }}</span>
-    </div>
-    <div class="activity-footer">
-        <span class="activity-category">{{ activity.category }}</span>
-        <div class="activity-footer-buttons">
-            <RouterLink :to="getRouteLink" :class="{ button: true, disabled: isDeleting }">View</RouterLink>
-            <button @click="emits('on-delete', activity.id!)" :class="{ button: true, disabled: isDeleting }" :disabled="isDeleting">Delete</button>
+    <div class="single-activity">
+        <div class="activity-header">
+            <div class="user-image">
+                <img src="@/assets/user.png" alt="user">
+            </div>
+            <div class="title">
+                <h2>{{ activity.title }}</h2>
+                <h3>Hosted by Peter</h3>
+            </div>
+        </div>
+        <div class="activity-content">
+            <div class="date-city">
+                <div>
+                    <img class="icon" src="@/assets/clock-icon.png" alt="date">
+                    <span>{{ dateTimeString }}</span>
+                </div>
+                <div>
+                    <img class="icon" src="@/assets/location-pin-icon.png" alt="location">
+                    <span>{{ activity.city }}</span>
+                </div>
+            </div>
+            <div class="description">
+                <p>{{ activity.description }}</p>
+            </div>
+        </div>
+        <div class="activity-footer">
+            <span class="activity-category">{{ activity.category }}</span>
+            <div class="activity-footer-buttons">
+                <RouterLink :to="getRouteLink" :class="{ button: true, disabled: isDeleting }">View</RouterLink>
+                <button @click="emits('on-delete', activity.id!)" :class="{ button: true, disabled: isDeleting }"
+                    :disabled="isDeleting">Delete</button>
+            </div>
         </div>
     </div>
 </template>
@@ -17,8 +38,10 @@
 
 <script setup lang="ts">
 import type { Activity } from '@/models/Activity';
+import RouteNames from '@/utils/constanses/RouteNames';
+import { DateTimeToCzechFormat } from '@/utils/stateUndependentFunctions';
 import { computed, type ComputedRef } from 'vue';
-import { RouterLink } from 'vue-router';
+import { RouterLink, type LocationAsRelativeRaw } from 'vue-router';
 
 
 const props = defineProps<{
@@ -30,24 +53,85 @@ const emits = defineEmits<{
     (e: 'on-delete', activityId: string): void
 }>();
 
-const getRouteLink: ComputedRef<string> = computed(() => {
-    return `/activities/${props.activity.id}`
+const getRouteLink: ComputedRef<LocationAsRelativeRaw> = computed(() => {
+    return {
+        name: RouteNames.ACTIVITY_DETAIL,
+        params: {
+            activityId: props.activity.id!
+        }
+    }
 });
 
 const dateTimeString: ComputedRef<string> = computed(() => {
     const d: Date = new Date(props.activity.beginDate);
-    return `${d.toLocaleDateString()} ${d.toLocaleTimeString()}`;
+    return DateTimeToCzechFormat(d);
 });
 </script>
 
 
 <style scoped>
-h2 {
-    margin: 5px 0 15px 20px;
+.single-activity {
+    width: 100%;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #b8bdca;
+}
+
+.activity-header {
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+}
+
+.activity-header h2 {
+    margin: 5px 0 10px 0px;
+}
+
+.activity-header h3 {
+    margin: 0 0 auto 0;
+}
+
+.activity-header .user-image {
+    padding: 10px 20px 15px 5px;
+}
+
+.activity-header .user-image img {
+    width: 100%;
+    height: auto;
+    margin: auto;
+    border-radius: 50%;
+}
+
+.activity-content {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    row-gap: 10px;
 }
 
 .activity-content p {
-    margin-bottom: 5px;
+    font-family: 'Trebuchet MS', Calibri, sans-serif;
+    margin: 0;
+    padding-top: 10px;
+}
+
+img.icon {
+    width: 15px;
+    height: auto;
+    margin-right: 10px;
+}
+
+.activity-content .date-city{
+    display: flex;
+    column-gap: 15px;
+}
+
+.activity-content .date-city>div{
+    display: inline-flex;
+    align-items: center;
+}
+
+.activity-content .date-city span{
+    font-family: 'Lucida Sans', Geneva, sans-serif;
+    color: rgb(103, 92, 92);
 }
 
 .activity-footer {
@@ -94,7 +178,7 @@ h2 {
 }
 
 a.disabled,
-button.disabled{
+button.disabled {
     pointer-events: none;
     background-color: #c5c5c5;
     color: #9f9f9f;

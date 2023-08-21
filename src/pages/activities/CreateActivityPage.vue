@@ -1,17 +1,20 @@
 <template>
-    <div class="container">
-        <ResponseMessage v-if="isResponded" :is-error="!isSuccessResponse" :message="responseMessage" />
-        <ActivityForm
-            v-if="!isResponded"
-            @refresh-form="handleClearForm"
-            @submit-form="handleCreateActivity"
-            :activity-to-edit="activityObject"
-            :is-submitting="isSubmittingData" />
-    </div>
+    <PageContainer>
+        <div class="container">
+            <ResponseMessage v-if="isResponded" :is-error="!isSuccessResponse" :message="responseMessage" />
+            <ActivityForm
+                v-if="!isResponded"
+                @refresh-form="handleClearForm"
+                @submit-form="handleCreateActivity"
+                :activity-to-edit="activityObject"
+                :is-submitting="isSubmittingData" />
+        </div>
+    </PageContainer>
 </template>
 
 <script setup lang="ts">
 import ActivityForm from '@/components/activities/details/ActivityForm.vue';
+import PageContainer from '@/components/layout/PageContainer.vue';
 import ResponseMessage from '@/components/layout/ResponseMessage.vue';
 import type { Activity } from '@/models/Activity';
 import { useActivityStore } from '@/stores/activities';
@@ -27,7 +30,7 @@ const isResponded: Ref<boolean> = ref(false);
 const isSuccessResponse: Ref<boolean> = ref(true);
 const responseMessage: Ref<string> = ref('');
 const isSubmittingData: Ref<boolean> = ref(false);
-const activityObject : Ref<Activity | null> = ref(null);
+const activityObject: Ref<Activity | null> = ref(null);
 
 const handleClearForm = () => {
     activityObject.value = {
@@ -62,5 +65,4 @@ const createActivityOnServer = async (activity: Activity) => {
     width: 50%;
     margin: 25px auto;
 }
-
 </style>

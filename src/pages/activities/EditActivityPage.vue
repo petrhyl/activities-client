@@ -1,17 +1,20 @@
 <template>
-    <div class="edit-activity">
-       
-        <ActivityForm
-            @refresh-form="handleClearForm"
-            @submit-form="handleUpdateActivity"
-            :activity-to-edit="getActivity"
-            :is-submitting="isSubmittingData" />
-    </div>
+    <PageContainer>
+        <div class="edit-activity">
+            <ActivityForm
+                @refresh-form="handleClearForm"
+                @submit-form="handleUpdateActivity"
+                :activity-to-edit="getActivity"
+                :is-submitting="isSubmittingData" />
+        </div>
+    </PageContainer>
 </template>
 
 
 <script setup lang="ts">
 import ActivityForm from '@/components/activities/details/ActivityForm.vue';
+import PageContainer from '@/components/layout/PageContainer.vue';
+import ResponseMessage from '@/components/layout/ResponseMessage.vue';
 import type { Activity } from '@/models/Activity';
 import { useActivityStore } from '@/stores/activities';
 import RouteNames from '@/utils/constanses/RouteNames';
@@ -41,7 +44,7 @@ const handleUpdateActivity = async (activity: Activity) => {
     await updateActivityOnServer(activity);
 }
 
-const updateActivityOnServer= async (activity: Activity) => {
+const updateActivityOnServer = async (activity: Activity) => {
 
 }
 
@@ -73,6 +76,4 @@ const isFormValid = (activityObject: Activity) => {
 </script>
 
 
-<style>
-
-</style>
+<style></style>

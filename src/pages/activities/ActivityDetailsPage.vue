@@ -1,21 +1,24 @@
 <template>
-    <div class="activity-detail">
-        <LoadingLayer :is-loading="isActivityLoading" :error-message="errorMessage">
-            <ActivityDetailComponent
-                v-if="getActivity"
-                :activity="getActivity"
-                @triger-edit="handleEdit"
-                @join-activity="handleJoinActivity"
-                @cancel-attendance="handleCancelAttendance" />
-        </LoadingLayer>
-        
-    </div>
+    <PageContainer>
+        <div class="activity-detail">
+            <LoadingLayer :is-loading="isActivityLoading" :error-message="errorMessage">
+                <ActivityDetailComponent
+                    v-if="getActivity"
+                    :activity="getActivity"
+                    @triger-edit="handleEdit"
+                    @join-activity="handleJoinActivity"
+                    @cancel-attendance="handleCancelAttendance" />
+            </LoadingLayer>
+
+        </div>
+    </PageContainer>
 </template>
 
 
 <script setup lang="ts">
 import ActivityDetailComponent from '@/components/activities/details/ActivityDetailComponent.vue';
 import LoadingLayer from '@/components/layout/LoadingLayer.vue';
+import PageContainer from '@/components/layout/PageContainer.vue';
 import type { Activity } from '@/models/Activity';
 import { useActivityStore } from '@/stores/activities';
 import RouteNames from '@/utils/constanses/RouteNames';
@@ -56,7 +59,7 @@ const loadActivity = async (id: string) => {
 const detailElement = ref<HTMLDivElement | null>();
 
 const handleEdit = () => {
-   router.push({name: RouteNames.EDIT_ACTIVITY});
+    router.push({ name: RouteNames.EDIT_ACTIVITY });
 }
 
 const handleCancelAttendance = () => {
@@ -73,6 +76,4 @@ const handleJoinActivity = () => {
 </script>
 
 
-<style scoped>
-
-</style>
+<style scoped></style>

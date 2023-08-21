@@ -1,5 +1,5 @@
 <template>
-    <nav>
+    <nav class="top-navigation">
         <header>
             <img src="@/assets/logo.png" alt="logo" />
             <h1>Reactivities</h1>
@@ -20,7 +20,7 @@ import RouteNames from '@/utils/constanses/RouteNames';
 <style scoped>
 nav {
     width: 100%;
-    height: 70px;
+    height: 85px;
     display: flex;
     justify-content: space-around;
     background: linear-gradient(80deg, #b7ffe7 10%, #1c7db4 75%, #92d7ff 100%);

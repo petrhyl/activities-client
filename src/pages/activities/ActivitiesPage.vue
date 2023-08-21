@@ -1,14 +1,16 @@
 <template>
-  <div class="activities">
-    <div class="grid-column">
-      <p v-if="errorMessage !== ''">{{ errorMessage }}</p>
-      <LoadingComponent v-if="!isLoaded" />
-      <ActivityGroupedList
-        :grouped-activities="getGroupedByDateActivities"
-        @on-delete-activity="handleDeleteActivity"
-        :is-deleting-activity="isActivityDeleting" />
+  <PageContainer>
+    <div class="activities">
+      <div class="grid-column">
+        <p v-if="errorMessage !== ''">{{ errorMessage }}</p>
+        <LoadingComponent v-if="!isLoaded" />
+        <ActivityGroupedList
+          :grouped-activities="getGroupedByDateActivities"
+          @on-delete-activity="handleDeleteActivity"
+          :is-deleting-activity="isActivityDeleting" />
+      </div>
     </div>
-  </div>
+  </PageContainer>
 </template>
 
 <script setup lang="ts">
@@ -19,6 +21,7 @@ import { useRouter } from 'vue-router';
 import RouteNames from '@/utils/constanses/RouteNames';
 import LoadingComponent from '@/components/layout/LoadingComponent.vue';
 import ActivityGroupedList from '@/components/activities/ActivityGroupedList.vue';
+import PageContainer from '@/components/layout/PageContainer.vue';
 
 
 const activityStore = useActivityStore();
@@ -65,10 +68,6 @@ onBeforeMount(async () => {
 </script>
 
 <style>
-.activities {
-  width: 100%;
-}
-
 .grid-column {
   position: relative;
   display: flex;

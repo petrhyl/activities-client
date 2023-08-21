@@ -12,7 +12,7 @@
 
 <script setup lang="ts">
 import type { Activity } from '@/models/Activity';
-import  ActivityComponent  from "./ActivityComponent.vue";
+import  ActivityComponent  from "./details/ActivityComponent.vue";
 import { ref, type Ref } from 'vue';
 
 
@@ -39,7 +39,7 @@ const handleDeleteActivity = (activityId : string) =>{
 ul{
     width: 100%;
     list-style: none;    
-    margin: 0 0 15px 0;
+    margin: 0 0 25px 0;
 }
 
 li{    

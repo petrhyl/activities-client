@@ -49,6 +49,6 @@ li {
     font-weight: 400;
     font-family:Impact, Haettenschweiler, sans-serif;
     color: #2537b1;
-    padding: 25px 0 10px 15px;
+    padding: 5px 0 10px 15px;
 }
 </style>

@@ -6,11 +6,11 @@
             </div>
             <div class="title">
                 <h2>{{ activity.title }}</h2>
-                <h3>Hosted by Peter</h3>
+                <div class="activity-hosted-by"><span>Hosted by </span><span class="activity-host">Bob</span></div>
             </div>
         </div>
         <div class="activity-content">
-            <div class="date-city">
+            <div class="date-city-category">
                 <div>
                     <img class="icon" src="@/assets/clock-icon.png" alt="date">
                     <span>{{ dateTimeString }}</span>
@@ -18,13 +18,13 @@
                 <div>
                     <img class="icon" src="@/assets/location-pin-icon.png" alt="location">
                     <span>{{ activity.city }}</span>
-                </div>
-            </div>
-            <div class="description">
-                <p>{{ activity.description }}</p>
-            </div>
+                </div>                
+            </div>            
         </div>
-        <div class="activity-footer">
+        <div>
+            attendors
+        </div>
+        <div class="activity-footer">         
             <span class="activity-category">{{ activity.category }}</span>
             <div class="activity-footer-buttons">
                 <RouterLink :to="getRouteLink" :class="{ button: true, disabled: isDeleting }">View</RouterLink>
@@ -78,7 +78,8 @@ const dateTimeString: ComputedRef<string> = computed(() => {
 
 .activity-header {
     display: grid;
-    grid-template-columns: 1fr 4fr;
+    grid-template-columns: 1fr 6fr;
+    gap: 5%;
 }
 
 .activity-header h2 {
@@ -101,16 +102,12 @@ const dateTimeString: ComputedRef<string> = computed(() => {
 }
 
 .activity-content {
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: start;
     row-gap: 10px;
-}
-
-.activity-content p {
-    font-family: 'Trebuchet MS', Calibri, sans-serif;
-    margin: 0;
-    padding-top: 10px;
+    margin-bottom: 15px;
 }
 
 img.icon {
@@ -119,19 +116,26 @@ img.icon {
     margin-right: 10px;
 }
 
-.activity-content .date-city{
+.activity-content .date-city-category{
+    width: 100%;
     display: flex;
-    column-gap: 15px;
+    column-gap: 5%;
 }
 
-.activity-content .date-city>div{
+.activity-content .date-city-category>div{
     display: inline-flex;
     align-items: center;
 }
 
-.activity-content .date-city span{
+.activity-content .date-city-category span{
     font-family: 'Lucida Sans', Geneva, sans-serif;
     color: rgb(103, 92, 92);
+}
+
+.activity-category {
+    padding: 7px 12px;
+    border: 1px solid gray;
+    border-radius: 5px;
 }
 
 .activity-footer {
@@ -145,23 +149,25 @@ img.icon {
     display: grid;
     grid-template-columns: 1fr 1fr;
     column-gap: 10px;
+    align-items: end;
 }
 
 .button {
-    font-size: 14pt;
+    height: fit-content;
+    font-size: 13pt;
     font-weight: 600;
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', sans-serif;
     letter-spacing: 1px;
     text-align: center;
     border-radius: 5px;
-    padding: 7px 20px;
+    padding: 7px 17px;
     cursor: pointer;
 }
 
 .activity-footer-buttons a {
     text-decoration: none;
     color: rgb(110, 2, 134);
-    background: linear-gradient(90deg, #b7ffe7 10%, #8bd3fd);
+    background: linear-gradient(90deg, #abfee2 10%, #8bd3fd);
 }
 
 .activity-footer-buttons button {
@@ -171,10 +177,10 @@ img.icon {
     border: none;
 }
 
-.activity-category {
-    padding: 7px 12px;
-    border: 1px solid gray;
-    border-radius: 5px;
+.activity-footer p {
+    font-family: 'Trebuchet MS', Calibri, sans-serif;
+    margin: 0;
+    padding-top: 10px;
 }
 
 a.disabled,

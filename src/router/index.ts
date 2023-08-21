@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Activities from "@/pages/Activities.vue";
+import Activities from "@/pages/activities/ActivitiesPage.vue";
 import RouteNames from "@/utils/constanses/RouteNames";
 
 
@@ -12,19 +12,21 @@ export const router = createRouter({
         }, {
             path: '/activities',
             name: RouteNames.ACTIVITIES,
-            component: Activities,
-            children: [
-                {
-                    path: ':activityId',
-                    name: RouteNames.ACTIVITY_DETAIL,
-                    props: true,
-                    component: () => import('@/pages/ActivityDetails.vue')
-                }
-            ]
+            component: Activities
         },{
-            path: '/create-new',
+            path: '/activities/:activityId',
+            name: RouteNames.ACTIVITY_DETAIL,
+            props: true,
+            component: () => import('@/pages/activities/ActivityDetailsPage.vue')                   
+        },{
+            path: '/activities/create-new',
             name: RouteNames.CREATE_ACTIVITY,
-            component: () => import('@/pages/CreateActivity.vue')
+            component: () => import('@/pages/activities/CreateActivityPage.vue')
+        },{
+            path: '/activities/edit/:activityId',
+            name: RouteNames.EDIT_ACTIVITY,
+            props: true,
+            component: () => import('@/pages/activities/EditActivityPage.vue')
         }
     ],
     scrollBehavior(to, position) {

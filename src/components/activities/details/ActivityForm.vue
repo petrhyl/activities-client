@@ -31,8 +31,8 @@
                 v-model.lazy="formInputs.venue">
         </div>
         <div class="form-container">
-            <input type="submit" value="Submit" :class="{ disabled: isSubmitting}" :disabled="isSubmitting" >
-            <input type="button" value="Cancel" @click="emits('cancel-form')">
+            <input type="submit" value="Submit" :class="{ disabled: isSubmitting }" :disabled="isSubmitting">
+            <input type="button" value="Refresh" @click="emits('refresh-form')">
         </div>
     </form>
 </template>
@@ -41,7 +41,7 @@
 <script setup lang="ts">
 import { DateToISOStringWithoutSeconds } from '@/utils/stateUndependentFunctions';
 import type { Activity } from '@/models/Activity';
-import { onMounted, reactive } from 'vue';
+import { onMounted, reactive, toRef, watch } from 'vue';
 
 
 const props = defineProps<{
@@ -49,8 +49,10 @@ const props = defineProps<{
     isSubmitting: boolean
 }>();
 
+const formData = toRef(() => props.activityToEdit);
+
 const emits = defineEmits<{
-    (e: 'cancel-form'): void
+    (e: 'refresh-form'): void
     (e: 'submit-form', activityObject: Activity): void
 }>();
 
@@ -63,7 +65,14 @@ const formInputs = reactive({
     venue: ''
 });
 
-let formProp: keyof typeof formInputs;
+onMounted(() => {
+    fillForm();
+});
+
+watch(formData, () => {
+    fillForm();
+});
+
 
 const handleSubmitForm = () => {
     let date = new Date(formInputs.beginDate);
@@ -82,13 +91,9 @@ const handleSubmitForm = () => {
     }
 
     emits('submit-form', activity);
-
-    for (formProp in formInputs) {
-        formInputs[formProp] = '';
-    }
 }
 
-onMounted(() => {
+const fillForm = () => {
     if (props.activityToEdit) {
         formInputs.title = props.activityToEdit.title;
         formInputs.description = props.activityToEdit.description;
@@ -97,7 +102,7 @@ onMounted(() => {
         formInputs.city = props.activityToEdit.city;
         formInputs.venue = props.activityToEdit.venue;
     }
-});
+}
 
 </script>
 
@@ -168,7 +173,7 @@ input[type='submit'] {
     background-color: #b7ffe7;
 }
 
-input.disabled{
+input.disabled {
     background-color: #969696;
     border-color: #969696;
 }

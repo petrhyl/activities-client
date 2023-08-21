@@ -1,18 +1,18 @@
 <template>
     <div class="container">
-        <div v-if="isResponded" :class="{ response: true, error: !isSuccessResponse, success: isSuccessResponse }">
-            {{ responseMessage }}
-        </div>
+        <ResponseMessage v-if="isResponded" :is-error="!isSuccessResponse" :message="responseMessage" />
         <ActivityForm
-            @cancel-form="handleCancelForm"
+            v-if="!isResponded"
+            @refresh-form="handleClearForm"
             @submit-form="handleCreateActivity"
-            :activity-to-edit="null"
+            :activity-to-edit="activityObject"
             :is-submitting="isSubmittingData" />
     </div>
 </template>
 
 <script setup lang="ts">
-import ActivityForm from '@/components/activities/ActivityForm.vue';
+import ActivityForm from '@/components/activities/details/ActivityForm.vue';
+import ResponseMessage from '@/components/layout/ResponseMessage.vue';
 import type { Activity } from '@/models/Activity';
 import { useActivityStore } from '@/stores/activities';
 import RouteNames from '@/utils/constanses/RouteNames';
@@ -27,9 +27,17 @@ const isResponded: Ref<boolean> = ref(false);
 const isSuccessResponse: Ref<boolean> = ref(true);
 const responseMessage: Ref<string> = ref('');
 const isSubmittingData: Ref<boolean> = ref(false);
+const activityObject : Ref<Activity | null> = ref(null);
 
-const handleCancelForm = () => {
-    router.push({ name: RouteNames.ACTIVITIES });
+const handleClearForm = () => {
+    activityObject.value = {
+        title: '',
+        category: '',
+        description: '',
+        beginDate: new Date(),
+        city: '',
+        venue: ''
+    };
 }
 
 const handleCreateActivity = async (activity: Activity) => {
@@ -55,17 +63,4 @@ const createActivityOnServer = async (activity: Activity) => {
     margin: 25px auto;
 }
 
-.response {
-    margin-bottom: 20px;
-    font-size: 13pt;
-    font-family: Impact, Haettenschweiler, sans-serif;
-}
-
-.error {
-    color: #ab0039;
-}
-
-.success {
-    color: #00a600;
-}
 </style>

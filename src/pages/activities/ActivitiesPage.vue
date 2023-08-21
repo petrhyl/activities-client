@@ -8,9 +8,6 @@
         @on-delete-activity="handleDeleteActivity"
         :is-deleting-activity="isActivityDeleting" />
     </div>
-    <div class="grid-column">
-      <RouterView />
-    </div>
   </div>
 </template>
 
@@ -69,10 +66,7 @@ onBeforeMount(async () => {
 
 <style>
 .activities {
-  display: grid;
-  grid-template-columns: 0.65fr 0.35fr;
-  column-gap: 25px;
-  margin-top: 25px;
+  width: 100%;
 }
 
 .grid-column {

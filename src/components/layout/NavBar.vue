@@ -45,6 +45,7 @@ menu {
 
 img {
     margin-right: 25px;
+    padding: 7px 0;
 }
 
 a {

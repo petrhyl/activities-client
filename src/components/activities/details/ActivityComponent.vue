@@ -18,18 +18,18 @@
                 <div>
                     <img class="icon" src="@/assets/location-pin-icon.png" alt="location">
                     <span>{{ activity.city }}</span>
-                </div>                
-            </div>            
+                </div>
+            </div>
         </div>
-        <div>
+        <div class="attendors">
             attendors
         </div>
-        <div class="activity-footer">         
+        <div class="activity-footer">
             <span class="activity-category">{{ activity.category }}</span>
             <div class="activity-footer-buttons">
-                <RouterLink :to="getRouteLink" :class="{ button: true, disabled: isDeleting }">View</RouterLink>
-                <button @click="emits('on-delete', activity.id!)" :class="{ button: true, disabled: isDeleting }"
-                    :disabled="isDeleting">Delete</button>
+                <StyledButton :button-type="ButtonTypes.LINK" :link-to="getRouteLink" :css-class="getRoutLinkClass" text="View" />
+                <StyledButton :button-type="ButtonTypes.BUTTON" text="Delete" @click-button="emits('on-delete', activity.id!)" :css-class="getDeleteButtonClass"
+                    :is-disabled="isDeleting" />
             </div>
         </div>
     </div>
@@ -37,11 +37,13 @@
 
 
 <script setup lang="ts">
+import StyledButton from '@/components/layout/form/StyledButton.vue';
 import type { Activity } from '@/models/Activity';
+import ButtonTypes from '@/utils/constanses/ButtonTypes';
 import RouteNames from '@/utils/constanses/RouteNames';
 import { DateTimeToCzechFormat } from '@/utils/stateUndependentFunctions';
 import { computed, type ComputedRef } from 'vue';
-import { RouterLink, type LocationAsRelativeRaw } from 'vue-router';
+import { type LocationAsRelativeRaw } from 'vue-router';
 
 
 const props = defineProps<{
@@ -60,6 +62,26 @@ const getRouteLink: ComputedRef<LocationAsRelativeRaw> = computed(() => {
             activityId: props.activity.id!
         }
     }
+});
+
+const getRoutLinkClass: ComputedRef<string> = computed(()=>{
+    let css = 'link';
+
+    if (props.isDeleting) {
+        css = `${css} disabled`;
+    }
+
+    return css;
+});
+
+const getDeleteButtonClass: ComputedRef<string> = computed(()=>{
+    let css = 'delete';
+    
+    if (props.isDeleting) {
+        css = `${css} disabled`;
+    }
+
+    return css;
 });
 
 const dateTimeString: ComputedRef<string> = computed(() => {
@@ -116,18 +138,18 @@ img.icon {
     margin-right: 10px;
 }
 
-.activity-content .date-city-category{
+.activity-content .date-city-category {
     width: 100%;
     display: flex;
     column-gap: 5%;
 }
 
-.activity-content .date-city-category>div{
+.activity-content .date-city-category>div {
     display: inline-flex;
     align-items: center;
 }
 
-.activity-content .date-city-category span{
+.activity-content .date-city-category span {
     font-family: 'Lucida Sans', Geneva, sans-serif;
     color: rgb(103, 92, 92);
 }
@@ -152,39 +174,44 @@ img.icon {
     align-items: end;
 }
 
-.button {
-    height: fit-content;
-    font-size: 13pt;
-    font-weight: 600;
-    font-family: 'Franklin Gothic Medium', 'Arial Narrow', sans-serif;
-    letter-spacing: 1px;
-    text-align: center;
-    border-radius: 5px;
-    padding: 7px 17px;
-    cursor: pointer;
-}
-
-.activity-footer-buttons a {
-    text-decoration: none;
-    color: rgb(110, 2, 134);
-    background: linear-gradient(90deg, #abfee2 10%, #8bd3fd);
-}
-
-.activity-footer-buttons button {
-    color: #806a6a;
-    background-color: #b8cad4;
-    outline: none;
-    border: none;
-}
-
 .activity-footer p {
     font-family: 'Trebuchet MS', Calibri, sans-serif;
     margin: 0;
     padding-top: 10px;
 }
 
-a.disabled,
-button.disabled {
+@media screen and (max-width: 870px) {
+    .activity-header {
+        grid-template-columns: 1fr 4fr;
+        gap: 20px;
+    }
+}
+
+@media screen and (max-width: 680px) {
+    .activity-header {
+        grid-template-columns: 1fr 3fr;
+        gap: 20px;
+    }
+}
+</style>
+
+<style>
+.activity-footer-buttons .link {
+    text-decoration: none;
+    color: rgb(110, 2, 134);
+    background: linear-gradient(90deg, #abfee2 10%, #8bd3fd);
+}
+
+.activity-footer-buttons .delete {
+    color: #e2e2e2;
+    background-color: #8da2ae;
+}
+
+.activity-footer-buttons .delete:hover {
+    background-color: #a4b7c2;
+}
+
+.disabled {
     pointer-events: none;
     background-color: #c5c5c5;
     color: #9f9f9f;

@@ -1,9 +1,15 @@
 import { HttpVerbs } from "@/utils/constanses/HttpVerbs";
 import type { Activity } from "@/models/Activity";
-import { defineStore } from "pinia";
+import { defineStore, mapActions } from "pinia";
 import { computed, ref, type Ref } from "vue";
 
 export const useActivityStore = defineStore('activityStore', () => {
+
+    interface FetchDataParams {
+        method: HttpVerbs,
+        id: string | null,
+        body: Activity | null
+    }
 
     const activities: Ref<Activity[]> = ref([]);
     const activity: Ref<Activity | null> = ref(null);
@@ -105,20 +111,16 @@ export const useActivityStore = defineStore('activityStore', () => {
 
     const getGroupedByDateActivities = computed(() => {
         return Object.entries(
-            activities.value.reduce((orderedActivities , singleActivity ) => {
+            activities.value.reduce((groupedActivities, singleActivity) => {
                 const date = new Date(singleActivity.beginDate).toLocaleDateString();
-                orderedActivities[date] = orderedActivities[date] ? [...orderedActivities[date], singleActivity] : [singleActivity];
-                return orderedActivities;
-            }, {} as {[key: string]: Activity[]})
+                groupedActivities[date] = groupedActivities[date] ? [...groupedActivities[date], singleActivity] : [singleActivity];
+                return groupedActivities;
+            },  {} as {[key: string]: Activity[]})
         );
     });
 
-    interface FetchDataParams {
-        method: HttpVerbs,
-        id: string | null,
-        body: Activity | null
-    }
 
+    
     const fetchData = async (params: FetchDataParams) => {
         let url = 'https://localhost:5000/api/activities';
 

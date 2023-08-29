@@ -1,36 +1,39 @@
 <template>
     <PageContainer>
-        <div class="container">
-            <ResponseMessage v-if="isResponded" :is-error="!isSuccessResponse" :message="responseMessage" />
-            <ActivityForm
-                v-if="!isResponded"
+        <div class="create-activity-page">
+            <ResponseMessage v-if="submitResponse.isResponded" :is-error="!submitResponse.isSuccessful" :message="submitResponse.message" />
+            <ActivityForm v-if="!submitResponse.isResponded"
                 @refresh-form="handleClearForm"
                 @submit-form="handleCreateActivity"
-                :activity-to-edit="activityObject"
-                :is-submitting="isSubmittingData" />
+                :submit-response="submitResponse" />
+                <div v-if="submitResponse.isResponded" class="back-link-container">
+                    <input v-if="submitResponse.isSuccessful" class="back-link" type="button" value="Create another" @click="handleCreateAnother">
+                    <input type="button" class="back-link" value="View all activities" @click="handleViewAll" />
+                </div>
         </div>
     </PageContainer>
 </template>
 
 <script setup lang="ts">
 import ActivityForm from '@/components/activities/details/ActivityForm.vue';
-import PageContainer from '@/components/layout/PageContainer.vue';
+import PageContainer from '@/components/layout/base/PageContainer.vue';
 import ResponseMessage from '@/components/layout/ResponseMessage.vue';
 import type { Activity } from '@/models/Activity';
+import type { SubmitResponse } from '@/models/auxillary/interfaces';
 import { useActivityStore } from '@/stores/activities';
 import RouteNames from '@/utils/constanses/RouteNames';
 import { ref, type Ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 
+const clearSubmitResponse = { isResponded: false, isSuccessful: true, message: '' };
+
 const router = useRouter();
 const activityStore = useActivityStore();
 
-const isResponded: Ref<boolean> = ref(false);
-const isSuccessResponse: Ref<boolean> = ref(true);
-const responseMessage: Ref<string> = ref('');
-const isSubmittingData: Ref<boolean> = ref(false);
+const submitResponse: Ref<SubmitResponse> = ref(clearSubmitResponse);
 const activityObject: Ref<Activity | null> = ref(null);
+
 
 const handleClearForm = () => {
     activityObject.value = {
@@ -43,26 +46,35 @@ const handleClearForm = () => {
     };
 }
 
-const handleCreateActivity = async (activity: Activity) => {
-    isSubmittingData.value = true;
-    await createActivityOnServer(activity);
+const handleCreateAnother = () => {
+   handleClearForm();
+   submitResponse.value = clearSubmitResponse;      
 }
 
-const createActivityOnServer = async (activity: Activity) => {
+const handleViewAll = () => {
+    router.push({name: RouteNames.ACTIVITIES});
+}
+
+const handleCreateActivity = async (activity: Activity) => {
     const response = await activityStore.createActivity(activity);
 
-    if (!response.isSuccessful && response.errorMessage) {
-        responseMessage.value = response.errorMessage;
-    }
-
-    isResponded.value = true;
-    isSubmittingData.value = false;
+    submitResponse.value.isResponded = true;
+    submitResponse.value.isSuccessful = response.isSuccessful
+    submitResponse.value.message = response.errorMessage ?? 'Event was successfully created!';
 }
+    
 </script>
 
 <style scoped>
-.container {
-    width: 50%;
+@import url('@/styles/style.css');
+
+.create-activity-page {
+    width: 40%;
     margin: 25px auto;
+}
+
+.back-link-container{
+    width: 100%;
+    margin-top: 20px;
 }
 </style>

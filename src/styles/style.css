@@ -1,0 +1,80 @@
+.back-link {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 13pt;
+    font-weight: 600;
+    text-decoration: none;
+    outline: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: 2px solid #3058b4;
+    padding: 8px 15px;
+    cursor: pointer;
+    animation-name: waving;
+    animation-duration: 4s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+@keyframes waving {
+    0% {
+        background: repeating-linear-gradient(90deg, #54ffff, #208ecd, #9cdbff);
+    }
+    5% {
+        background: repeating-linear-gradient(90deg, #9cdbff, #54ffff, #208ecd);
+    }
+    15% {
+        background: repeating-linear-gradient(90deg, #208ecd, #9cdbff, #54ffff);
+    }
+    20% {
+        background: repeating-linear-gradient(90deg, #54ffff, #208ecd, #9cdbff);
+    }
+    25% {
+        background: repeating-linear-gradient(90deg, #9cdbff, #54ffff, #208ecd);
+    }
+    30% {
+        background: repeating-linear-gradient(90deg, #208ecd, #9cdbff, #54ffff);
+    }
+    35% {
+        background: repeating-linear-gradient(90deg, #54ffff, #208ecd, #9cdbff);
+    }
+    40% {
+        background: repeating-linear-gradient(90deg, #9cdbff , #54ffff, #208ecd);
+    }
+    45% {
+        background: repeating-linear-gradient(90deg, #208ecd, #9cdbff, #54ffff);
+    }
+    50% {
+        background: repeating-linear-gradient(90deg, #54ffff, #208ecd, #9cdbff);
+    }
+    55% {
+        background: repeating-linear-gradient(90deg, #9cdbff , #54ffff, #208ecd);
+    }
+    60% {
+        background: repeating-linear-gradient(90deg, #208ecd, #9cdbff , #54ffff);
+    }
+    65% {
+        background: repeating-linear-gradient(90deg, #54ffff, #208ecd, #9cdbff );
+    }
+    70% {
+        background: repeating-linear-gradient(90deg, #9cdbff , #54ffff, #208ecd);
+    }
+    75% {
+        background: repeating-linear-gradient(90deg, #208ecd, #9cdbff , #54ffff);
+    }
+    80% {
+        background: repeating-linear-gradient(90deg, #54ffff, #208ecd, #9cdbff );
+    }
+    85% {
+        background: repeating-linear-gradient(90deg, #9cdbff , #54ffff, #208ecd);
+    }
+    90% {
+        background: repeating-linear-gradient(90deg, #208ecd, #9cdbff , #54ffff);
+    }
+    95% {
+        background: repeating-linear-gradient(90deg, #54ffff, #208ecd, #9cdbff );
+    }
+    100% {
+        background: repeating-linear-gradient(90deg, #9cdbff , #54ffff, #208ecd);
+    }
+}

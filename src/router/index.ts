@@ -27,6 +27,10 @@ export const router = createRouter({
             name: RouteNames.EDIT_ACTIVITY,
             props: true,
             component: () => import('@/pages/activities/EditActivityPage.vue')
+        },{
+            path: '/:notFound(.*)',
+            name: RouteNames.NOT_FOUND,
+            component: () => import('@/pages/NotFoundPage.vue')
         }
     ],
     scrollBehavior(to, position) {

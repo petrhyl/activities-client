@@ -30,6 +30,7 @@ const getCssClass: ComputedRef<string> = computed(() => {
     width: 100%;
     font-size: 13pt;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 600;
     text-align: center;
 }
 

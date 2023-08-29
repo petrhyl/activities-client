@@ -1,61 +1,63 @@
 <template>
-    <form class="card" @submit.prevent="handleSubmitForm">
-        <div class="form-component">
-            <label for="title">Title</label>
+    <ResponseMessage v-if="response.isResponded" :is-error="!response.isSuccessful"
+        :message="response.message" />
+    <FormLayout v-if="!response.isResponded" @submit-form="handleSubmitForm" :form-styles="'card'">
+        <FormComponent label-for="activity-title-input" label-text="Activity Title" warning-message="">
             <input type="text" name="title" class="form-input-element" id="activity-title-input"
                 v-model.lazy="formInputs.title">
-        </div>
-        <div class="form-component">
-            <label for="description">Description</label>
+        </FormComponent>
+        <FormComponent label-for="activity-description-text" label-text="Description" warning-message="">
             <textarea name="description" class="form-input-element" id="activity-description-text" rows="5"
                 v-model.lazy="formInputs.description"></textarea>
-        </div>
-        <div class="form-component">
-            <label for="category">Category</label>
+        </FormComponent>
+        <FormComponent label-for="activity-category-input" label-text="Category" warning-message="">
             <input type="text" name="category" class="form-input-element" id="activity-category-input"
                 v-model.lazy="formInputs.category">
-        </div>
-        <div class="form-component">
-            <label for="date">Date and Time</label>
+        </FormComponent>
+        <FormComponent label-for="activity-date-input" label-text="Event Date Time" warning-message="">
             <input type="datetime-local" name="date" class="form-input-element" id="activity-date-input"
                 v-model.lazy="formInputs.beginDate">
-        </div>
-        <div class="form-component">
-            <label for="city">City</label>
+        </FormComponent>
+        <FormComponent label-for="activity-city-input" label-text="City" warning-message="">
             <input type="text" name="city" class="form-input-element" id="activity-city-input"
                 v-model.lazy="formInputs.city">
-        </div>
-        <div class="form-component">
-            <label for="venue">Venue</label>
+        </FormComponent>
+        <FormComponent label-for="activity-venue-input" label-text="Venue" warning-message="">
             <input type="text" name="venue" class="form-input-element" id="activity-venue-input"
                 v-model.lazy="formInputs.venue">
-        </div>
-        <div class="form-container">
+        </FormComponent>
+        <FormComponentContainer>
             <input type="submit" value="Submit" :class="{ disabled: isSubmitting }" :disabled="isSubmitting">
             <input type="button" value="Refresh" @click="emits('refresh-form')">
-        </div>
-    </form>
+        </FormComponentContainer>
+    </FormLayout>
 </template>
 
 
 <script setup lang="ts">
+import FormLayout from "@/components/layout/form/FormLayout.vue";
+import FormComponentContainer from "@/components/layout/form/FormComponentContainer.vue";
+import FormComponent from "@/components/layout/form/FormComponent.vue";
 import { DateToISOStringWithoutSeconds } from '@/utils/stateUndependentFunctions';
 import type { Activity } from '@/models/Activity';
-import { onMounted, reactive, toRef, watch } from 'vue';
+import { onMounted, reactive, type Ref, ref, watch, type UnwrapNestedRefs, type InjectionKey, inject, toRef, toRefs } from 'vue';
+import type { SubmitResponse } from "@/models/auxillary/interfaces";
+import { ScrollPageToTop } from '@/utils/stateUndependentFunctions'
+import ResponseMessage from "@/components/layout/ResponseMessage.vue";
 
 
 const props = defineProps<{
-    activityToEdit: Activity | null,
-    isSubmitting: boolean
+    submitResponse: SubmitResponse | null,
+    activityToEdit?: Activity | null
 }>();
-
-const formData = toRef(() => props.activityToEdit);
 
 const emits = defineEmits<{
     (e: 'refresh-form'): void
-    (e: 'submit-form', activityObject: Activity): void
+    (e: 'submit-form', activityObject: Activity): Promise<void>
 }>();
 
+const isSubmitting: Ref<boolean> = ref(false);
+const response: UnwrapNestedRefs<SubmitResponse> = reactive({ isSuccessful: true, message: '', isResponded: false });
 const formInputs = reactive({
     title: '',
     description: '',
@@ -69,29 +71,35 @@ onMounted(() => {
     fillForm();
 });
 
-watch(formData, () => {
+watch(props, () => {
     fillForm();
+    if (props.submitResponse) {
+        response.isResponded = props.submitResponse.isResponded;
+        response.isSuccessful = props.submitResponse.isSuccessful;
+        response.message = props.submitResponse.message;
+    }
 });
 
 
-const handleSubmitForm = () => {
-    let date = new Date(formInputs.beginDate);
-
-    if (date.toString() === 'Invalid Date') {
-        date = new Date(0);
+const handleSubmitForm = async () => {
+    isSubmitting.value = true;
+    if (!isFormValid(formInputs)) {
+        return;
     }
 
-    const activity: Activity = {
+    const activityObject: Activity = {
         title: formInputs.title,
         description: formInputs.description,
         category: formInputs.category,
-        beginDate: date,
+        beginDate: new Date(formInputs.beginDate),
         city: formInputs.city,
         venue: formInputs.venue
     }
 
-    emits('submit-form', activity);
+    await emits('submit-form', activityObject);
+    ScrollPageToTop();
 }
+
 
 const fillForm = () => {
     if (props.activityToEdit) {
@@ -104,30 +112,42 @@ const fillForm = () => {
     }
 }
 
+const isFormValid = (inputs: typeof formInputs) => {
+    let isValid = true;
+
+    if (inputs.title.trim() === '') {
+        isValid = false;
+    }
+
+    if (inputs.description.trim() === '') {
+        isValid = false;
+    }
+
+    if (inputs.city.trim() === '') {
+        isValid = false;
+    }
+
+    if (inputs.category.trim() === '') {
+        isValid = false;
+    }
+
+    if (inputs.beginDate === new Date(0).toString() || new Date(inputs.beginDate).toString() === 'Invalid Date') {
+        isValid = false;
+    }
+
+    return isValid;
+}
+
 </script>
 
 
 <style scoped>
-form {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    row-gap: 15px;
-    padding: 15px;
-}
-
-.form-component {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
 .form-input-element {
     width: 100%;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     outline: none;
     border-radius: 5px;
-    border: 1px solid #bebebe;
+    border: 1px solid var(--light-gray-color);
     padding: 7px 10px;
 }
 

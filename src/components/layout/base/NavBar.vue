@@ -23,7 +23,7 @@ nav {
     height: 85px;
     display: flex;
     justify-content: space-around;
-    background: linear-gradient(80deg, #b7ffe7 10%, #1c7db4 75%, #92d7ff 100%);
+    background: var(--gradient-background);
 }
 
 header {
@@ -45,7 +45,7 @@ menu {
 
 img {
     margin-right: 25px;
-    padding: 7px 0;
+    padding: 10px 0;
 }
 
 a {
@@ -62,4 +62,8 @@ a:hover {
     color: #eee5c5;
     transform: scale(1.1);
 }
-</style>@/utils/constanses/RouteNames
+
+a.router-link-active{
+    transform: scale(1.1);
+}
+</style>

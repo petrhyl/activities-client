@@ -25,7 +25,7 @@ const props = withDefaults(defineProps<{
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #d0d0d0b3;
+    background-color: transparent;
     padding-top: 20%;
     z-index: 100;
 }

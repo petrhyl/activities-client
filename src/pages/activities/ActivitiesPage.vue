@@ -9,6 +9,9 @@
           @on-delete-activity="handleDeleteActivity"
           :is-deleting-activity="isActivityDeleting" />
       </div>
+      <div>
+        <ActivityFilters />
+      </div>
     </div>
   </PageContainer>
 </template>
@@ -21,7 +24,8 @@ import { useRouter } from 'vue-router';
 import RouteNames from '@/utils/constanses/RouteNames';
 import LoadingComponent from '@/components/layout/LoadingComponent.vue';
 import ActivityGroupedList from '@/components/activities/ActivityGroupedList.vue';
-import PageContainer from '@/components/layout/PageContainer.vue';
+import PageContainer from '@/components/layout/base/PageContainer.vue';
+import ActivityFilters from '@/components/activities/ActivityFilters.vue';
 
 
 const activityStore = useActivityStore();
@@ -67,11 +71,18 @@ onBeforeMount(async () => {
 });
 </script>
 
-<style>
+<style scoped>
+.activities{
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  column-gap: 20px;
+}
+
 .grid-column {
   position: relative;
   display: flex;
   flex-direction: column;
   row-gap: 20px;
+  margin: 0 auto;
 }
 </style>

@@ -14,6 +14,7 @@
 .page-container{
     position: relative;
     width: 100%;
+    margin: 0;
     padding: 20px 0;
 }
 </style>

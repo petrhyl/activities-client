@@ -1,102 +1,158 @@
 <template>
- <div class="card">
-        <div>
-            <img :src="getImageLocation" alt="category">
-            <h2>{{ activity.title }}</h2>
-            <div class="date">{{ dateTimeString }}</div>
-            <div>{{ activity.city }}</div>
-            <div>{{ activity.venue }}</div>
-            <p>category: {{ activity.category }}</p>
-            <p>{{ activity.description }}</p>
-        </div>
-        <div class="detail-footer">
-            <div class="user-actions">
-                <button @click="emits('join-activity')">Join Activity</button>
-                <button @click="emits('cancel-attendance')">Cancel Attendance</button>
+    <div class="detail-component" v-if="getActivity">
+        <div class="grid-column">
+            <div class="detail-header card">
+                <ActivityDetailInfo
+                    :header-image-url="getImageLocation"
+                    :title="getActivity.title"
+                    :date="dateTimeString"
+                    :category="getActivity.category"
+                    :hosted-by="getHost"
+                    @cancel-attendance="handleCancelAttendance"
+                    @join-activity="handleJoinActivity"
+                    @triger-edit="handleEdit" />
             </div>
-            <div class="edit-button">
-                <button @click="emits('triger-edit')">Edit</button>
+            <div class="detail-content card">
+                <RowWithImageIcon image-source="/src/assets/calendar-icon.png" image-alternative-text="date">
+                    <span>{{ dateTimeString }}</span>
+                </RowWithImageIcon>
+                <RowWithImageIcon image-source="/src/assets/location-pin-icon.png" image-alternative-text="location">
+                    <span>{{ getActivity.city }}, {{ getActivity.venue }}</span>
+                </RowWithImageIcon>
+                <RowWithImageIcon image-source="/src/assets/info-icon.png" image-alternative-text="info">
+                    <span>{{ getActivity.description }}</span>
+                </RowWithImageIcon>
+            </div>
+            <div class="detail-chat card">
+                <ActivityChat />
             </div>
         </div>
-    </div>
-    <div class="card">
-
+        <div class="grid-column">
+            <div class="attenders card">
+                <h3>Attenders</h3>
+                <AttendersList :attenders="['fdas']" />
+            </div>
+        </div>
     </div>
 </template>
 
 
 <script setup lang="ts">
-import type { Activity } from '@/models/Activity';
+import { useActivityStore } from '@/stores/activities';
 import { DateTimeToCzechFormat } from '@/utils/stateUndependentFunctions';
+import { storeToRefs } from 'pinia';
 import { computed, type ComputedRef } from 'vue';
+import ActivityDetailInfo from './ActivityDetailInfo.vue';
+import RowWithImageIcon from '@/components/layout/RowWithImageIcon.vue';
+import ActivityChat from './chat/ActivityChat.vue';
+import AttendersList from './attenders/AttendersList.vue';
 
- 
-const props = defineProps<{
-    activity: Activity
-}>();
 
-const emits = defineEmits<{
-    (e: 'triger-edit'): void,
-    (e: 'join-activity'): void
-    (e: 'cancel-attendance') : void
-}>();
+const activityStore = useActivityStore();
+
+const { getActivity } = storeToRefs(activityStore);
 
 const dateTimeString: ComputedRef<string> = computed(() => {
-    const d: Date = new Date(props.activity.beginDate);
+    const d: Date = new Date(getActivity.value?.beginDate ?? 0);
     return DateTimeToCzechFormat(d);
 });
 
 const getImageLocation: ComputedRef<string> = computed(() => {
-    return `/src/assets/categoryImages/${props.activity.category}.jpg`;
+    return `/src/assets/categoryImages/${getActivity.value?.category}.jpg`;
 });
+
+const getHost: ComputedRef<string> = computed(() => {
+    return 'Petr';
+});
+
+
+const handleCancelAttendance = () => {
+
+}
+
+const handleJoinActivity = () => {
+
+}
+
+const handleEdit = () => {
+
+}
 
 </script>
 
 
 <style scoped>
-img {
-    width: 100%;
-    height: auto;
-    border-radius: 5px;
-}
-
-.activity-detail {
-    position: relative;
-}
-
-.detail-footer {
+.detail-component {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 3fr 2fr;
+    column-gap: 20px;
 }
 
-button {
-    font-size: 13pt;
-    font-weight: 600;
-    color: #262525;
-    outline: none;
-    border: 1px solid #7b9ae1;
-    padding: 7px 0;
+.grid-column {
+    display: flex;
+    flex-direction: column;
+    row-gap: 20px;
 }
 
-button:first-child {
-    background-color: #b7ffe7;
-    border-right-width: 1px;
-    border-top-left-radius: 5px;
-    border-bottom-left-radius: 5px;
+.detail-header {
+    padding: 0 0 15px 0;
 }
 
-button:last-child {
-    background-color: #92d7ff;
-    border-left-width: 1px;
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
+.detail-content {
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
 }
 
-button:hover {
-    border-color: #ade1ff;
+.detail-content>div {
+    border-bottom: 2px solid #cccccc;
+    padding-bottom: 8px;
 }
 
-button:active {
-    outline: none;
+.detail-content span {
+    display: flex;
+    align-items: center;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.detail-chat {
+    padding: 0 0 15px 0;
+}
+
+.attenders{
+    padding: 0 0 15px 0;
+}
+
+.attenders>h3{
+    width: 100%;
+    text-align: center;
+    color: var(--light-gold-color);
+    background: var(--gradient-background);
+    padding: 15px 0;
+}
+
+@media screen and (max-width: 670px) {
+    .image-background {
+        height: 27vh;
+        background-position-x: center;
+    }  
+
+    .main-info {
+        padding: 0 0 10px 30px;
+    }
+
+    .main-info h1 {
+        font-size: 15pt;
+        margin-bottom: 10px;
+    }
+
+    .main-info .info-detail {
+        margin-bottom: 10px;
+    }
+
+    .main-info .date {
+        font-size: 11pt;
+        margin-bottom: 10px;
+    }
 }
 </style>

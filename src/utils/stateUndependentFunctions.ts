@@ -42,5 +42,10 @@ export const DateTimeToCzechFormat = (dateObject: Date | string): string => {
     dateString = date.toLocaleDateString(undefined, { day: 'numeric', month: 'numeric', year: 'numeric' });
     dateString = dateString.split(' ').join('');
 
-    return dateString + '\xa0' + date.toLocaleTimeString( undefined, { hour: '2-digit', minute: '2-digit'});
+    return dateString + '\xa0' + date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+}
+
+
+export const ScrollPageToTop = () => {
+    window.scroll({ top: 0, left: 0, behavior: 'smooth' });
 }

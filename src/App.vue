@@ -16,6 +16,7 @@ import NavBar from './components/layout/base/NavBar.vue';
 
 * {
   box-sizing: border-box;
+  color: var(--dark-font-color);
 }
 
 body {

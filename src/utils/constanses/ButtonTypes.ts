@@ -1,5 +1,7 @@
-export default class ButtonTypes{
-    static BUTTON = 'button';
-    static SUBMIT = 'submit';
-    static LINK = 'link';
+const ButtonTypes = {
+    BUTTON: 'button',
+    SUBMIT :'submit',
+    LINK :'link',
 }
+
+export default ButtonTypes;

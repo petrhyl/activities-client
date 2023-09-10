@@ -2,7 +2,7 @@
   <PageContainer>
     <div class="activities">
       <div class="grid-column">
-        <p v-if="errorMessage !== ''">{{ errorMessage }}</p>
+        <p v-if="errorMessage !== ''" class="error-message">{{ errorMessage }}</p>
         <LoadingComponent v-if="!isLoaded" />
         <ActivityGroupedList
           :grouped-activities="getGroupedByDateActivities"
@@ -84,5 +84,10 @@ onBeforeMount(async () => {
   flex-direction: column;
   row-gap: 20px;
   margin: 0 auto;
+}
+
+.error-message{
+  font-size: 13pt;
+  color: var(--warning-color);
 }
 </style>

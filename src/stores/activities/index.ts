@@ -1,7 +1,8 @@
-import { HttpVerbs } from "@/utils/constanses/HttpVerbs";
+import HttpVerbs from "@/utils/constanses/HttpVerbs";
 import type { Activity } from "@/models/Activity";
 import { defineStore, mapActions } from "pinia";
-import { computed, ref, type Ref } from "vue";
+import { computed, ref, type ComputedRef, type Ref } from "vue";
+import type { SelectOption } from "@/models/auxillary/interfaces";
 
 export const useActivityStore = defineStore('activityStore', () => {
 
@@ -115,12 +116,52 @@ export const useActivityStore = defineStore('activityStore', () => {
                 const date = new Date(singleActivity.beginDate).toLocaleDateString();
                 groupedActivities[date] = groupedActivities[date] ? [...groupedActivities[date], singleActivity] : [singleActivity];
                 return groupedActivities;
-            },  {} as {[key: string]: Activity[]})
+            }, {} as { [key: string]: Activity[] })
         );
     });
 
+    const getActivityCategories: ComputedRef<SelectOption[] | null> = computed(() => {
+        return [
+            {
+                id:'drinks',
+                value: 'drinks',
+                text: 'Drinks',
+                isSelected: false
+            },
+            {
+                id:'culture',
+                value: 'culture',
+                text: 'Culture',
+                isSelected: false
+            },
+            {
+                id:'film',
+                value: 'film',
+                text: 'Film',
+                isSelected: false
+            },
+            {
+                id:'food',
+                value: 'food',
+                text: 'Food',
+                isSelected: false
+            },
+            {
+                id:'music',
+                value: 'music',
+                text: 'Music',
+                isSelected: false
+            },
+            {
+                id:'travel',
+                value: 'travel',
+                text: 'Travel',
+                isSelected: false
+            }
+        ]
+    });
 
-    
+
     const fetchData = async (params: FetchDataParams) => {
         let url = 'https://localhost:5000/api/activities';
 
@@ -205,7 +246,8 @@ export const useActivityStore = defineStore('activityStore', () => {
         deleteActivity,
         getActivity,
         getActivities,
-        getGroupedByDateActivities
+        getGroupedByDateActivities,
+        getActivityCategories
     }
 });
 

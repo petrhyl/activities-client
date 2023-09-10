@@ -1,7 +1,9 @@
-export default class RouteNames{    
-    static ACTIVITIES = 'activities';
-    static ACTIVITY_DETAIL = 'activityDetail';
-    static CREATE_ACTIVITY = 'createActivity';
-    static EDIT_ACTIVITY = 'editActivity';
-    static NOT_FOUND = 'notFound';
+ const RouteNames = {    
+    ACTIVITIES : 'activities',
+    ACTIVITY_DETAIL : 'activityDetail',
+    CREATE_ACTIVITY : 'createActivity',
+    EDIT_ACTIVITY : 'editActivity',
+    NOT_FOUND : 'notFound'
 }
+
+export default RouteNames;

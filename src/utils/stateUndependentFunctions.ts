@@ -13,6 +13,11 @@ export const DateToISOStringWithoutSeconds = (dateObject: Date | string): string
         date = new Date(0);
     }
 
+    const utcOffsetMinutes = date.getTimezoneOffset();
+    const utcOffsetHours = Math.round(utcOffsetMinutes / 60);
+    let hoursToSet = date.getHours() - utcOffsetHours;
+
+    date.setHours(hoursToSet);
 
     dateString = date.toISOString();
 

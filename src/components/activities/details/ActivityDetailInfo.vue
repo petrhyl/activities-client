@@ -68,7 +68,6 @@ const emits = defineEmits<{
     height: 100%;
     display: flex;
     flex-direction: column;
-    color: #f5f5e5;
     background-color: #0e060691;
     top: 0;
     left: 0;
@@ -77,6 +76,12 @@ const emits = defineEmits<{
     padding-left: 40px;
     padding-bottom: 20px;
     justify-content: end;
+}
+
+.main-info h1,
+.main-info span,
+.main-info div{
+    color: #f5f5e5;
 }
 
 .main-info .date {

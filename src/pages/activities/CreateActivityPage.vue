@@ -12,7 +12,12 @@ import { useRouter } from 'vue-router';
 
 const emptyActivity: Activity = {
     title: '',
-    category: '',
+    category: {
+        id: '-1',
+        value: '',
+        text: '',
+        isSelected: false
+    },
     description: '',
     beginDate: new Date(),
     city: '',

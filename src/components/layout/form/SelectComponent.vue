@@ -13,22 +13,23 @@ const props = defineProps<{
 const selecteElement = ref<HTMLDivElement | null>(null);
 
 const selectOptions: SelectOption[] = reactive(props.options);
-const selectedSelected: Ref<SelectOption> = ref({ id: '', value: '', text: '', isSelected: true });
+const selectedSelected: Ref<SelectOption> = ref({ id: '', value: '', name: '', isSelected: true });
 const isContainerOpened: Ref<boolean> = ref(false);
 const optionsAnimationClass: Ref<string> = ref('');
 const containerDisplayValue: Ref<string> = ref('none');
+const containerDisplayTimeoutId: Ref<number | undefined> = ref();
 
-const getCustomSelectCssClasses: ComputedRef = computed(() => {
+const getCustomSelectCssClasses: ComputedRef<string> = computed(() => {
     return `${props.cssClass} this-custom-select`;
 });
 
-const selectedOption: ComputedRef<SelectOption> = computed<SelectOption>((): SelectOption => {
+const selectedOption: ComputedRef<SelectOption> = computed(()=> {
     if (selectedSelected.value.value.trim() === '') {
         if (selectOptions.length < 1) {
             return {
                 id: '-1',
                 value: '-1',
-                text: '- no options -',
+                name: '- no options -',
                 isSelected: true
             };
         }
@@ -39,7 +40,7 @@ const selectedOption: ComputedRef<SelectOption> = computed<SelectOption>((): Sel
             return {
                 id: '-1',
                 value: '-1',
-                text: '- select -',
+                name: '- select -',
                 isSelected: true
             };
         }
@@ -124,7 +125,7 @@ const handleSelect = (selectedId: string) => {
 
     selectedSelected.value = {
         id: selectedId,
-        text: selectOptions[selectedOptionIndex].text,
+        name: selectOptions[selectedOptionIndex].name,
         value: selectOptions[selectedOptionIndex].value,
         isSelected: true
     }
@@ -156,11 +157,17 @@ const browseOptions = (toTop: boolean) => {
 
 const toggleOptionVisibility = (isOpening: boolean) => {
     isContainerOpened.value = isOpening;
+
+    clearTimeout(containerDisplayTimeoutId.value);
+
     if (isContainerOpened.value) {
         optionsAnimationClass.value = 'open';
         containerDisplayValue.value = 'block';
     } else {
         optionsAnimationClass.value = 'close';
+        containerDisplayTimeoutId.value = setTimeout(() => {
+            containerDisplayValue.value = 'none';
+        }, 251);
     }
 }
 
@@ -176,7 +183,7 @@ const toggleOptionVisibility = (isOpening: boolean) => {
         @blur="handleCloseSelectElement"
         @keyup="handleSelectOptionOnPressKey">
         <div class="select-selected-item" :value="selectedOption.value" :selected-id="selectedOption.id">{{
-            selectedOption.text }}</div>
+            selectedOption.name }}</div>
         <div class="drop-down-arrow"></div>
         <div class="select-items-container">
             <div :class="`options-container ${optionsAnimationClass}`">
@@ -187,7 +194,7 @@ const toggleOptionVisibility = (isOpening: boolean) => {
                     :value="opt.value"
                     @mousedown="handleSelect(opt.id)"
                     :selected="opt.isSelected"
-                    :class="{ 'select-option': true, selected: opt.isSelected }">{{ opt.text }}</div>
+                    :class="{ 'select-option': true, selected: opt.isSelected }">{{ opt.name }}</div>
             </div>
         </div>
     </div>
@@ -236,6 +243,7 @@ const toggleOptionVisibility = (isOpening: boolean) => {
     border-top: none;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
+    box-shadow: 1px 3px 3px #c8c8c8;
     padding: 5px 0;
     transform-origin: top;
     overflow: hidden;

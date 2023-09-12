@@ -25,7 +25,7 @@
             attendors
         </div>
         <div class="activity-footer">
-            <span class="activity-category">{{ activity.category }}</span>
+            <span class="activity-category">{{ activity.category.name }}</span>
             <div class="activity-footer-buttons">
                 <StyledButton :button-type="ButtonTypes.LINK" :link-to="getRouteLink" :css-class="getRoutLinkClass" text="View" />
                 <StyledButton :button-type="ButtonTypes.BUTTON" text="Delete" @click-button="emits('on-delete', activity.id!)" :css-class="getDeleteButtonClass"

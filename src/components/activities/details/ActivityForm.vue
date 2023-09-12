@@ -34,7 +34,12 @@ const emptyFormInputs = {
         isValid: true
     },
     category: {
-        value: '',
+        value: {
+            id: '-1',
+            value: '',
+            name: '',
+            isSelected: false
+        },
         warning: '',
         isChanged: false,
         isValid: true
@@ -116,7 +121,7 @@ const handleChangeValue = (action: FormActions) => {
             }
             break;
         case FormActions.CATEGORY:
-            if (formInputs.category.value !== '') {
+            if (formInputs.category.value.value !== '' && formInputs.category.value.id !== '-1') {
                 formInputs.category.isChanged = true;
                 formInputs.category.isValid = true;
                 formInputs.category.warning = '';
@@ -168,7 +173,7 @@ const handleValidateComponent = (action: FormActions) => {
             }
             break;
         case FormActions.CATEGORY:
-            if (formInputs.category.value === '' && formInputs.category.isChanged) {
+            if ((formInputs.category.value.value === '' || formInputs.category.value.id === '-1') && formInputs.category.isChanged) {
                 formInputs.category.isValid = false;
                 formInputs.category.warning = 'Please, select the type.';
                 isSomeValueInvalid = true;

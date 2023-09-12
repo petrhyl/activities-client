@@ -6,7 +6,7 @@
                     :header-image-url="getImageLocation"
                     :title="getActivity.title"
                     :date="dateTimeString"
-                    :category="getActivity.category"
+                    :category="getActivity.category.name"
                     :hosted-by="getHost"
                     @cancel-attendance="handleCancelAttendance"
                     @join-activity="handleJoinActivity"
@@ -58,7 +58,7 @@ const dateTimeString: ComputedRef<string> = computed(() => {
 });
 
 const getImageLocation: ComputedRef<string> = computed(() => {
-    return `/src/assets/categoryImages/${getActivity.value?.category}.jpg`;
+    return `/src/assets/categoryImages/${getActivity.value?.category.value}.jpg`;
 });
 
 const getHost: ComputedRef<string> = computed(() => {

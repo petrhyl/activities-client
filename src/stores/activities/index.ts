@@ -1,5 +1,5 @@
 import HttpVerbs from "@/utils/constanses/HttpVerbs";
-import type { Activity } from "@/models/Activity";
+import type { Activity, ActivityCategory } from "@/models/Activity";
 import { defineStore, mapActions } from "pinia";
 import { computed, ref, type ComputedRef, type Ref } from "vue";
 import type { SelectOption } from "@/models/auxillary/interfaces";
@@ -106,11 +106,12 @@ export const useActivityStore = defineStore('activityStore', () => {
         return { isSuccessful, errorMessage: !isSuccessful ? errorMessage.value : null }
     }
 
+
     const getActivity = computed(() => activity.value);
 
     const getActivities = computed(() => activities.value);
 
-    const getGroupedByDateActivities = computed(() => {
+    const getGroupedByDateActivities = computed(() => {     
         return Object.entries(
             activities.value.reduce((groupedActivities, singleActivity) => {
                 const date = new Date(singleActivity.beginDate).toLocaleDateString();
@@ -200,6 +201,7 @@ export const useActivityStore = defineStore('activityStore', () => {
             }
 
             return true;
+            
         } catch (err) {
             if (err instanceof Error) {
                 let errMsg = err.message;
@@ -235,7 +237,6 @@ export const useActivityStore = defineStore('activityStore', () => {
                 return '';
         }
     }
-
 
 
     return {

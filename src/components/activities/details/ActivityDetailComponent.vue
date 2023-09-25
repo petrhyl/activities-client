@@ -46,9 +46,12 @@ import ActivityDetailInfo from './ActivityDetailInfo.vue';
 import RowWithImageIcon from '@/components/layout/RowWithImageIcon.vue';
 import ActivityChat from './chat/ActivityChat.vue';
 import AttendersList from './attenders/AttendersList.vue';
+import { useRouter } from 'vue-router';
+import RouteNames from '@/utils/constanses/RouteNames';
 
 
 const activityStore = useActivityStore();
+const router = useRouter();
 
 const { getActivity } = storeToRefs(activityStore);
 
@@ -75,7 +78,10 @@ const handleJoinActivity = () => {
 }
 
 const handleEdit = () => {
-
+    if (getActivity.value) {
+        const activityId = getActivity.value.id;
+        router.push({ name: RouteNames.EDIT_ACTIVITY, params: { activityId } })
+    }
 }
 
 </script>
@@ -119,11 +125,11 @@ const handleEdit = () => {
     padding: 0 0 15px 0;
 }
 
-.attenders{
+.attenders {
     padding: 0 0 15px 0;
 }
 
-.attenders>h3{
+.attenders>h3 {
     width: 100%;
     text-align: center;
     color: var(--light-gold-color);
@@ -135,7 +141,7 @@ const handleEdit = () => {
     .image-background {
         height: 27vh;
         background-position-x: center;
-    }  
+    }
 
     .main-info {
         padding: 0 0 10px 30px;

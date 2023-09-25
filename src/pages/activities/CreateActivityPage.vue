@@ -15,8 +15,7 @@ const emptyActivity: Activity = {
     category: {
         id: '-1',
         value: '',
-        text: '',
-        isSelected: false
+        name: ''
     },
     description: '',
     beginDate: new Date(),
@@ -32,16 +31,17 @@ const clearSubmitResponse = {
 const router = useRouter();
 const activityStore = useActivityStore();
 
-const submitResponse: Ref<SubmitResponse> = ref(clearSubmitResponse);
+const submitResponse: SubmitResponse = reactive(clearSubmitResponse);
 const activityObject: Activity = reactive(emptyActivity);
 
 
 watch(activityObject, () => {
-    console.log('deje se neco pica');
 })
 
 const handleCreateAnother = () => {
-    submitResponse.value = clearSubmitResponse;
+    submitResponse.isResponded = clearSubmitResponse.isResponded;
+    submitResponse.isSuccessful = clearSubmitResponse.isSuccessful;
+    submitResponse.message = clearSubmitResponse.message;
 }
 
 const handleViewAll = () => {
@@ -51,9 +51,9 @@ const handleViewAll = () => {
 const handleCreateActivity = async (activity: Activity) => {
     const response = await activityStore.createActivity(activity);
 
-    submitResponse.value.isResponded = true;
-    submitResponse.value.isSuccessful = response.isSuccessful
-    submitResponse.value.message = response.errorMessage ?? 'Event was successfully created!';
+    submitResponse.isResponded = true;
+    submitResponse.isSuccessful = response.isSuccessful
+    submitResponse.message = response.errorMessage ?? 'Event was successfully created!';
 }
 
 </script>
@@ -68,7 +68,6 @@ const handleCreateActivity = async (activity: Activity) => {
             <ActivityForm
                 v-if="!submitResponse.isResponded"
                 @submit-form="handleCreateActivity"
-                :submit-response="submitResponse"
                 :activity-to-edit="activityObject" />
             <div v-if="submitResponse.isResponded" class="back-link-container">
                 <input v-if="submitResponse.isSuccessful" class="back-link" type="button" value="Create another"
@@ -91,6 +90,10 @@ const handleCreateActivity = async (activity: Activity) => {
 .back-link-container {
     width: 100%;
     margin-top: 20px;
+}
+
+.back-link-container input:first-of-type{
+    margin-right: 20px;
 }
 
 @media screen and (max-width: 1200px) {

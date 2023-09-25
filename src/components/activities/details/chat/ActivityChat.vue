@@ -1,3 +1,21 @@
+<script setup lang="ts">
+import FormLayout from '@/components/layout/form/FormLayout.vue';
+import ContributionComponent from './ContributionComponent.vue';
+import StyledButton from '@/components/layout/form/StyledButton.vue';
+import ButtonTypes from '@/utils/constanses/ButtonTypes';
+import { ref, type Ref } from 'vue';
+
+
+const invalidMessage: Ref<string> = ref('');
+
+    
+const handleSubmit = () => {
+
+}
+
+</script>
+
+
 <template>
     <h3 class="chat-title">Chat about this event</h3>
     <div class="chat-content">
@@ -11,7 +29,7 @@
             </li>
         </ul>
         <div class="comment">
-            <FormLayout form-styles="form" :on-submit-form="handleSubmit">
+            <FormLayout form-styles="form" :on-submit-form="handleSubmit" :invalid-message="invalidMessage">
                 <textarea class="text" rows="7"></textarea>
                 <StyledButton :css-class="'button-add'" :button-type="ButtonTypes.SUBMIT" :text="'Add Reply'"
                     @click-button="handleSubmit" />
@@ -19,20 +37,6 @@
         </div>
     </div>
 </template>
-
-
-<script setup lang="ts">
-import FormLayout from '@/components/layout/form/FormLayout.vue';
-import ContributionComponent from './ContributionComponent.vue';
-import StyledButton from '@/components/layout/form/StyledButton.vue';
-import ButtonTypes from '@/utils/constanses/ButtonTypes';
-
-
-const handleSubmit = () => {
-
-}
-
-</script>
 
 
 <style scoped>

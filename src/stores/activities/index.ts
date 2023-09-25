@@ -1,6 +1,6 @@
 import HttpVerbs from "@/utils/constanses/HttpVerbs";
 import type { Activity, ActivityCategory } from "@/models/Activity";
-import { defineStore, mapActions } from "pinia";
+import { defineStore } from "pinia";
 import { computed, ref, type ComputedRef, type Ref } from "vue";
 import type { SelectOption } from "@/models/auxillary/interfaces";
 
@@ -12,8 +12,16 @@ export const useActivityStore = defineStore('activityStore', () => {
         body: Activity | null
     }
 
+    enum DataObject {
+        ACTIVITY,
+        ACTIVITIES,
+        ACTIVITY_CATEGORIES,
+        ACTIVITY_CATEGORY
+    }
+
     const activities: Ref<Activity[]> = ref([]);
     const activity: Ref<Activity | null> = ref(null);
+    const categories: Ref<ActivityCategory[]> = ref([]);
     const errorMessage: Ref<string> = ref('');
 
     /**
@@ -28,7 +36,7 @@ export const useActivityStore = defineStore('activityStore', () => {
             id: null
         };
 
-        const isSuccessful = await fetchData(fetchParams);
+        const isSuccessful = await fetchData(fetchParams, DataObject.ACTIVITIES);
 
         return { isSuccessful, errorMessage: !isSuccessful ? errorMessage.value : null }
     }
@@ -106,12 +114,29 @@ export const useActivityStore = defineStore('activityStore', () => {
         return { isSuccessful, errorMessage: !isSuccessful ? errorMessage.value : null }
     }
 
+    /**
+     * Create a request on the server to load list of the objects of <ActivityCategory>. The list is stored in the getter of this hook.
+     * @return {Promise<FetchResponse>} - if request was completed successfully return the property indicating success is true and error message null,
+     *  otherwise false and reason in error message
+     */
+    const loadActivityCategories = async (): Promise<FetchResponse> => {
+        const fetchParams: FetchDataParams = {
+            method: HttpVerbs.GET,
+            body: null,
+            id: null
+        };
+
+        const isSuccessful = await fetchData(fetchParams, DataObject.ACTIVITY_CATEGORIES);
+
+        return { isSuccessful, errorMessage: !isSuccessful ? errorMessage.value : null }
+    }
+
 
     const getActivity = computed(() => activity.value);
 
     const getActivities = computed(() => activities.value);
 
-    const getGroupedByDateActivities = computed(() => {     
+    const getGroupedByDateActivities = computed(() => {
         return Object.entries(
             activities.value.reduce((groupedActivities, singleActivity) => {
                 const date = new Date(singleActivity.beginDate).toLocaleDateString();
@@ -121,50 +146,15 @@ export const useActivityStore = defineStore('activityStore', () => {
         );
     });
 
-    const getActivityCategories: ComputedRef<SelectOption[] | null> = computed(() => {
-        return [
-            {
-                id:'drinks',
-                value: 'drinks',
-                text: 'Drinks',
-                isSelected: false
-            },
-            {
-                id:'culture',
-                value: 'culture',
-                text: 'Culture',
-                isSelected: false
-            },
-            {
-                id:'film',
-                value: 'film',
-                text: 'Film',
-                isSelected: false
-            },
-            {
-                id:'food',
-                value: 'food',
-                text: 'Food',
-                isSelected: false
-            },
-            {
-                id:'music',
-                value: 'music',
-                text: 'Music',
-                isSelected: false
-            },
-            {
-                id:'travel',
-                value: 'travel',
-                text: 'Travel',
-                isSelected: false
-            }
-        ]
-    });
+    const getActivityCategories: ComputedRef<ActivityCategory[]> = computed(() => categories.value);
 
 
-    const fetchData = async (params: FetchDataParams) => {
+    const fetchData = async (params: FetchDataParams, fetchingObject: DataObject = DataObject.ACTIVITY) => {
         let url = 'https://localhost:5000/api/activities';
+
+        if (fetchingObject === DataObject.ACTIVITY_CATEGORY || fetchingObject === DataObject.ACTIVITY_CATEGORIES) {
+            url = 'https://localhost:5000/api/activity/categories';
+        }
 
         if (params.id) {
             url += `/${params.id}`;
@@ -188,25 +178,40 @@ export const useActivityStore = defineStore('activityStore', () => {
             const response = await fetch(url, parametrObject);
 
             if (!response.ok) {
-                const message = 'There is an error on the server side. ' + getResponseErrorMessage(params.method, params.id !== null);
-                throw new Error(message);
+                if (response.status >= 500) {
+                    const message = 'There is an error on the server side. ' + getResponseErrorMessage(params.method, fetchingObject);
+                    throw new Error(message);
+                }
+                
+                if (response.status === 401) {
+                    throw new Error("You have to be logged in.");                    
+                }
+                
+                if (response.status === 400 || response.status === 422) {
+                    throw new Error("Sorry, your entered data could not be processed.");                    
+                }
             }
 
             if (params.method === HttpVerbs.GET) {
-                if (params.id) {
-                    activity.value = await response.json();
-                } else {
-                    activities.value = await response.json();
+                switch (fetchingObject) {
+                    case DataObject.ACTIVITIES: activities.value = await response.json();
+                        break;
+                    case DataObject.ACTIVITY: activity.value = await response.json();
+                        break;
+                    case DataObject.ACTIVITY_CATEGORIES: categories.value = await response.json();
+                        break
+                    default:
+                        break;
                 }
             }
 
             return true;
-            
+
         } catch (err) {
             if (err instanceof Error) {
                 let errMsg = err.message;
                 if (errMsg === '') {
-                    errMsg = getResponseErrorMessage(params.method, params.id !== null);
+                    errMsg = getResponseErrorMessage(params.method, fetchingObject);
                 }
 
                 errorMessage.value = errMsg;
@@ -220,19 +225,27 @@ export const useActivityStore = defineStore('activityStore', () => {
         }
     }
 
-    const getResponseErrorMessage = (method: HttpVerbs, isFetchingOneActivity: boolean) => {
-        switch (method) {
-            case HttpVerbs.GET:
-                if (isFetchingOneActivity) {
-                    return 'The activity could not be loaded.';
-                }
+    const getResponseErrorMessage = (method: HttpVerbs, fetchingObject: DataObject) => {
+        switch (fetchingObject) {
+            case DataObject.ACTIVITIES:
                 return 'The activities could not be loaded.';
-            case HttpVerbs.POST:
-                return 'The activity could not be created.';
-            case HttpVerbs.DELETE:
-                return 'The activity could not be deleted.';
-            case HttpVerbs.PUT:
-                return 'The activity could not be updated.';
+            case DataObject.ACTIVITY:
+                switch (method) {
+                    case HttpVerbs.GET:
+                        return 'The activity could not be loaded.';
+                    case HttpVerbs.POST:
+                        return 'The activity could not be created.';
+                    case HttpVerbs.DELETE:
+                        return 'The activity could not be deleted.';
+                    case HttpVerbs.PUT:
+                        return 'The activity could not be updated.';
+                    default:
+                        return '';
+                }
+            case DataObject.ACTIVITY_CATEGORIES:
+                return 'The activity categories could not be loaded.';
+            case DataObject.ACTIVITY_CATEGORY:
+                return 'The activity category could not be loaded.';
             default:
                 return '';
         }
@@ -245,6 +258,7 @@ export const useActivityStore = defineStore('activityStore', () => {
         updateActivity,
         createActivity,
         deleteActivity,
+        loadActivityCategories,
         getActivity,
         getActivities,
         getGroupedByDateActivities,

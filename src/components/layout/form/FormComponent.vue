@@ -6,7 +6,7 @@ const props = withDefaults(defineProps<{
     labelFor: string,
     labelText: string,
     warningMessage: string
-}>(), { labelFor: '', labelText: '', warningMessage: ''});
+}>(), { labelFor: '', labelText: '', warningMessage: '' });
 
 
 </script>
@@ -19,33 +19,32 @@ const props = withDefaults(defineProps<{
             <span v-if="warningMessage !== ''" class="warning-message">{{ warningMessage }}</span>
         </div>
         <slot></slot>
-        
     </div>
-    </template>
+</template>
     
 
 
 <style scoped>
-.form-component{
+.form-component {
     width: 100%;
     display: flex;
     flex-direction: column;
     margin-bottom: 20px;
 }
 
-.form-component label{
+.form-component label {
     font-size: 11pt;
     font-family: 'Gill Sans', Calibri, sans-serif;
     color: #666666;
-    
+
 }
 
-.lable-and-warning{
+.lable-and-warning {
     display: inline-block;
     margin: 0 auto 3px 15px;
 }
 
-.warning-message{
+.warning-message {
     font-family: Cambria, Georgia, 'Times New Roman', serif;
     font-size: 10pt;
     text-align: left;

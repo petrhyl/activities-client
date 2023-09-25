@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { type SelectOption } from "@/models/auxillary/interfaces";
-import { computed, ref, type ComputedRef, type Ref, reactive, onMounted, onUnmounted } from "vue";
+import { computed, ref, type ComputedRef, type Ref, reactive, onMounted, watch } from "vue";
 
 
 const props = defineProps<{
@@ -10,10 +10,14 @@ const props = defineProps<{
     options: SelectOption[]
 }>();
 
+const emits = defineEmits<{
+    (ev: 'change-selected', option: SelectOption): void
+}>();
+
 const selecteElement = ref<HTMLDivElement | null>(null);
 
-const selectOptions: SelectOption[] = reactive(props.options);
-const selectedSelected: Ref<SelectOption> = ref({ id: '', value: '', name: '', isSelected: true });
+const selectOptions: Ref<SelectOption[]> = ref(props.options);
+const selectedOption: Ref<SelectOption> = ref({ id: '', value: '', text: '', isSelected: true });
 const isContainerOpened: Ref<boolean> = ref(false);
 const optionsAnimationClass: Ref<string> = ref('');
 const containerDisplayValue: Ref<string> = ref('none');
@@ -23,32 +27,23 @@ const getCustomSelectCssClasses: ComputedRef<string> = computed(() => {
     return `${props.cssClass} this-custom-select`;
 });
 
-const selectedOption: ComputedRef<SelectOption> = computed(()=> {
-    if (selectedSelected.value.value.trim() === '') {
-        if (selectOptions.length < 1) {
+const getSelectedOption: ComputedRef<SelectOption> = computed(() => {
+    if (selectedOption.value.value.trim() === '') {
+        const selectedId = selectOptions.value.find(o => o.isSelected);
+
+        if (!selectedId || selectedId.value.trim() === '') {
             return {
                 id: '-1',
                 value: '-1',
-                name: '- no options -',
+                text: '- select -',
                 isSelected: true
             };
         }
 
-        const selectedOpt = selectOptions.find(o => o.isSelected);
-
-        if (!selectedOpt || selectedOpt.value.trim() === '') {
-            return {
-                id: '-1',
-                value: '-1',
-                name: '- select -',
-                isSelected: true
-            };
-        }
-
-        return selectedOpt
+        return selectedId;
     }
 
-    return selectedSelected.value;
+    return selectedOption.value;
 });
 
 
@@ -78,6 +73,28 @@ const getArrowPadding: ComputedRef<string> = computed(() => {
 
 onMounted(() => {
     selecteElement.value!.tabIndex = 0;
+});
+
+watch(props, () => {
+    let selectedId: SelectOption | undefined;
+    if (selectOptions.value.length > 0) {
+        selectOptions.value = []
+    }
+
+    props.options.forEach((opt) => {
+        if (opt.isSelected) {
+            selectedId = opt;
+        }
+        selectOptions.value.push(opt);
+    });
+
+    if (selectedId && selectedOption.value.value === '') {
+        selectedOption.value = selectedId;
+    }
+});
+
+watch(selectedOption, (current, _) => {
+    emits('change-selected', current);
 });
 
 
@@ -112,47 +129,53 @@ const handleClickSelectElement = () => {
 
 const handleSelect = (selectedId: string) => {
     let selectedOptionIndex = 0;
-    for (let index = 0; index < selectOptions.length; index++) {
-        if (selectOptions[index].id === selectedId) {
+    for (let index = 0; index < selectOptions.value.length; index++) {
+        if (selectOptions.value[index].id === selectedId) {
             selectedOptionIndex = index;
-            selectOptions[index].isSelected = true;
+            selectOptions.value[index].isSelected = true;
 
             continue;
         }
 
-        selectOptions[index].isSelected = false;
+        selectOptions.value[index].isSelected = false;
     }
 
-    selectedSelected.value = {
+    selectedOption.value = {
         id: selectedId,
-        name: selectOptions[selectedOptionIndex].name,
-        value: selectOptions[selectedOptionIndex].value,
+        text: selectOptions.value[selectedOptionIndex].text,
+        value: selectOptions.value[selectedOptionIndex].value,
         isSelected: true
     }
 }
 
 const browseOptions = (toTop: boolean) => {
     let selectedIndex = 0;
-    selectOptions.forEach((opt, i) => {
+    let isAnySelected = false;
+    selectOptions.value.forEach((opt, i) => {
         if (opt.isSelected) {
             selectedIndex = i;
+            isAnySelected = true;
             return;
         }
     });
 
+    if (!isAnySelected) {
+        selectedIndex = -1;
+    }
+
     if (toTop) {
         selectedIndex--;
         if (selectedIndex < 0) {
-            selectedIndex = selectOptions.length - 1;
+            selectedIndex = selectOptions.value.length - 1;
         }
     } else {
         selectedIndex++;
-        if (selectedIndex > selectOptions.length - 1) {
+        if (selectedIndex > selectOptions.value.length - 1) {
             selectedIndex = 0;
         }
     }
 
-    handleSelect(selectOptions[selectedIndex].id);
+    handleSelect(selectOptions.value[selectedIndex].id);
 }
 
 const toggleOptionVisibility = (isOpening: boolean) => {
@@ -182,19 +205,19 @@ const toggleOptionVisibility = (isOpening: boolean) => {
         @click="handleClickSelectElement"
         @blur="handleCloseSelectElement"
         @keyup="handleSelectOptionOnPressKey">
-        <div class="select-selected-item" :value="selectedOption.value" :selected-id="selectedOption.id">{{
-            selectedOption.name }}</div>
+        <div class="select-selected-item" :value="getSelectedOption.value" :selected-id="getSelectedOption.id">{{
+            getSelectedOption.text }}</div>
         <div class="drop-down-arrow"></div>
         <div class="select-items-container">
             <div :class="`options-container ${optionsAnimationClass}`">
                 <div
-                    v-for="opt in options"
+                    v-for="opt in selectOptions"
                     :key="opt.id"
                     :id="opt.id"
                     :value="opt.value"
                     @mousedown="handleSelect(opt.id)"
                     :selected="opt.isSelected"
-                    :class="{ 'select-option': true, selected: opt.isSelected }">{{ opt.name }}</div>
+                    :class="{ 'select-option': true, selected: opt.isSelected }">{{ opt.text }}</div>
             </div>
         </div>
     </div>
@@ -252,7 +275,7 @@ const toggleOptionVisibility = (isOpening: boolean) => {
 
 .options-container.open {
     animation-name: openContainer;
-    animation-duration: 250ms;
+    animation-duration: 200ms;
     animation-timing-function: ease-out;
     animation-fill-mode: forwards;
     animation-iteration-count: 1;
@@ -260,7 +283,7 @@ const toggleOptionVisibility = (isOpening: boolean) => {
 
 .options-container.close {
     animation-name: closeContainer;
-    animation-duration: 250ms;
+    animation-duration: 200ms;
     animation-timing-function: ease-in;
     animation-fill-mode: forwards;
     animation-iteration-count: 1;

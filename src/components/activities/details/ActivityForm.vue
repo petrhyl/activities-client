@@ -4,20 +4,20 @@ import FormComponentContainer from "@/components/layout/form/FormComponentContai
 import FormComponent from "@/components/layout/form/FormComponent.vue";
 import { DateToISOStringWithoutSeconds } from '@/utils/stateUndependentFunctions';
 import type { Activity } from '@/models/Activity';
-import { onMounted, reactive, type Ref, ref, watch, type UnwrapNestedRefs, type ComputedRef, computed } from 'vue';
-import type { SelectOption, SubmitResponse } from "@/models/auxillary/interfaces";
+import { onMounted, reactive, type Ref, ref, watch, type ComputedRef, computed } from 'vue';
+import type { SelectOption } from "@/models/auxillary/interfaces";
 import { ScrollPageToTop } from '@/utils/stateUndependentFunctions'
-import ResponseMessage from "@/components/layout/ResponseMessage.vue";
 import SelectComponent from "@/components/layout/form/SelectComponent.vue";
 import { useActivityStore } from "@/stores/activities";
+import { useRouter } from "vue-router";
 
 enum FormActions {
-    TITLE,
-    DESC,
-    CATEGORY,
-    DATE,
-    CITY,
-    VENUE
+    TITLE = 'title',
+    DESC = 'description',
+    CATEGORY = 'category',
+    DATE = 'beginDate',
+    CITY = 'city',
+    VENUE = 'venue'
 }
 
 const emptyFormInputs = {
@@ -25,49 +25,48 @@ const emptyFormInputs = {
         value: '',
         warning: '',
         isChanged: false,
-        isValid: true
+        isValid: false
     },
     description: {
         value: '',
         warning: '',
         isChanged: false,
-        isValid: true
+        isValid: false
     },
     category: {
         value: {
             id: '-1',
             value: '',
-            name: '',
+            text: '',
             isSelected: false
         },
         warning: '',
         isChanged: false,
-        isValid: true
+        isValid: false
     },
     beginDate: {
         value: DateToISOStringWithoutSeconds(new Date()),
         warning: '',
         isChanged: false,
-        isValid: true
+        isValid: false
     },
     city: {
         value: '',
         warning: '',
         isChanged: false,
-        isValid: true
+        isValid: false
     },
     venue: {
         value: '',
         warning: '',
         isChanged: false,
-        isValid: true
+        isValid: false
     }
 };
 
 
 
 const props = defineProps<{
-    submitResponse: SubmitResponse | null,
     activityToEdit: Activity | null
 }>();
 
@@ -76,32 +75,38 @@ const emits = defineEmits<{
 }>();
 
 const store = useActivityStore();
+const router = useRouter();
 
 
 const isFormValid: Ref<boolean> = ref(false);
 const isSubmitting: Ref<boolean> = ref(false);
-const response: UnwrapNestedRefs<SubmitResponse> = reactive({ isSuccessful: true, message: '', isResponded: false });
+const invalidMessage: Ref<string> = ref('');
 const formInputs = reactive(emptyFormInputs);
 
-const getCategoryOptions : ComputedRef<SelectOption[]> = computed(()=>{
-    if (!store.getActivityCategories) {
+const getCategoryOptions: ComputedRef<SelectOption[]> = computed(() => {
+    if (store.getActivityCategories.length < 1) {
         return [];
     }
 
-    return store.getActivityCategories
-})
+    let selectedId = props.activityToEdit?.category.id ?? -1;
 
-onMounted(() => {
+    return store.getActivityCategories.map(category => {
+        return {
+            id: category.id,
+            value: category.value,
+            text: category.name,
+            isSelected: category.id === selectedId
+        }
+    });
+});
+
+onMounted(async () => {
+    await store.loadActivityCategories();
     fillForm();
 });
 
 watch(props, () => {
     fillForm();
-    if (props.submitResponse) {
-        response.isResponded = props.submitResponse.isResponded;
-        response.isSuccessful = props.submitResponse.isSuccessful;
-        response.message = props.submitResponse.message;
-    }
 });
 
 watch(formInputs, () => {
@@ -160,75 +165,106 @@ const handleChangeValue = (action: FormActions) => {
     }
 }
 
-const handleValidateComponent = (action: FormActions) => {
-    isFormValid.value = true;
-    let isSomeValueInvalid = false;
+const handleChangeCategoryValue = (selectedOption: SelectOption) => {
+    formInputs.category.value = selectedOption;
+    handleChangeValue(FormActions.CATEGORY);
+}
 
+const handleValidateComponent = (action: FormActions) => {
     switch (action) {
         case FormActions.TITLE:
             if (!/[a-z]{2}/i.test(formInputs.title.value) && formInputs.title.isChanged) {
                 formInputs.title.isValid = false;
                 formInputs.title.warning = 'The title has to contain at least three letters.'
-                isSomeValueInvalid = true;
             }
             break;
         case FormActions.CATEGORY:
             if ((formInputs.category.value.value === '' || formInputs.category.value.id === '-1') && formInputs.category.isChanged) {
                 formInputs.category.isValid = false;
                 formInputs.category.warning = 'Please, select the type.';
-                isSomeValueInvalid = true;
             }
             break;
         case FormActions.DESC:
             if (formInputs.description.value === '' && formInputs.description.isChanged) {
                 formInputs.description.isValid = false;
                 formInputs.description.warning = 'Please, provide some description.';
-                isSomeValueInvalid = true;
             }
             break;
         case FormActions.DATE:
             if ((formInputs.beginDate.value === new Date(0).toString() || new Date(formInputs.beginDate.value).toString() === 'Invalid Date') && formInputs.beginDate.isChanged) {
                 formInputs.beginDate.isValid = false;
                 formInputs.beginDate.warning = "Please, fill event's date and time correctly.";
-                isSomeValueInvalid = true;
             }
             break;
         case FormActions.CITY:
             if (!/[a-z]{2}/i.test(formInputs.city.value) && formInputs.city.isChanged) {
                 formInputs.city.isValid = false;
                 formInputs.city.warning = 'City of the event cannot be empty.';
-                isSomeValueInvalid = true;
             }
             break;
         case FormActions.VENUE:
             if (!/[a-z]{2}/i.test(formInputs.venue.value) && formInputs.venue.isChanged) {
                 formInputs.venue.isValid = false;
                 formInputs.venue.warning = 'Venue of the event cannot be empty.';
-                isSomeValueInvalid = true;
             }
             break;
         default:
             break;
     }
-
-    isFormValid.value = !isSomeValueInvalid;
 }
 
+const validateForm = () => {
+    let isAnyInvalid = false;
+    handleChangeValue(FormActions.TITLE);
+    handleChangeValue(FormActions.DESC);
+    handleChangeValue(FormActions.DATE);
+    handleChangeValue(FormActions.CITY);
+    handleChangeValue(FormActions.VENUE);
+    handleChangeValue(FormActions.CATEGORY);
+    if (!formInputs.title.isValid) {
+        isAnyInvalid = true;
+    }    
+    if (!formInputs.beginDate.isValid) {
+        isAnyInvalid = true;
+    }
+    if (!(formInputs.category.value.value !== '')) {
+        isAnyInvalid = true;
+    }
+    if (!formInputs.description.isValid) {
+        isAnyInvalid = true;
+    }
+    if (!formInputs.city.isValid) {
+        isAnyInvalid = true;
+    }
+    if (!formInputs.venue.isValid) {
+        isAnyInvalid = true;
+    }
+
+    isFormValid.value = !isAnyInvalid;
+}
+
+
 const handleRefresh = () => {
-    fillForm();
+    router.go(0);
 }
 
 const handleSubmitForm = async () => {
     isSubmitting.value = true;
-    if (!isFormValid) {
+    validateForm();
+    if (!isFormValid.value) {
         isSubmitting.value = false;
+        invalidMessage.value = 'Please, fill in all informations correctly.'
         return;
     }
 
     const activityObject: Activity = {
         title: formInputs.title.value,
         description: formInputs.description.value,
-        category: formInputs.category.value,
+        category: {
+            id: formInputs.category.value.id,
+            value: formInputs.category.value.value,
+            name: formInputs.category.value.text
+        },
         beginDate: new Date(formInputs.beginDate.value),
         city: formInputs.city.value,
         venue: formInputs.venue.value
@@ -238,11 +274,10 @@ const handleSubmitForm = async () => {
     ScrollPageToTop();
 }
 
-
 const fillForm = () => {
     formInputs.title = emptyFormInputs.title;
     formInputs.description = emptyFormInputs.description;
-    formInputs.category = emptyFormInputs.category;
+    formInputs.category.value = emptyFormInputs.category.value;
     formInputs.beginDate = emptyFormInputs.beginDate;
     formInputs.city = emptyFormInputs.city;
     formInputs.venue = emptyFormInputs.venue;
@@ -250,21 +285,23 @@ const fillForm = () => {
     if (props.activityToEdit) {
         formInputs.title.value = props.activityToEdit.title;
         formInputs.description.value = props.activityToEdit.description;
-        formInputs.category.value = props.activityToEdit.category;
+        formInputs.category.value = {
+            id: props.activityToEdit.category.id,
+            value: props.activityToEdit.category.value,
+            text: props.activityToEdit.category.name,
+            isSelected: true
+        };
         formInputs.beginDate.value = DateToISOStringWithoutSeconds(props.activityToEdit.beginDate);
         formInputs.city.value = props.activityToEdit.city;
         formInputs.venue.value = props.activityToEdit.venue;
     }
 }
 
-
 </script>
 
 
 <template>
-    <ResponseMessage v-if="response.isResponded" :is-error="!response.isSuccessful"
-        :message="response.message" />
-    <FormLayout v-if="!response.isResponded" @submit-form="handleSubmitForm" :form-styles="'card'">
+    <FormLayout @submit-form="handleSubmitForm" :form-styles="'card'" :invalid-message="invalidMessage">
         <FormComponent label-for="activity-title-input" label-text="Activity Title"
             :warning-message="formInputs.title.warning">
             <input
@@ -293,7 +330,9 @@ const fillForm = () => {
                 :css-class="'category-select'"
                 :element-id="'activity-category'"
                 :element-name="'activity-category'"
-                :options="getCategoryOptions" />
+                :options="getCategoryOptions"
+                @change-selected="handleChangeCategoryValue"
+                @blur="handleValidateComponent(FormActions.CATEGORY)" />
         </FormComponent>
         <FormComponent label-for="activity-date-input" label-text="Event Date Time"
             :warning-message="formInputs.beginDate.warning">
@@ -358,19 +397,6 @@ const fillForm = () => {
 
 .form-component>textarea {
     resize: none;
-}
-
-.form-component>label {
-    font-size: 11pt;
-    font-family: 'Gill Sans', Calibri, sans-serif;
-    color: #3f3f3f;
-    margin: 0 auto 3px 15px;
-}
-
-.form-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    column-gap: 15px;
 }
 
 input[type='button'],

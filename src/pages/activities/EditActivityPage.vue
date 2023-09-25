@@ -1,26 +1,8 @@
-<template>
-    <PageContainer>
-        <div class="edit-activity-page">
-            <LoadActivity :activity-id="activityId">
-                <ActivityForm
-                    @refresh-form="handleRefreshForm"
-                    @submit-form="handleUpdateActivity"
-                    :activity-to-edit="activityToEdit"
-                    :submit-response="submitResponse">
-                </ActivityForm>
-                <div v-if="submitResponse?.isResponded" class="back-link-container">
-                    <input class="back-link" type="button" :value="linkText" @click="handleLinkClick">
-                </div>
-            </LoadActivity>
-        </div>
-    </PageContainer>
-</template>
-
-
 <script setup lang="ts">
 import ActivityForm from '@/components/activities/details/ActivityForm.vue';
 import LoadActivity from '@/components/activities/details/LoadActivity.vue';
 import PageContainer from '@/components/layout/base/PageContainer.vue';
+import ResponseMessage from '@/components/layout/ResponseMessage.vue';
 import type { Activity } from '@/models/Activity';
 import type { SubmitResponse } from '@/models/auxillary/interfaces';
 import { useActivityStore } from '@/stores/activities';
@@ -43,28 +25,24 @@ const activityToEdit: Ref<Activity | null> = ref(getActivity.value);
 const submitResponse: Ref<SubmitResponse | null> = ref(null);
 
 
-const linkText: ComputedRef<string> = computed(() => {
-    return submitResponse.value?.isSuccessful ? 'View updated Activity' : 'Go back to all activities'
-});
-
 watch(getActivity, () => {
     setActivityToNull();
     setActivityToItsValue();
 });
 
 const setActivityToNull = () => {
-    activityToEdit.value = null;
+    activityToEdit.value = null;    
 }
 
 const setActivityToItsValue = () => {
     activityToEdit.value = getActivity.value;
 }
 
-const handleLinkClick = () => {
-    if (submitResponse.value?.isSuccessful) {
-        router.push({ name: RouteNames.ACTIVITY_DETAIL, params: { activityId: props.activityId } });
-    } else {
+const handleLinkClick = (toAll: boolean) => {
+    if (toAll) {
         router.push({ name: RouteNames.ACTIVITIES });
+    } else {
+        router.push({ name: RouteNames.ACTIVITY_DETAIL, params: { activityId: props.activityId } });
     }
 }
 
@@ -93,6 +71,27 @@ const handleUpdateActivity = async (activity: Activity) => {
 </script>
 
 
+<template>
+    <PageContainer>
+        <div class="edit-activity-page">
+            <LoadActivity :activity-id="activityId">
+                <ResponseMessage v-if="submitResponse?.isResponded" :is-error="!submitResponse.isSuccessful"
+                :message="submitResponse.message" />
+                <ActivityForm v-if="!submitResponse"
+                    @refresh-form="handleRefreshForm"
+                    @submit-form="handleUpdateActivity"
+                    :activity-to-edit="activityToEdit"
+                />
+                <div v-if="submitResponse?.isResponded" class="back-link-container">
+                    <input v-if="submitResponse.isSuccessful" class="back-link" type="button" value="View updated Activity" @click="handleLinkClick(false)">
+                    <input class="back-link" type="button" value="Go back to all activities" @click="handleLinkClick(true)">
+                </div>
+            </LoadActivity>
+        </div>
+    </PageContainer>
+</template>
+
+
 <style scoped>
 @import url('@/styles/style.css');
 
@@ -104,5 +103,28 @@ const handleUpdateActivity = async (activity: Activity) => {
 .back-link-container {
     width: 100%;
     margin-top: 20px;
+}
+
+.back-link-containe .back-link:first-child{
+    margin-bottom: 20px;
+}
+
+
+@media screen and (max-width: 1200px) {
+    .edit-activity-page {
+        width: 55%;
+    }
+}
+
+@media screen and (max-width: 980px) {
+    .edit-activity-page {
+        width: 75%;
+    }
+}
+
+@media screen and (max-width: 670px) {
+    .edit-activity-page {
+        width: 97%;
+    }
 }
 </style>

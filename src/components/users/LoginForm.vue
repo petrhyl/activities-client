@@ -2,7 +2,7 @@
 import FormLayout from "@/components/layout/form/FormLayout.vue";
 import FormComponent from "@/components/layout/form/FormComponent.vue";
 import FormComponentContainer from "@/components/layout/form/FormComponentContainer.vue";
-import { Ref, ref } from "vue";
+import { type Ref, ref } from "vue";
 
 
 const invalidMessage: Ref<string> = ref('');
@@ -16,21 +16,21 @@ const handleSubmit = () =>{
 
 
 <template>
-    <FormLayout @submit-form="handleSubmit" :invalid-message="invalidMessage">
-        <FormComponent>
-            <input type="email" id="login-email" name="login-email" />
+    <FormLayout @submit-form="handleSubmit" :invalid-message="invalidMessage" form-styles="card">
+        <FormComponent label-for="login-email" label-text="E-mail" :warning-message="''">
+            <input type="email" id="login-email" name="login-email" class="form-input-element" />
         </FormComponent>
-        <FormComponent>
-            <input type="password" id="login-password" name="login-password" />
+        <FormComponent label-for="login-password" label-text="Password" :warning-message="''">
+            <input type="password" id="login-password" name="login-password" class="form-input-element" />
         </FormComponent>
         <FormComponentContainer>
-            <input type="submit" id="submit-login-button" value="Log in" />
+            <div></div><input type="submit" id="submit-login-button" value="Log in" />
         </FormComponentContainer>
     </FormLayout>
 </template>
 
 
-<style>
+<style scoped>
 input[type='submit'] {
     font-size: 12pt;
     font-family: 'Gill Sans', Calibri, sans-serif;

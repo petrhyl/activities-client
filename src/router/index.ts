@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Activities from "@/pages/activities/ActivitiesPage.vue";
 import RouteNames from "@/utils/constanses/RouteNames";
+import HomePage from "@/pages/HomePage.vue";
 
 
 export const router = createRouter({
@@ -8,11 +8,12 @@ export const router = createRouter({
     routes: [
         {
             path: '/',
-            redirect: { name: 'activities' }
+            name: RouteNames.HOME,
+            component: HomePage
         }, {
             path: '/activities',
             name: RouteNames.ACTIVITIES,
-            component: Activities
+            component: () => import('@/pages/activities/ActivitiesPage.vue')
         },{
             path: '/activities/:activityId',
             name: RouteNames.ACTIVITY_DETAIL,
@@ -27,6 +28,10 @@ export const router = createRouter({
             name: RouteNames.EDIT_ACTIVITY,
             props: true,
             component: () => import('@/pages/activities/EditActivityPage.vue')
+        },{
+            path: '/login',
+            name: RouteNames.LOGIN,
+            component: () => import('@/pages/users/LoginPage.vue')
         },{
             path: '/:notFound(.*)',
             name: RouteNames.NOT_FOUND,

@@ -10,3 +10,8 @@ export interface SelectOption{
     text: string, 
     isSelected: boolean
 }
+
+export interface FetchResponse {
+    isSuccessful: boolean,
+    errorMessage: string | null
+}

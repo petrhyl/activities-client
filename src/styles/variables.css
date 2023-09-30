@@ -3,8 +3,8 @@
     --azure-color: #71fff8;
     --sky-color: #73ccff;
     --light-gold-color: #eee5c5;
-    --blue-color:#0084d0;
+    --blue-color:#007bc3;
     --gradient-background: linear-gradient(80deg, var(--azure-color) 7%, var(--blue-color) 50%, var(--blue-color) 80%, var(--sky-color));
     --warning-color: #bb0035;
-    --dark-font-color: #261b2a;
+    --dark-font-color: #201b2a;
 }

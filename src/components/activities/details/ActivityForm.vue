@@ -223,7 +223,7 @@ const validateForm = () => {
     handleChangeValue(FormActions.CATEGORY);
     if (!formInputs.title.isValid) {
         isAnyInvalid = true;
-    }    
+    }
     if (!formInputs.beginDate.isValid) {
         isAnyInvalid = true;
     }
@@ -386,15 +386,6 @@ const fillForm = () => {
 </style>
 
 <style scoped>
-.form-input-element {
-    width: 100%;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-    outline: none;
-    border-radius: 5px;
-    border: 1px solid var(--light-gray-color);
-    padding: 7px 10px;
-}
-
 .form-component>textarea {
     resize: none;
 }

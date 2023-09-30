@@ -2,7 +2,7 @@ import HttpVerbs from "@/utils/constanses/HttpVerbs";
 import type { Activity, ActivityCategory } from "@/models/Activity";
 import { defineStore } from "pinia";
 import { computed, ref, type ComputedRef, type Ref } from "vue";
-import type { SelectOption } from "@/models/auxillary/interfaces";
+import type { FetchResponse } from "@/models/auxillary/interfaces";
 
 export const useActivityStore = defineStore('activityStore', () => {
 
@@ -151,7 +151,7 @@ export const useActivityStore = defineStore('activityStore', () => {
 
     const fetchData = async (params: FetchDataParams, fetchingObject: DataObject = DataObject.ACTIVITY) => {
         let url = 'https://localhost:5000/api/activities';
-
+        
         if (fetchingObject === DataObject.ACTIVITY_CATEGORY || fetchingObject === DataObject.ACTIVITY_CATEGORIES) {
             url = 'https://localhost:5000/api/activity/categories';
         }
@@ -266,7 +266,3 @@ export const useActivityStore = defineStore('activityStore', () => {
     }
 });
 
-export interface FetchResponse {
-    isSuccessful: boolean,
-    errorMessage: string | null
-}

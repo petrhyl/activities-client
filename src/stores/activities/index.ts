@@ -1,28 +1,18 @@
 import HttpVerbs from "@/utils/constanses/HttpVerbs";
-import type { Activity, ActivityCategory } from "@/models/Activity";
 import { defineStore } from "pinia";
 import { computed, ref, type ComputedRef, type Ref } from "vue";
-import type { FetchResponse } from "@/models/auxillary/interfaces";
+import type { FetchDataParams, FetchResponse } from "@/models/auxillary/interfaces";
+import { DataObject } from "@/utils/constanses/enums";
+import { fetchData } from "@/utils/fetchingFunction";
+import { ApiEndpoints } from "@/utils/constanses/ApiEndpoints";
+import type { Activity, ActivityCategory } from "@/models/Activity";
 
 export const useActivityStore = defineStore('activityStore', () => {
 
-    interface FetchDataParams {
-        method: HttpVerbs,
-        id: string | null,
-        body: Activity | null
-    }
-
-    enum DataObject {
-        ACTIVITY,
-        ACTIVITIES,
-        ACTIVITY_CATEGORIES,
-        ACTIVITY_CATEGORY
-    }
 
     const activities: Ref<Activity[]> = ref([]);
     const activity: Ref<Activity | null> = ref(null);
     const categories: Ref<ActivityCategory[]> = ref([]);
-    const errorMessage: Ref<string> = ref('');
 
     /**
      * Create a request on the server to load list of the objects of <Activity>. The list is stored in the getter of this hook.
@@ -30,15 +20,21 @@ export const useActivityStore = defineStore('activityStore', () => {
      *  otherwise false and reason in error message
      */
     const loadActivities = async (): Promise<FetchResponse> => {
-        const fetchParams: FetchDataParams = {
+        const fetchParams: FetchDataParams<Activity[], Activity[]> = {
             method: HttpVerbs.GET,
-            body: null,
-            id: null
+            requestBody: null,
         };
 
-        const isSuccessful = await fetchData(fetchParams, DataObject.ACTIVITIES);
+        const response = await fetchData(fetchParams, DataObject.ACTIVITIES, ApiEndpoints.ACTIVITY);
 
-        return { isSuccessful, errorMessage: !isSuccessful ? errorMessage.value : null }
+        if (response.isSuccessful) {
+            activities.value = response.data!;
+        }
+
+        return {
+            isSuccessful: response.isSuccessful,
+            errorMessage: !response.isSuccessful ? response.errorMessage : null
+        }
     }
 
     /**
@@ -48,14 +44,21 @@ export const useActivityStore = defineStore('activityStore', () => {
      * otherwise false and reason in error message
      */
     const loadSingleActivity = async (idActivity: string): Promise<FetchResponse> => {
-        const fetchParams: FetchDataParams = {
+        const fetchParams: FetchDataParams<Activity, Activity> = {
             method: HttpVerbs.GET,
-            body: null,
-            id: idActivity
+            requestBody: null
         };
-        const isSuccessful = await fetchData(fetchParams);
 
-        return { isSuccessful, errorMessage: !isSuccessful ? errorMessage.value : null }
+        const response = await fetchData(fetchParams, DataObject.ACTIVITY, ApiEndpoints.ACTIVITY + '/' + idActivity);
+
+        if (response.isSuccessful) {
+            activity.value = response.data!;
+        }
+
+        return {
+            isSuccessful: response.isSuccessful,
+            errorMessage: !response.isSuccessful ? response.errorMessage : null
+        }
     }
 
     /**
@@ -69,15 +72,17 @@ export const useActivityStore = defineStore('activityStore', () => {
             return { isSuccessful: false, errorMessage: 'You have to provide ID of the modifying object.' }
         }
 
-        const fetchParams: FetchDataParams = {
+        const fetchParams: FetchDataParams<Activity, Activity> = {
             method: HttpVerbs.PUT,
-            body: activityObject,
-            id: activityObject.id
+            requestBody: activityObject
         };
 
-        const isSuccessful = await fetchData(fetchParams);
+        const response = await fetchData(fetchParams, DataObject.ACTIVITY, ApiEndpoints.ACTIVITY);
 
-        return { isSuccessful, errorMessage: !isSuccessful ? errorMessage.value : null }
+        return {
+            isSuccessful: response.isSuccessful,
+            errorMessage: !response.isSuccessful ? response.errorMessage : null
+        }
     }
 
     /**
@@ -87,14 +92,17 @@ export const useActivityStore = defineStore('activityStore', () => {
      * otherwise false and reason in error message
      */
     const createActivity = async (activityObject: Activity): Promise<FetchResponse> => {
-        const fetchParams: FetchDataParams = {
+        const fetchParams: FetchDataParams<Activity, Activity> = {
             method: HttpVerbs.POST,
-            body: activityObject,
-            id: null
+            requestBody: activityObject
         };
-        const isSuccessful = await fetchData(fetchParams);
 
-        return { isSuccessful, errorMessage: !isSuccessful ? errorMessage.value : null }
+        const response = await fetchData(fetchParams, DataObject.ACTIVITY, ApiEndpoints.ACTIVITY);
+
+        return {
+            isSuccessful: response.isSuccessful,
+            errorMessage: !response.isSuccessful ? response.errorMessage : null
+        }
     }
 
     /**
@@ -104,14 +112,17 @@ export const useActivityStore = defineStore('activityStore', () => {
     * otherwise false and reason in error message
     */
     const deleteActivity = async (idActivity: string): Promise<FetchResponse> => {
-        const fetchParams: FetchDataParams = {
+        const fetchParams: FetchDataParams<Activity, Activity> = {
             method: HttpVerbs.DELETE,
-            body: null,
-            id: idActivity
+            requestBody: null,
         };
-        const isSuccessful = await fetchData(fetchParams);
 
-        return { isSuccessful, errorMessage: !isSuccessful ? errorMessage.value : null }
+        const response = await fetchData(fetchParams, DataObject.ACTIVITY, ApiEndpoints.ACTIVITY + '/' + idActivity);
+
+        return {
+            isSuccessful: response.isSuccessful,
+            errorMessage: !response.isSuccessful ? response.errorMessage : null
+        }
     }
 
     /**
@@ -120,15 +131,21 @@ export const useActivityStore = defineStore('activityStore', () => {
      *  otherwise false and reason in error message
      */
     const loadActivityCategories = async (): Promise<FetchResponse> => {
-        const fetchParams: FetchDataParams = {
+        const fetchParams: FetchDataParams<ActivityCategory[], ActivityCategory[]> = {
             method: HttpVerbs.GET,
-            body: null,
-            id: null
+            requestBody: null,
         };
 
-        const isSuccessful = await fetchData(fetchParams, DataObject.ACTIVITY_CATEGORIES);
+        const response = await fetchData(fetchParams, DataObject.ACTIVITY_CATEGORIES, ApiEndpoints.ACTIVITY_CATEGORY);
 
-        return { isSuccessful, errorMessage: !isSuccessful ? errorMessage.value : null }
+        if (response.isSuccessful) {
+            categories.value = response.data!;
+        }
+
+        return {
+            isSuccessful: response.isSuccessful,
+            errorMessage: !response.isSuccessful ? response.errorMessage : null
+        }
     }
 
 
@@ -147,110 +164,6 @@ export const useActivityStore = defineStore('activityStore', () => {
     });
 
     const getActivityCategories: ComputedRef<ActivityCategory[]> = computed(() => categories.value);
-
-
-    const fetchData = async (params: FetchDataParams, fetchingObject: DataObject = DataObject.ACTIVITY) => {
-        let url = 'https://localhost:5000/api/activities';
-        
-        if (fetchingObject === DataObject.ACTIVITY_CATEGORY || fetchingObject === DataObject.ACTIVITY_CATEGORIES) {
-            url = 'https://localhost:5000/api/activity/categories';
-        }
-
-        if (params.id) {
-            url += `/${params.id}`;
-        }
-
-        let parametrObject: RequestInit = {
-            method: params.method
-        }
-
-        if (params.method === HttpVerbs.PUT || params.method === HttpVerbs.POST) {
-            parametrObject = {
-                ...parametrObject,
-                body: JSON.stringify(params.body),
-                headers: {
-                    'Content-type': 'application/json'
-                }
-            }
-        }
-
-        try {
-            const response = await fetch(url, parametrObject);
-
-            if (!response.ok) {
-                if (response.status >= 500) {
-                    const message = 'There is an error on the server side. ' + getResponseErrorMessage(params.method, fetchingObject);
-                    throw new Error(message);
-                }
-                
-                if (response.status === 401) {
-                    throw new Error("You have to be logged in.");                    
-                }
-                
-                if (response.status === 400 || response.status === 422) {
-                    throw new Error("Sorry, your entered data could not be processed.");                    
-                }
-            }
-
-            if (params.method === HttpVerbs.GET) {
-                switch (fetchingObject) {
-                    case DataObject.ACTIVITIES: activities.value = await response.json();
-                        break;
-                    case DataObject.ACTIVITY: activity.value = await response.json();
-                        break;
-                    case DataObject.ACTIVITY_CATEGORIES: categories.value = await response.json();
-                        break
-                    default:
-                        break;
-                }
-            }
-
-            return true;
-
-        } catch (err) {
-            if (err instanceof Error) {
-                let errMsg = err.message;
-                if (errMsg === '') {
-                    errMsg = getResponseErrorMessage(params.method, fetchingObject);
-                }
-
-                errorMessage.value = errMsg;
-
-                return false;
-            }
-
-            errorMessage.value = 'Unexpected error.';
-
-            return false;
-        }
-    }
-
-    const getResponseErrorMessage = (method: HttpVerbs, fetchingObject: DataObject) => {
-        switch (fetchingObject) {
-            case DataObject.ACTIVITIES:
-                return 'The activities could not be loaded.';
-            case DataObject.ACTIVITY:
-                switch (method) {
-                    case HttpVerbs.GET:
-                        return 'The activity could not be loaded.';
-                    case HttpVerbs.POST:
-                        return 'The activity could not be created.';
-                    case HttpVerbs.DELETE:
-                        return 'The activity could not be deleted.';
-                    case HttpVerbs.PUT:
-                        return 'The activity could not be updated.';
-                    default:
-                        return '';
-                }
-            case DataObject.ACTIVITY_CATEGORIES:
-                return 'The activity categories could not be loaded.';
-            case DataObject.ACTIVITY_CATEGORY:
-                return 'The activity category could not be loaded.';
-            default:
-                return '';
-        }
-    }
-
 
     return {
         loadActivities,

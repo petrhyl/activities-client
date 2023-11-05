@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import PageContainer from '@/components/layout/base/PageContainer.vue';
-import FormComponentContainer from '@/components/layout/form/FormComponentContainer.vue';
-import type { RouterLink } from 'vue-router';
 import RouteNames from "@/utils/constanses/RouteNames";
 import StyledButton from '@/components/layout/form/StyledButton.vue';
 import ButtonTypes from '@/utils/constanses/ButtonTypes';
@@ -21,9 +19,9 @@ import ButtonTypes from '@/utils/constanses/ButtonTypes';
             <h1 class="welcome-title">Welcome to Activities</h1>
             <div class="link-container">
                 <StyledButton :button-type="ButtonTypes.LINK" :link-to="{ name: RouteNames.ACTIVITIES }"
-                    :text="'Visit all activities'" :css-class="'home-page-link'" />
+                    :text="'Visit all activities'" :css-class="'home-page-activities'" />
                 <StyledButton :button-type="ButtonTypes.LINK" :link-to="{ name: RouteNames.LOGIN }" :text="'Log in'"
-                    :css-class="'home-page-link'" />
+                    :css-class="'home-page-login'" />
             </div>
         </div>
     </PageContainer>
@@ -31,17 +29,29 @@ import ButtonTypes from '@/utils/constanses/ButtonTypes';
 
 
 <style>
-.home-page-link {
+.home-page-activities {
     background-color: #ecfffb;
     box-shadow: 0 0 4px 1px #00569c;
     color: #00569c;
 }
 
-.home-page-link:hover{
+.home-page-activities:hover{
     box-shadow: 0 0 4px 1px #0674ce;
     color: #0674ce;
 }
+
+.home-page-login{
+    background-color: var(--blue-color);
+    box-shadow: 0 0 4px 1px #00569c;
+    color: #ecfffb;
+}
+
+.home-page-login:hover{
+    background-color: #1691d8;
+    box-shadow: 0 0 4px 1px #0674ce;
+}
 </style>
+
 <style scoped>
 .home-page {
     width: 100%;

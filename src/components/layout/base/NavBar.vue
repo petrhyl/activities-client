@@ -1,13 +1,3 @@
-<script setup lang="ts">
-import RouteNames from '@/utils/constanses/RouteNames';
-import { WindowWidth } from "@/utils/constanses/OtherEnums";
-import { inject } from 'vue';
-import { keyProvidedWindowWidth } from '@/models/auxillary/providedKey';
-
-const currentWidth = inject(keyProvidedWindowWidth);
-
-</script>
-
 <template>
     <nav class="top-navigation">
         <header>
@@ -21,12 +11,28 @@ const currentWidth = inject(keyProvidedWindowWidth);
                 <button class="nav-button">&#x2630;</button>
             </div>
             <div v-else class="menu-item-list">
-                <RouterLink :to="{ name: RouteNames.ACTIVITIES }">Show Activities</RouterLink>
-                <RouterLink :to="{ name: RouteNames.CREATE_ACTIVITY }">Create New Activity</RouterLink>
+                <RouterLink class="navigation-link" :to="{ name: RouteNames.ACTIVITIES }">Show Activities</RouterLink>
+                <RouterLink class="navigation-link" :to="{ name: RouteNames.CREATE_ACTIVITY }">Create New Activity
+                </RouterLink>
+                <div class="account-link-container">
+                    <RouterLink class="navigation-link account-link" :to="{ name: RouteNames.LOGIN }">Log In</RouterLink>
+                    <RouterLink class="navigation-link account-link" :to="{ name: RouteNames.REGISTERATION }">Sign Up</RouterLink>
+                </div>
             </div>
         </div>
     </nav>
 </template>
+
+
+<script setup lang="ts">
+import RouteNames from '@/utils/constanses/RouteNames';
+import { WindowWidth } from "@/utils/constanses/OtherEnums";
+import { inject } from 'vue';
+import { keyProvidedWindowWidth } from '@/models/auxillary/providedKey';
+
+const currentWidth = inject(keyProvidedWindowWidth);
+
+</script>
 
 
 <style scoped>
@@ -66,26 +72,38 @@ img {
     margin-right: 25px;
 }
 
-a {
+.account-link-container {
+    display: flex;
+    column-gap: 15px;
+}
+
+.navigation-link {
     height: fit-content;
     font-size: 16pt;
     font-family: 'Franklin Gothic Medium', sans-serif;
     line-height: 18pt;
     text-decoration: none;
-    color: #d8cfad;
+    color: var(--gold-color);
     transition: all 170ms ease-out;
 }
 
-a:hover {
-    color: #eee5c5;
+.account-link {
+    border: 2px solid #d8cfad;
+    border-radius: 7px;
+    padding: 4px 8px;
+    font-size: 14pt;
+}
+
+.navigation-link:hover {
+    color: var(--light-gold-color);
     transform: scale(1.1);
 }
 
-a.router-link-active {
+.navigation-link.router-link-active {
     transform: scale(1.1);
 }
 
-.nav-button{
+.nav-button {
     width: calc(26pt + 14px);
     height: calc(26pt + 14px);
     color: #001a68;

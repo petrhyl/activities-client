@@ -2,6 +2,15 @@ import type { FetchDataParams, FetchDataResponse } from "@/models/auxillary/inte
 import HttpVerbs from "./constanses/HttpVerbs";
 import { DataObject } from "./constanses/enums";
 
+
+/**
+     * Send request to the server for POST/UPDATE/GET data according FetchDataParams.HttpMethod and obtain corresponding response
+     * @param {FetchDataParams} params - an object of type <FetchDataParams> containing what http method to use and what type of response to expect
+     * @param {DataObject} fetchingObject - enum indicating an object what is requested
+     * @param {string} apiEndpoint - endpoint which to call API with
+     * @return {Promise<FetchDataResponse>} - if request was completed successfully return the property indicating success is true and error message null, 
+     * otherwise false and reason in error message
+     */
 export const fetchData = async <T, U>(params: FetchDataParams<T, U>, fetchingObject: DataObject, apiEndpoint: string): Promise<FetchDataResponse<U>> => {
     
     let parametrObject: RequestInit = {

@@ -1,3 +1,19 @@
+<template>
+    <FormLayout @submit-form="handleSubmit" :invalid-message="invalidMessage" form-styles="card">
+        <FormComponent label-for="login-email" label-text="E-mail" :warning-message="''">
+            <input type="email" id="login-email" name="login-email" class="form-input-element" />
+        </FormComponent>
+        <FormComponent label-for="login-password" label-text="Password" :warning-message="''">
+            <input type="password" id="login-password" name="login-password" class="form-input-element" />
+        </FormComponent>
+        <FormComponentContainer>
+            <div></div><input type="submit" id="submit-login-button" value="Log in" />
+        </FormComponentContainer>
+    </FormLayout>
+</template>
+
+
+
 <script setup lang="ts">
 import FormLayout from "@/components/layout/form/FormLayout.vue";
 import FormComponent from "@/components/layout/form/FormComponent.vue";
@@ -13,21 +29,6 @@ const handleSubmit = () =>{
 
 }
 </script>
-
-
-<template>
-    <FormLayout @submit-form="handleSubmit" :invalid-message="invalidMessage" form-styles="card">
-        <FormComponent label-for="login-email" label-text="E-mail" :warning-message="''">
-            <input type="email" id="login-email" name="login-email" class="form-input-element" />
-        </FormComponent>
-        <FormComponent label-for="login-password" label-text="Password" :warning-message="''">
-            <input type="password" id="login-password" name="login-password" class="form-input-element" />
-        </FormComponent>
-        <FormComponentContainer>
-            <div></div><input type="submit" id="submit-login-button" value="Log in" />
-        </FormComponentContainer>
-    </FormLayout>
-</template>
 
 
 <style scoped>

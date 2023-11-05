@@ -12,5 +12,6 @@ export enum DataObject {
     ACTIVITIES,
     ACTIVITY_CATEGORIES,
     ACTIVITY_CATEGORY,
-    USER
+    LOGIN,
+    REGISTRATION
 }

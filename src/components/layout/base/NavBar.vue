@@ -14,9 +14,19 @@
                 <RouterLink class="navigation-link" :to="{ name: RouteNames.ACTIVITIES }">Show Activities</RouterLink>
                 <RouterLink class="navigation-link" :to="{ name: RouteNames.CREATE_ACTIVITY }">Create New Activity
                 </RouterLink>
-                <div class="account-link-container">
-                    <RouterLink class="navigation-link account-link" :to="{ name: RouteNames.LOGIN }">Log In</RouterLink>
-                    <RouterLink class="navigation-link account-link" :to="{ name: RouteNames.REGISTERATION }">Sign Up</RouterLink>
+                <div v-if="!isUserLogged" class="account-link-container">
+                    <RouterLink class="navigation-link account-link" :to="{ name: RouteNames.LOGIN }">
+                        Log In
+                    </RouterLink>
+                    <RouterLink class="navigation-link account-link" :to="{ name: RouteNames.REGISTERATION }">
+                        Sign Up
+                    </RouterLink>
+                </div>
+                <div v-else class="account-link-container">
+                    <input type="button" class="navigation-link account-link" @click="handleLogout" value="Log Out" />
+                    <RouterLink class="navigation-link account-link" :to="{name: RouteNames.USER_PROFILE }">
+                        {{ getUserName }}
+                    </RouterLink>
                 </div>
             </div>
         </div>
@@ -26,11 +36,32 @@
 
 <script setup lang="ts">
 import RouteNames from '@/utils/constanses/RouteNames';
-import { WindowWidth } from "@/utils/constanses/OtherEnums";
-import { inject } from 'vue';
+import { WindowWidth } from "@/utils/constanses/enums";
+import { inject, ref, watch, type Ref, computed, type ComputedRef } from 'vue';
 import { keyProvidedWindowWidth } from '@/models/auxillary/providedKey';
+import { storeToRefs } from 'pinia';
+import { useUserStore } from '@/stores/user';
 
-const currentWidth = inject(keyProvidedWindowWidth);
+const currentWidth = inject(keyProvidedWindowWidth)
+
+const userStore = useUserStore()
+const { isLoggedIn, getCurrentUser } = storeToRefs(userStore)
+
+const isUserLogged: Ref<boolean> = ref(isLoggedIn.value)
+
+const getUserName: ComputedRef<string> = computed(()=>{
+    const userName = getCurrentUser.value?.displayName ?? ''
+    return userName.length < 10 ? userName : userName.substring(0, 7) + '...' 
+})
+
+
+const handleLogout = () =>{
+    userStore.logoutUser()
+}
+
+watch(isLoggedIn, () => {
+    isUserLogged.value = isLoggedIn.value
+})
 
 </script>
 
@@ -84,6 +115,7 @@ img {
     line-height: 18pt;
     text-decoration: none;
     color: var(--gold-color);
+    background-color: transparent;
     transition: all 170ms ease-out;
 }
 

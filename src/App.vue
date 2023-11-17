@@ -1,11 +1,30 @@
+<template>
+  <NavBar />
+  <main>
+    <RouterView />
+  </main>
+</template>
+
+
+
 <script setup lang="ts">
 import { type Ref, ref, onBeforeMount, provide } from 'vue';
 import NavBar from './components/layout/base/NavBar.vue';
-import { WindowWidth } from './utils/constanses/OtherEnums';
+import { WindowWidth } from './utils/constanses/enums';
 import { keyProvidedWindowWidth } from './models/auxillary/providedKey';
+import { useUserStore } from './stores/user';
 
 
-const currentWindowWidth: Ref<WindowWidth> = ref(WindowWidth.COMMON);
+const userStore = useUserStore()
+
+const currentWindowWidth: Ref<WindowWidth> = ref(WindowWidth.COMMON)
+
+provide(keyProvidedWindowWidth, currentWindowWidth)
+
+onBeforeMount(() => {
+  addWindowWidthListeners()
+  tryLogUserIn()
+});
 
 const acertainWidth = () => {
   if (window.innerWidth <= WindowWidth.PHONE) {
@@ -23,39 +42,33 @@ const acertainWidth = () => {
   }
 }
 
-provide(keyProvidedWindowWidth, currentWindowWidth);
-
-onBeforeMount(() => {
-  addWindowWidthListeners();
-});
-
-
 const addWindowWidthListeners = () => {
   window.matchMedia(`(max-width:${WindowWidth.PHONE}px)`).addEventListener('change', () => {
-    acertainWidth();
+    acertainWidth()
   });
   window.matchMedia(`(max-width:${WindowWidth.TABLET}px)`).addEventListener('change', () => {
-    acertainWidth();
+    acertainWidth()
   });
   window.matchMedia(`(max-width:${WindowWidth.SMALL}px)`).addEventListener('change', () => {
-    acertainWidth();
+    acertainWidth()
   });
   window.matchMedia(`(max-width:${WindowWidth.LARGE}px)`).addEventListener('change', () => {
-    acertainWidth();
+    acertainWidth()
   });
   window.matchMedia(`(max-width:${WindowWidth.SUPER_LARGE}px)`).addEventListener('change', () => {
-    acertainWidth();
+    acertainWidth()
   });
+}
+
+const tryLogUserIn = () => {
+  const token = userStore.getCurrentUserToken
+  if (token) {
+    userStore.getCurrentUserByToken(token)
+  }
 }
 </script>
 
 
-<template>
-  <NavBar />
-  <main>
-    <RouterView />
-  </main>
-</template>
 
 
 <style>

@@ -12,20 +12,43 @@ import { DataObject } from "./constanses/enums";
      * otherwise false and reason in error message
      */
 export const fetchData = async <T, U>(params: FetchDataParams<T, U>, fetchingObject: DataObject, apiEndpoint: string): Promise<FetchDataResponse<U>> => {
-    
+
     let parametrObject: RequestInit = {
         method: params.method
     }
+    
+    let headers : HeadersInit = {}
+
+    if (params.headers) {
+        headers = {
+            ...params.headers
+        }
+    }
 
     if (params.method === HttpVerbs.PUT || params.method === HttpVerbs.POST) {
+         headers = {
+            ...headers,
+            'Content-Type':'application/json'
+        }
+    }
+
+    if (Object.keys(headers).length > 0) {
         parametrObject = {
             ...parametrObject,
-            body: JSON.stringify(params.requestBody),
             headers: {
-                'Content-type': 'application/json'
+                ...headers
             }
         }
     }
+
+    if (params.requestBody) {
+        parametrObject = {
+            ...parametrObject,
+            body: JSON.stringify(params.requestBody)
+        }
+    }
+
+    console.log(parametrObject);
 
     try {
         const response = await fetch(apiEndpoint, parametrObject);
@@ -35,23 +58,25 @@ export const fetchData = async <T, U>(params: FetchDataParams<T, U>, fetchingObj
                 const message = 'There is an error on the server side. ' + getResponseErrorMessage(params.method, fetchingObject);
                 throw new Error(message);
             }
-            
+
             if (response.status === 401) {
-                throw new Error("You have to be logged in.");                    
+                throw new Error("Wrong login details.");
             }
-            
+
             if (response.status === 400 || response.status === 422) {
-                throw new Error("Sorry, your entered data could not be processed.");                    
+                throw new Error("Sorry, your entered data could not be processed.");
             }
 
             if (response.status === 404) {
-                throw new Error("The specific request was not found.")  
+                throw new Error("The specific request was not found.")
             }
-        }        
+
+            throw new Error("Something went wrong.")
+        }
 
         let data: U | null = null;
 
-        if (params.method === HttpVerbs.GET) {
+        if (response.body) {
             data = await response.json();
         }
 
@@ -68,7 +93,7 @@ export const fetchData = async <T, U>(params: FetchDataParams<T, U>, fetchingObj
             errMsg = err.message;
             if (errMsg === '') {
                 errMsg = getResponseErrorMessage(params.method, fetchingObject);
-            }            
+            }
         }
 
         return {

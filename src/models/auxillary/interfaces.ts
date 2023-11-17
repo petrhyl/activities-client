@@ -21,8 +21,16 @@ export interface FetchResponse {
 export interface FetchDataParams<T, U> {
     method: HttpVerbs,
     requestBody: T | null
+    headers: {} | null
 }
 
 export interface FetchDataResponse<T> extends FetchResponse {
     data: T | null
+}
+
+export interface FormInputToValidate {
+    value: string,
+    warning: string,
+    isChanged: boolean,
+    isValid: boolean
 }

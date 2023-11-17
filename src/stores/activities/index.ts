@@ -6,9 +6,11 @@ import { DataObject } from "@/utils/constanses/enums";
 import { fetchData } from "@/utils/fetchingFunction";
 import { ApiEndpoints } from "@/utils/constanses/ApiEndpoints";
 import type { Activity, ActivityCategory } from "@/models/Activity";
+import { useUserStore } from "../user";
 
 export const useActivityStore = defineStore('activityStore', () => {
 
+    const userStore = useUserStore()
 
     const activities: Ref<Activity[]> = ref([]);
     const activity: Ref<Activity | null> = ref(null);
@@ -23,6 +25,7 @@ export const useActivityStore = defineStore('activityStore', () => {
         const fetchParams: FetchDataParams<Activity[], Activity[]> = {
             method: HttpVerbs.GET,
             requestBody: null,
+            headers: null
         };
 
         const response = await fetchData(fetchParams, DataObject.ACTIVITIES, ApiEndpoints.ACTIVITY);
@@ -46,7 +49,8 @@ export const useActivityStore = defineStore('activityStore', () => {
     const loadSingleActivity = async (idActivity: string): Promise<FetchResponse> => {
         const fetchParams: FetchDataParams<Activity, Activity> = {
             method: HttpVerbs.GET,
-            requestBody: null
+            requestBody: null,
+            headers: null
         };
 
         const response = await fetchData(fetchParams, DataObject.ACTIVITY, ApiEndpoints.ACTIVITY + '/' + idActivity);
@@ -74,7 +78,8 @@ export const useActivityStore = defineStore('activityStore', () => {
 
         const fetchParams: FetchDataParams<Activity, Activity> = {
             method: HttpVerbs.PUT,
-            requestBody: activityObject
+            requestBody: activityObject,
+            headers: { 'Authorization': userStore.getCurrentUserToken }
         };
 
         const response = await fetchData(fetchParams, DataObject.ACTIVITY, ApiEndpoints.ACTIVITY);
@@ -94,7 +99,8 @@ export const useActivityStore = defineStore('activityStore', () => {
     const createActivity = async (activityObject: Activity): Promise<FetchResponse> => {
         const fetchParams: FetchDataParams<Activity, Activity> = {
             method: HttpVerbs.POST,
-            requestBody: activityObject
+            requestBody: activityObject,
+            headers: { 'Authorization': userStore.getCurrentUserToken }
         };
 
         const response = await fetchData(fetchParams, DataObject.ACTIVITY, ApiEndpoints.ACTIVITY);
@@ -115,6 +121,7 @@ export const useActivityStore = defineStore('activityStore', () => {
         const fetchParams: FetchDataParams<Activity, Activity> = {
             method: HttpVerbs.DELETE,
             requestBody: null,
+            headers: { 'Authorization': userStore.getCurrentUserToken }
         };
 
         const response = await fetchData(fetchParams, DataObject.ACTIVITY, ApiEndpoints.ACTIVITY + '/' + idActivity);
@@ -134,6 +141,7 @@ export const useActivityStore = defineStore('activityStore', () => {
         const fetchParams: FetchDataParams<ActivityCategory[], ActivityCategory[]> = {
             method: HttpVerbs.GET,
             requestBody: null,
+            headers: null
         };
 
         const response = await fetchData(fetchParams, DataObject.ACTIVITY_CATEGORIES, ApiEndpoints.ACTIVITY_CATEGORY);

@@ -8,7 +8,7 @@ import type { SubmitResponse } from '@/models/auxillary/interfaces';
 import { useActivityStore } from '@/stores/activities';
 import RouteNames from '@/utils/constanses/RouteNames';
 import { storeToRefs } from 'pinia';
-import { ref, type ComputedRef, type Ref, computed, watch } from 'vue';
+import { ref, type Ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 

@@ -1,3 +1,77 @@
+<template>
+    <FormLayout @submit-form="handleSubmitForm" :form-styles="'card'" :invalid-message="invalidMessage">
+        <FormComponent label-for="activity-title-input" label-text="Activity Title"
+            :warning-message="formInputs.title.warning">
+            <input
+                type="text"
+                name="activity-title-input"
+                class="form-input-element"
+                id="activity-title-input"
+                v-model="formInputs.title.value"
+                @input="handleChangeValue(FormActions.TITLE)"
+                @blur="handleValidateComponent(FormActions.TITLE)">
+        </FormComponent>
+        <FormComponent label-for="activity-description-text" label-text="Description"
+            :warning-message="formInputs.description.warning">
+            <textarea
+                name="activity-description-text"
+                class="form-input-element"
+                id="activity-description-text"
+                rows="5"
+                v-model="formInputs.description.value"
+                @input="handleChangeValue(FormActions.DESC)"
+                @blur="handleValidateComponent(FormActions.DESC)"></textarea>
+        </FormComponent>
+        <FormComponent label-for="activity-category-select" label-text="Category"
+            :warning-message="formInputs.category.warning">
+            <SelectComponent
+                :css-class="'category-select'"
+                :element-id="'activity-category'"
+                :element-name="'activity-category'"
+                :options="getCategoryOptions"
+                @change-selected="handleChangeCategoryValue"
+                @blur="handleValidateComponent(FormActions.CATEGORY)" />
+        </FormComponent>
+        <FormComponent label-for="activity-date-input" label-text="Event Date Time"
+            :warning-message="formInputs.beginDate.warning">
+            <input
+                type="datetime-local"
+                name="activity-date-input"
+                class="form-input-element"
+                id="activity-date-input"
+                v-model="formInputs.beginDate.value"
+                @input="handleChangeValue(FormActions.DATE)"
+                @blur="handleValidateComponent(FormActions.DATE)">
+        </FormComponent>
+        <FormComponent label-for="activity-city-input" label-text="City"
+            :warning-message="formInputs.city.warning">
+            <input
+                type="text"
+                name="activity-city-input"
+                class="form-input-element"
+                id="activity-city-input"
+                v-model="formInputs.city.value"
+                @input="handleChangeValue(FormActions.CITY)"
+                @blur="handleValidateComponent(FormActions.CITY)">
+        </FormComponent>
+        <FormComponent label-for="activity-venue-input" label-text="Venue" :warning-message="formInputs.venue.warning">
+            <input
+                type="text"
+                name="activity-venue-input"
+                class="form-input-element"
+                id="activity-venue-input"
+                v-model="formInputs.venue.value"
+                @input="handleChangeValue(FormActions.VENUE)"
+                @blur="handleValidateComponent(FormActions.VENUE)">
+        </FormComponent>
+        <FormComponentContainer>
+            <input type="submit" value="Submit" :class="{ disabled: isSubmitting }" :disabled="isSubmitting">
+            <input type="button" value="Refresh" @click="handleRefresh">
+        </FormComponentContainer>
+    </FormLayout>
+</template>
+
+
 <script setup lang="ts">
 import FormLayout from "@/components/layout/form/FormLayout.vue";
 import FormComponentContainer from "@/components/layout/form/FormComponentContainer.vue";
@@ -10,6 +84,7 @@ import { ScrollPageToTop } from '@/utils/stateUndependentFunctions'
 import SelectComponent from "@/components/layout/form/SelectComponent.vue";
 import { useActivityStore } from "@/stores/activities";
 import { useRouter } from "vue-router";
+import { isDateValid, isNameValid, isTitleValid } from "@/utils/inputValidation";
 
 enum FormActions {
     TITLE = 'title',
@@ -114,8 +189,6 @@ watch(formInputs, () => {
 });
 
 
-// * * * * * not vue functions * * * * *
-
 const handleChangeValue = (action: FormActions) => {
     switch (action) {
         case FormActions.TITLE:
@@ -173,7 +246,7 @@ const handleChangeCategoryValue = (selectedOption: SelectOption) => {
 const handleValidateComponent = (action: FormActions) => {
     switch (action) {
         case FormActions.TITLE:
-            if (!/[a-z]{2}/i.test(formInputs.title.value) && formInputs.title.isChanged) {
+            if (!isTitleValid(formInputs.title.value) && formInputs.title.isChanged) {
                 formInputs.title.isValid = false;
                 formInputs.title.warning = 'The title has to contain at least three letters.'
             }
@@ -191,19 +264,19 @@ const handleValidateComponent = (action: FormActions) => {
             }
             break;
         case FormActions.DATE:
-            if ((formInputs.beginDate.value === new Date(0).toString() || new Date(formInputs.beginDate.value).toString() === 'Invalid Date') && formInputs.beginDate.isChanged) {
+            if (!isDateValid(formInputs.beginDate.value) && formInputs.beginDate.isChanged) {
                 formInputs.beginDate.isValid = false;
                 formInputs.beginDate.warning = "Please, fill event's date and time correctly.";
             }
             break;
         case FormActions.CITY:
-            if (!/[a-z]{2}/i.test(formInputs.city.value) && formInputs.city.isChanged) {
+            if (!isNameValid(formInputs.city.value) && formInputs.city.isChanged) {
                 formInputs.city.isValid = false;
                 formInputs.city.warning = 'City of the event cannot be empty.';
             }
             break;
         case FormActions.VENUE:
-            if (!/[a-z]{2}/i.test(formInputs.venue.value) && formInputs.venue.isChanged) {
+            if (!isNameValid(formInputs.venue.value) && formInputs.venue.isChanged) {
                 formInputs.venue.isValid = false;
                 formInputs.venue.warning = 'Venue of the event cannot be empty.';
             }
@@ -298,80 +371,6 @@ const fillForm = () => {
 }
 
 </script>
-
-
-<template>
-    <FormLayout @submit-form="handleSubmitForm" :form-styles="'card'" :invalid-message="invalidMessage">
-        <FormComponent label-for="activity-title-input" label-text="Activity Title"
-            :warning-message="formInputs.title.warning">
-            <input
-                type="text"
-                name="activity-title-input"
-                class="form-input-element"
-                id="activity-title-input"
-                v-model="formInputs.title.value"
-                @input="handleChangeValue(FormActions.TITLE)"
-                @blur="handleValidateComponent(FormActions.TITLE)">
-        </FormComponent>
-        <FormComponent label-for="activity-description-text" label-text="Description"
-            :warning-message="formInputs.description.warning">
-            <textarea
-                name="activity-description-text"
-                class="form-input-element"
-                id="activity-description-text"
-                rows="5"
-                v-model="formInputs.description.value"
-                @input="handleChangeValue(FormActions.DESC)"
-                @blur="handleValidateComponent(FormActions.DESC)"></textarea>
-        </FormComponent>
-        <FormComponent label-for="activity-category-select" label-text="Category"
-            :warning-message="formInputs.category.warning">
-            <SelectComponent
-                :css-class="'category-select'"
-                :element-id="'activity-category'"
-                :element-name="'activity-category'"
-                :options="getCategoryOptions"
-                @change-selected="handleChangeCategoryValue"
-                @blur="handleValidateComponent(FormActions.CATEGORY)" />
-        </FormComponent>
-        <FormComponent label-for="activity-date-input" label-text="Event Date Time"
-            :warning-message="formInputs.beginDate.warning">
-            <input
-                type="datetime-local"
-                name="activity-date-input"
-                class="form-input-element"
-                id="activity-date-input"
-                v-model="formInputs.beginDate.value"
-                @input="handleChangeValue(FormActions.DATE)"
-                @blur="handleValidateComponent(FormActions.DATE)">
-        </FormComponent>
-        <FormComponent label-for="activity-city-input" label-text="City"
-            :warning-message="formInputs.city.warning">
-            <input
-                type="text"
-                name="activity-city-input"
-                class="form-input-element"
-                id="activity-city-input"
-                v-model="formInputs.city.value"
-                @input="handleChangeValue(FormActions.CITY)"
-                @blur="handleValidateComponent(FormActions.CITY)">
-        </FormComponent>
-        <FormComponent label-for="activity-venue-input" label-text="Venue" :warning-message="formInputs.venue.warning">
-            <input
-                type="text"
-                name="activity-venue-input"
-                class="form-input-element"
-                id="activity-venue-input"
-                v-model="formInputs.venue.value"
-                @input="handleChangeValue(FormActions.VENUE)"
-                @blur="handleValidateComponent(FormActions.VENUE)">
-        </FormComponent>
-        <FormComponentContainer>
-            <input type="submit" value="Submit" :class="{ disabled: isSubmitting }" :disabled="isSubmitting">
-            <input type="button" value="Refresh" @click="handleRefresh">
-        </FormComponentContainer>
-    </FormLayout>
-</template>
 
 
 <style>

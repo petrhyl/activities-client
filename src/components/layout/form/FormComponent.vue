@@ -40,13 +40,13 @@ const props = withDefaults(defineProps<{
 }
 
 .lable-and-warning {
-    display: inline-block;
+    display: inline;
     margin: 0 auto 3px 15px;
 }
 
 .warning-message {
-    font-family: Cambria, Georgia, 'Times New Roman', serif;
-    font-size: 10pt;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 8pt;
     text-align: left;
     color: #9f0030;
     padding-left: 15px;

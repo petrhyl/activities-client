@@ -1,3 +1,5 @@
+import type { FormInputToValidate } from "@/models/auxillary/interfaces";
+
 /**
  * @param {Date} dateObject - date to be stringify
  * @returns {string} - Date in ISO string format without trailing letter 'Z' and seconds
@@ -53,4 +55,13 @@ export const DateTimeToCzechFormat = (dateObject: Date | string): string => {
 
 export const ScrollPageToTop = () => {
     window.scroll({ top: 0, left: 0, behavior: 'smooth' });
+}
+
+
+export const defineChangeOfInput = (formInput: FormInputToValidate) => {
+    if (formInput.value !== '') {
+        formInput.isChanged = true;
+        formInput.isValid = true;
+        formInput.warning = '';
+    }
 }

@@ -6,6 +6,7 @@ const RouteNames = {
     EDIT_ACTIVITY: 'editActivity',
     LOGIN: 'login',
     REGISTERATION: 'regiteration',
+    USER_PROFILE: 'userAccount',
     NOT_FOUND: 'notFound'
 }
 

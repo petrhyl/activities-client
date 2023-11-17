@@ -1,3 +1,23 @@
+<template>
+    <PageContainer>
+        <div class="create-activity-page">
+            {{ activityObject.title }}
+            <ResponseMessage v-if="submitResponse.isResponded" :is-error="!submitResponse.isSuccessful"
+                :message="submitResponse.message" />
+            <ActivityForm
+                v-if="!submitResponse.isResponded"
+                @submit-form="handleCreateActivity"
+                :activity-to-edit="activityObject" />
+            <div v-else class="back-link-container">
+                <input v-if="submitResponse.isSuccessful" class="back-link" type="button" value="Create another"
+                    @click="handleCreateAnother">
+                <input type="button" class="back-link" value="View all activities" @click="handleViewAll" />
+            </div>
+        </div>
+    </PageContainer>
+</template>
+
+
 <script setup lang="ts">
 import ActivityForm from '@/components/activities/details/ActivityForm.vue';
 import PageContainer from '@/components/layout/base/PageContainer.vue';
@@ -6,7 +26,7 @@ import type { Activity } from '@/models/Activity';
 import type { SubmitResponse } from '@/models/auxillary/interfaces';
 import { useActivityStore } from '@/stores/activities';
 import RouteNames from '@/utils/constanses/RouteNames';
-import { reactive, ref, watch, type Ref } from 'vue';
+import { reactive, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 
@@ -59,26 +79,6 @@ const handleCreateActivity = async (activity: Activity) => {
 </script>
 
 
-<template>
-    <PageContainer>
-        <div class="create-activity-page">
-            {{ activityObject.title }}
-            <ResponseMessage v-if="submitResponse.isResponded" :is-error="!submitResponse.isSuccessful"
-                :message="submitResponse.message" />
-            <ActivityForm
-                v-if="!submitResponse.isResponded"
-                @submit-form="handleCreateActivity"
-                :activity-to-edit="activityObject" />
-            <div v-if="submitResponse.isResponded" class="back-link-container">
-                <input v-if="submitResponse.isSuccessful" class="back-link" type="button" value="Create another"
-                    @click="handleCreateAnother">
-                <input type="button" class="back-link" value="View all activities" @click="handleViewAll" />
-            </div>
-        </div>
-    </PageContainer>
-</template>
-
-
 <style scoped>
 @import url('@/styles/style.css');
 
@@ -90,11 +90,9 @@ const handleCreateActivity = async (activity: Activity) => {
 .back-link-container {
     width: 100%;
     margin-top: 20px;
+    column-gap: 20px;
 }
 
-.back-link-container input:first-of-type{
-    margin-right: 20px;
-}
 
 @media screen and (max-width: 1200px) {
     .create-activity-page {

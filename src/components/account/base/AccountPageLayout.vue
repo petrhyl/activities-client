@@ -44,7 +44,7 @@ const props = defineProps<{
     flex-direction: column;
     align-items: center;
     row-gap: 15px;
-    margin: auto auto 35px 15px;
+    margin-bottom: 35px;
 }
 
 .link-to-registration-login-container span {
@@ -53,7 +53,7 @@ const props = defineProps<{
 
 .login-registration-page {
     width: 50%;
-    margin: 5% auto auto auto;
+    margin: 3% auto auto auto;
 }
 
 @media screen and (max-width: 1200px) {

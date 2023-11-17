@@ -1,6 +1,12 @@
+<template>
+    <div class="response-message">
+        <span :class="getCssClass">{{ message }}</span>
+    </div>
+</template>
+
+
 <script setup lang="ts">
 import { computed, type ComputedRef } from 'vue';
-
 
 
 const props = withDefaults(defineProps<{
@@ -14,21 +20,15 @@ const getCssClass: ComputedRef<string> = computed(() => {
 </script>
 
 
-<template>
-    <div class="response-message">
-        <span :class="getCssClass">{{ message }}</span>
-    </div>
-</template>
-
-
 <style>
 .response-message {
     width: 100%;
+    display: flex;
+    justify-content: center;
     margin: 15px 0;
 }
 
 .response-message span {
-    width: 100%;
     font-size: 13pt;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-weight: 600;

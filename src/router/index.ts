@@ -29,13 +29,17 @@ export const router = createRouter({
             props: true,
             component: () => import('@/pages/activities/EditActivityPage.vue')
         },{
-            path: '/user/login',
+            path: '/account/login',
             name: RouteNames.LOGIN,
             component: () => import('@/pages/account/LoginPage.vue')
         },{
-            path: '/user/registration',
+            path: '/account/registration',
             name: RouteNames.REGISTERATION,
             component: () => import('@/pages/account/RegistrationPage.vue')
+        },{
+            path: '/account/profile',
+            name: RouteNames.USER_PROFILE,
+            component: () => import('@/pages/account/ProfilePage.vue')
         },{
             path: '/:notFound(.*)',
             name: RouteNames.NOT_FOUND,

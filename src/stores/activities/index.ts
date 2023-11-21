@@ -73,7 +73,7 @@ export const useActivityStore = defineStore('activityStore', () => {
      */
     const updateActivity = async (activityObject: Activity): Promise<FetchResponse> => {
         if (!activityObject.id) {
-            return { isSuccessful: false, errorMessage: 'You have to provide ID of the modifying object.' }
+            return { isSuccessful: false, errorMessage: 'You have to provide ID of the updating object.' }
         }
 
         const fetchParams: FetchDataParams<Activity, Activity> = {
@@ -82,7 +82,7 @@ export const useActivityStore = defineStore('activityStore', () => {
             headers: { 'Authorization': userStore.getCurrentUserToken }
         };
 
-        const response = await fetchData(fetchParams, DataObject.ACTIVITY, ApiEndpoints.ACTIVITY);
+        const response = await fetchData(fetchParams, DataObject.ACTIVITY, ApiEndpoints.ACTIVITY + '/' + activityObject.id);
 
         return {
             isSuccessful: response.isSuccessful,

@@ -48,8 +48,6 @@ export const fetchData = async <T, U>(params: FetchDataParams<T, U>, fetchingObj
         }
     }
 
-    console.log(parametrObject);
-
     try {
         const response = await fetch(apiEndpoint, parametrObject);
 
@@ -76,7 +74,7 @@ export const fetchData = async <T, U>(params: FetchDataParams<T, U>, fetchingObj
 
         let data: U | null = null;
 
-        if (response.body) {
+        if (response.status === 200) {
             data = await response.json();
         }
 

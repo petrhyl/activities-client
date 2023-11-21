@@ -1,3 +1,24 @@
+<template>
+    <PageContainer>
+        <div class="edit-activity-page">
+            <LoadActivity :activity-id="activityId">
+                <ResponseMessage v-if="submitResponse?.isResponded" :is-error="!submitResponse.isSuccessful"
+                :message="submitResponse.message" />
+                <ActivityForm v-if="!submitResponse"
+                    @refresh-form="handleRefreshForm"
+                    @submit-form="handleUpdateActivity"
+                    :activity-to-edit="activityToEdit"
+                />
+                <div v-if="submitResponse?.isResponded" class="back-link-container">
+                    <input v-if="submitResponse.isSuccessful" class="back-link" type="button" value="View updated Activity" @click="handleLinkClick(false)">
+                    <input class="back-link" type="button" value="Go back to all activities" @click="handleLinkClick(true)">
+                </div>
+            </LoadActivity>
+        </div>
+    </PageContainer>
+</template>
+
+
 <script setup lang="ts">
 import ActivityForm from '@/components/activities/details/ActivityForm.vue';
 import LoadActivity from '@/components/activities/details/LoadActivity.vue';
@@ -71,27 +92,6 @@ const handleUpdateActivity = async (activity: Activity) => {
 </script>
 
 
-<template>
-    <PageContainer>
-        <div class="edit-activity-page">
-            <LoadActivity :activity-id="activityId">
-                <ResponseMessage v-if="submitResponse?.isResponded" :is-error="!submitResponse.isSuccessful"
-                :message="submitResponse.message" />
-                <ActivityForm v-if="!submitResponse"
-                    @refresh-form="handleRefreshForm"
-                    @submit-form="handleUpdateActivity"
-                    :activity-to-edit="activityToEdit"
-                />
-                <div v-if="submitResponse?.isResponded" class="back-link-container">
-                    <input v-if="submitResponse.isSuccessful" class="back-link" type="button" value="View updated Activity" @click="handleLinkClick(false)">
-                    <input class="back-link" type="button" value="Go back to all activities" @click="handleLinkClick(true)">
-                </div>
-            </LoadActivity>
-        </div>
-    </PageContainer>
-</template>
-
-
 <style scoped>
 @import url('@/styles/style.css');
 
@@ -101,6 +101,9 @@ const handleUpdateActivity = async (activity: Activity) => {
 }
 
 .back-link-container {
+    display: flex;
+    justify-content: center;
+    column-gap: 25px;
     width: 100%;
     margin-top: 20px;
 }

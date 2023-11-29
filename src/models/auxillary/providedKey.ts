@@ -1,6 +1,6 @@
 import type { InjectionKey, Ref } from "vue";
 import type { Activity } from "../Activity";
-import type { WindowWidth } from "@/utils/constanses/OtherEnums";
+import type { WindowWidth } from "@/utils/constanses/enums";
 
 export const keyProvidedActivity = Symbol() as InjectionKey<Activity | null>;
 

@@ -52,17 +52,20 @@ export const fetchData = async <T, U>(params: FetchDataParams<T, U>, fetchingObj
         const response = await fetch(apiEndpoint, parametrObject);
 
         if (!response.ok) {
+            let message
             if (response.status >= 500) {
-                const message = 'There is an error on the server side. ' + getResponseErrorMessage(params.method, fetchingObject);
+                message = 'There is an error on the server side. ' + getResponseErrorMessage(params.method, fetchingObject);
                 throw new Error(message);
             }
 
             if (response.status === 401) {
-                throw new Error("Wrong login details.");
+                message = await response.text()                
+                throw new Error(`Wrong login details. ${message}`);
             }
 
             if (response.status === 400 || response.status === 422) {
-                throw new Error("Sorry, your entered data could not be processed.");
+                message = await response.text()
+                throw new Error(`Sorry, your entered data could not be processed. ${message}`);
             }
 
             if (response.status === 404) {

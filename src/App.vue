@@ -8,7 +8,7 @@
 
 
 <script setup lang="ts">
-import { type Ref, ref, onBeforeMount, provide } from 'vue';
+import { type Ref, ref, onBeforeMount, provide, type ComputedRef, computed, onMounted } from 'vue';
 import NavBar from './components/layout/base/NavBar.vue';
 import { WindowWidth } from './utils/constanses/enums';
 import { keyProvidedWindowWidth } from './models/auxillary/providedKey';
@@ -21,10 +21,14 @@ const currentWindowWidth: Ref<WindowWidth> = ref(WindowWidth.COMMON)
 
 provide(keyProvidedWindowWidth, currentWindowWidth)
 
-onBeforeMount(() => {
+onBeforeMount(() => {  
   addWindowWidthListeners()
   tryLogUserIn()
 });
+
+onMounted(()=>{
+  acertainWidth()  
+})
 
 const acertainWidth = () => {
   if (window.innerWidth <= WindowWidth.PHONE) {

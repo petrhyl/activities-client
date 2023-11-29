@@ -10,6 +10,7 @@ import { ref, type ComputedRef, type Ref, computed } from "vue";
 import { useRouter } from "vue-router";
 
 const tokenStorageKey = 'activityApiJwt'
+const usernameStorageKey = 'activityApiUser'
 
 export const useUserStore = defineStore('userStore', () => {
     const router = useRouter()
@@ -17,15 +18,20 @@ export const useUserStore = defineStore('userStore', () => {
     const user: Ref<User | null> = ref(null);
 
     const isLoggedIn: ComputedRef<boolean> = computed(() => {
-        return !!user.value;
+        const token = user.value?.token ?? localStorage.getItem(tokenStorageKey)
+        return token !== null && token !== ''
     });
+
+    const getCurrentUsername: ComputedRef<string> = computed(() => {
+        return user.value?.displayName ?? localStorage.getItem(usernameStorageKey) ?? ''
+    })
 
     const getCurrentUser: ComputedRef<User | null> = computed(() => {
         return user.value;
     });
 
     const getCurrentUserToken: ComputedRef<string | null> = computed(() => {
-        let token = user.value?.token ?? localStorage.getItem(tokenStorageKey)
+        const token = user.value?.token ?? localStorage.getItem(tokenStorageKey)
         return `Bearer ${token}`
     })
 
@@ -39,8 +45,7 @@ export const useUserStore = defineStore('userStore', () => {
         const response = await fetchData(fetchParams, DataObject.LOGIN, ApiEndpoints.USER_LOGIN);
 
         if (response.isSuccessful) {
-            user.value = response.data!;
-            localStorage.setItem(tokenStorageKey, response.data?.token ?? '')
+            saveUserData(response.data!)
         }
 
         return {
@@ -59,7 +64,7 @@ export const useUserStore = defineStore('userStore', () => {
         const response = await fetchData(fetchParams, DataObject.REGISTRATION, ApiEndpoints.USER_REGISTRATION);
 
         if (response.isSuccessful) {
-            user.value = response.data!;
+            saveUserData(response.data!)
         }
 
         return {
@@ -72,7 +77,7 @@ export const useUserStore = defineStore('userStore', () => {
         const fetchParams: FetchDataParams<null, User> = {
             method: HttpVerbs.GET,
             requestBody: null,
-            headers: {'Authorization' : getCurrentUserToken.value}
+            headers: { 'Authorization': getCurrentUserToken.value }
         };
 
         const response = await fetchData(fetchParams, DataObject.CURRENT_USER, ApiEndpoints.CURRENT_USER);
@@ -88,17 +93,25 @@ export const useUserStore = defineStore('userStore', () => {
         }
     }
 
-
     const logoutUser = async () => {
         localStorage.removeItem(tokenStorageKey)
+        localStorage.removeItem(usernameStorageKey)
         user.value = null
         router.push({ name: RouteNames.HOME })
+    }
+
+
+    const saveUserData = (userData: User) => {
+        user.value = userData;
+        localStorage.setItem(tokenStorageKey, userData.token ?? '')
+        localStorage.setItem(usernameStorageKey, userData.displayName)
     }
 
 
     return {
         getCurrentUser,
         isLoggedIn,
+        getCurrentUsername,
         getCurrentUserToken,
         loginUser,
         registerUser,

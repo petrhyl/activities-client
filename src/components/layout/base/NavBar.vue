@@ -7,10 +7,7 @@
             </RouterLink>
         </header>
         <div class="nav-menu">
-            <div v-if="currentWidth! <= WindowWidth.TABLET" class="nav-button-container">
-                <button class="nav-button">&#x2630;</button>
-            </div>
-            <div v-else class="menu-item-list">
+            <div v-if="currentWidth! > WindowWidth.TABLET" class="menu-item-list">
                 <RouterLink class="navigation-link" :to="{ name: RouteNames.ACTIVITIES }">Show Activities</RouterLink>
                 <RouterLink class="navigation-link" :to="{ name: RouteNames.CREATE_ACTIVITY }">Create New Activity
                 </RouterLink>
@@ -24,10 +21,13 @@
                 </div>
                 <div v-else class="account-link-container">
                     <input type="button" class="navigation-link account-link" @click="handleLogout" value="Log Out" />
-                    <RouterLink class="navigation-link account-link" :to="{name: RouteNames.USER_PROFILE }">
+                    <RouterLink class="navigation-link account-link" :to="{ name: RouteNames.USER_PROFILE }">
                         {{ getUserName }}
                     </RouterLink>
                 </div>
+            </div>
+            <div v-else class="nav-button-container">
+                <button class="nav-button">&#x2630;</button>
             </div>
         </div>
     </nav>
@@ -37,7 +37,7 @@
 <script setup lang="ts">
 import RouteNames from '@/utils/constanses/RouteNames';
 import { WindowWidth } from "@/utils/constanses/enums";
-import { inject, ref, watch, type Ref, computed, type ComputedRef } from 'vue';
+import { inject, ref, watch, type Ref, computed, type ComputedRef, onMounted } from 'vue';
 import { keyProvidedWindowWidth } from '@/models/auxillary/providedKey';
 import { storeToRefs } from 'pinia';
 import { useUserStore } from '@/stores/user';
@@ -45,17 +45,16 @@ import { useUserStore } from '@/stores/user';
 const currentWidth = inject(keyProvidedWindowWidth)
 
 const userStore = useUserStore()
-const { isLoggedIn, getCurrentUser } = storeToRefs(userStore)
+const { isLoggedIn, getCurrentUsername } = storeToRefs(userStore)
 
 const isUserLogged: Ref<boolean> = ref(isLoggedIn.value)
 
-const getUserName: ComputedRef<string> = computed(()=>{
-    const userName = getCurrentUser.value?.displayName ?? ''
-    return userName.length < 10 ? userName : userName.substring(0, 7) + '...' 
+const getUserName: ComputedRef<string> = computed(() => {
+    const userName = getCurrentUsername.value
+    return userName.length < 10 ? userName : userName.substring(0, 7) + '...'
 })
 
-
-const handleLogout = () =>{
+const handleLogout = () => {
     userStore.logoutUser()
 }
 

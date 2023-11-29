@@ -119,8 +119,8 @@ const handleValidateInput = (action: FormActions) => {
 }
 
 const validateForm = () => {
-    handleChangeValue(FormActions.email)
-    handleChangeValue(FormActions.password)
+    handleValidateInput(FormActions.email)
+    handleValidateInput(FormActions.password)
 
     if (!formInputs.email.isValid || !formInputs.password.isValid) {
         isFormValid.value = false

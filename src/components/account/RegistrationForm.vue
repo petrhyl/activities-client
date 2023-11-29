@@ -196,11 +196,11 @@ const handleValidateInput = (action: FormActions) => {
 }
 
 const validateForm = () => {
-    handleChangeValue(FormActions.userName)
-    handleChangeValue(FormActions.displayedName)
-    handleChangeValue(FormActions.email)
-    handleChangeValue(FormActions.password)
-    handleChangeValue(FormActions.passwordCheck)
+    handleValidateInput(FormActions.userName)
+    handleValidateInput(FormActions.displayedName)
+    handleValidateInput(FormActions.email)
+    handleValidateInput(FormActions.password)
+    handleValidateInput(FormActions.passwordCheck)
 
     if (!formInputs.userName.isValid
         || !formInputs.displayedName.isValid

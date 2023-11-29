@@ -294,6 +294,12 @@ const validateForm = () => {
     handleChangeValue(FormActions.CITY);
     handleChangeValue(FormActions.VENUE);
     handleChangeValue(FormActions.CATEGORY);
+    handleValidateComponent(FormActions.TITLE)
+    handleValidateComponent(FormActions.DESC)
+    handleValidateComponent(FormActions.DATE)
+    handleValidateComponent(FormActions.CITY)
+    handleValidateComponent(FormActions.VENUE)
+    handleValidateComponent(FormActions.CATEGORY)
     if (!formInputs.title.isValid) {
         isAnyInvalid = true;
     }

@@ -1,7 +1,7 @@
 <template>
     <ul class="grouped-list">
-        <li v-for="[group, activities] in groupedActivities">
-            <div class="grouped-date">{{ group }}</div>
+        <li v-for="[groupDate, activities] in groupedActivities">
+            <div class="grouped-date">{{ groupDate }}</div>
             <ActivityList
                 :activities="activities"
                 @on-delete-item="handleDeleteActivity"

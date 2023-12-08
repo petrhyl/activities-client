@@ -1,3 +1,5 @@
+import type { User } from "./User"
+
 export interface Activity {
   id?: string,
   title: string,
@@ -5,7 +7,8 @@ export interface Activity {
   description: string,
   category: ActivityCategory,
   city: string,
-  venue: string
+  venue: string,
+  attenders: Attendee[]
 }
 
 export interface ActivityCategory {
@@ -13,3 +16,8 @@ export interface ActivityCategory {
     name: string,
     value: string
  }
+
+export interface Attendee{
+  attender: User,
+  isHost: boolean
+}

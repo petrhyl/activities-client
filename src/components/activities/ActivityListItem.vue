@@ -6,7 +6,10 @@
             </div>
             <div class="title">
                 <h2>{{ activity.title }}</h2>
-                <div class="activity-hosted-by"><span>Hosted by </span><span class="activity-host">Bob</span></div>
+                <div class="activity-hosted-by">
+                    <span>Hosted by </span>
+                    <span class="activity-host">{{ getHostOfActivity?.attender.displayName }}</span>
+                </div>
             </div>
         </div>
         <div class="activity-content">
@@ -21,14 +24,16 @@
                 </div>
             </div>
         </div>
-        <div class="attendors">
-            attendors
+        <div class="activity-attendors">
+            <ActivityListItemAttendees v-if="activity.attenders.length > 0" :attendors="activity.attenders" />
         </div>
         <div class="activity-footer">
             <span class="activity-category">{{ activity.category.name }}</span>
             <div class="activity-footer-buttons">
-                <StyledButton :button-type="ButtonTypes.LINK" :link-to="getRouteLink" :css-class="getRoutLinkClass" text="View" />
-                <StyledButton :button-type="ButtonTypes.BUTTON" text="Delete" @click-button="emits('on-delete', activity.id!)" :css-class="getDeleteButtonClass"
+                <StyledButton :button-type="ButtonTypes.LINK" :link-to="getRouteLink" :css-class="getRoutLinkClass"
+                    text="View" />
+                <StyledButton :button-type="ButtonTypes.BUTTON" text="Delete"
+                    @click-button="emits('on-delete', activity.id!)" :css-class="getDeleteButtonClass"
                     :is-disabled="isDeleting" />
             </div>
         </div>
@@ -38,12 +43,13 @@
 
 <script setup lang="ts">
 import StyledButton from '@/components/layout/form/StyledButton.vue';
-import type { Activity } from '@/models/Activity';
+import type { Activity, Attendee } from '@/models/Activity';
 import ButtonTypes from '@/utils/constanses/ButtonTypes';
 import RouteNames from '@/utils/constanses/RouteNames';
 import { DateTimeToCzechFormat } from '@/utils/stateUndependentFunctions';
 import { computed, type ComputedRef } from 'vue';
 import { type LocationAsRelativeRaw } from 'vue-router';
+import ActivityListItemAttendees from './ActivityListItemAttendees.vue';
 
 
 const props = defineProps<{
@@ -64,7 +70,7 @@ const getRouteLink: ComputedRef<LocationAsRelativeRaw> = computed(() => {
     }
 });
 
-const getRoutLinkClass: ComputedRef<string> = computed(()=>{
+const getRoutLinkClass: ComputedRef<string> = computed(() => {
     let css = 'link';
 
     if (props.isDeleting) {
@@ -74,9 +80,9 @@ const getRoutLinkClass: ComputedRef<string> = computed(()=>{
     return css;
 });
 
-const getDeleteButtonClass: ComputedRef<string> = computed(()=>{
+const getDeleteButtonClass: ComputedRef<string> = computed(() => {
     let css = 'delete';
-    
+
     if (props.isDeleting) {
         css = `${css} disabled`;
     }
@@ -88,6 +94,10 @@ const dateTimeString: ComputedRef<string> = computed(() => {
     const d: Date = new Date(props.activity.beginDate);
     return DateTimeToCzechFormat(d);
 });
+
+const getHostOfActivity: ComputedRef<Attendee | undefined> = computed(() => {
+    return props.activity.attenders.find(a => a.isHost)
+})
 </script>
 
 
@@ -100,20 +110,18 @@ const dateTimeString: ComputedRef<string> = computed(() => {
 
 .activity-header {
     display: grid;
-    grid-template-columns: 1fr 6fr;
+    grid-template-columns: 1fr 7fr;
     gap: 5%;
+    margin-bottom: 20px;
+    padding: 5px 0px 0px 10px;
 }
 
 .activity-header h2 {
-    margin: 5px 0 10px 0px;
+    margin-bottom: 10px;
 }
 
 .activity-header h3 {
     margin: 0 0 auto 0;
-}
-
-.activity-header .user-image {
-    padding: 10px 20px 15px 5px;
 }
 
 .activity-header .user-image img {

@@ -1,7 +1,7 @@
 <template>
 <ul class="card activity-list">
     <li v-for="activity in props.activities" :key="activity.id">
-        <ActivityComponent 
+        <ActivityListItem 
         :activity="activity" 
         :key="activity.id"
          @on-delete="handleDeleteActivity"
@@ -12,7 +12,7 @@
 
 <script setup lang="ts">
 import type { Activity } from '@/models/Activity';
-import  ActivityComponent  from "./details/ActivityComponent.vue";
+import  ActivityListItem  from "./ActivityListItem.vue";
 import { ref, type Ref } from 'vue';
 
 

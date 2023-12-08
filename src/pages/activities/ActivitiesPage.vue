@@ -1,3 +1,23 @@
+<template>
+  <PageContainer>
+    <div class="activities-page">
+      <div class="grid-column">
+        <p v-if="errorMessage !== ''" class="error-message">{{ errorMessage }}</p>
+        <LoadingComponent v-if="!isLoaded" />
+        <ActivityGroupedList
+          :grouped-activities="getGroupedByDateActivities"
+          @on-delete-activity="handleDeleteActivity"
+          :is-deleting-activity="isActivityDeleting" />
+      </div>
+      <div>
+        <ActivityFilters />
+      </div>
+    </div>
+  </PageContainer>
+</template>
+
+
+
 <script setup lang="ts">
 import { onBeforeMount, ref, type Ref, provide } from 'vue';
 import { useActivityStore } from '@/stores/activities';
@@ -8,6 +28,7 @@ import LoadingComponent from '@/components/layout/LoadingComponent.vue';
 import ActivityGroupedList from '@/components/activities/ActivityGroupedList.vue';
 import PageContainer from '@/components/layout/base/PageContainer.vue';
 import ActivityFilters from '@/components/activities/ActivityFilters.vue';
+import { ScrollPageToTop } from '@/utils/stateUndependentFunctions';
 
 
 const activityStore = useActivityStore();
@@ -25,6 +46,7 @@ const handleDeleteActivity = async (idItem: string) => {
 
   if (!responseMessage.isSuccessful) {
     errorMessage.value = responseMessage.errorMessage!;
+    ScrollPageToTop()
   } else {
     if (router.currentRoute.value.name === RouteNames.ACTIVITY_DETAIL) {
       router.currentRoute.value.params.activityId === idItem;
@@ -53,24 +75,6 @@ onBeforeMount(async () => {
 });
 </script>
 
-
-<template>
-  <PageContainer>
-    <div class="activities-page">
-      <div class="grid-column">
-        <p v-if="errorMessage !== ''" class="error-message">{{ errorMessage }}</p>
-        <LoadingComponent v-if="!isLoaded" />
-        <ActivityGroupedList
-          :grouped-activities="getGroupedByDateActivities"
-          @on-delete-activity="handleDeleteActivity"
-          :is-deleting-activity="isActivityDeleting" />
-      </div>
-      <div>
-        <ActivityFilters />
-      </div>
-    </div>
-  </PageContainer>
-</template>
 
 
 <style scoped>

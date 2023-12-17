@@ -1,29 +1,30 @@
-import type { Login, User, UserRegistration } from "@/models/User";
+import type { ApplicationUser, Login, User, UserRegistration } from "@/models/User";
 import type { FetchDataParams, FetchResponse } from "@/models/auxillary/interfaces";
 import { ApiEndpoints } from "@/utils/constanses/ApiEndpoints";
 import HttpVerbs from "@/utils/constanses/HttpVerbs";
 import RouteNames from "@/utils/constanses/RouteNames";
 import { DataObject } from "@/utils/constanses/enums";
 import { fetchData } from "@/utils/fetchingFunction";
+import { getCookieValueByName, setCookie } from "@/utils/stateUndependentFunctions";
 import { defineStore } from "pinia";
 import { ref, type ComputedRef, type Ref, computed } from "vue";
 import { useRouter } from "vue-router";
 
-const tokenStorageKey = 'activityApiJwt'
-const usernameStorageKey = 'activityApiUser'
+const userCookieName = 'activityApplicationUser'
 
 export const useUserStore = defineStore('userStore', () => {
     const router = useRouter()
 
-    const user: Ref<User | null> = ref(null);
+    const user: Ref<User | null> = ref(null)
+    const applicationUser: Ref<ApplicationUser | null> = ref(null)
 
     const isLoggedIn: ComputedRef<boolean> = computed(() => {
-        const token = user.value?.token ?? localStorage.getItem(tokenStorageKey)
-        return token !== null && token !== ''
+        const token = user.value?.token ?? applicationUser.value?.secret
+        return !!token && token !== ''
     });
 
     const getCurrentUsername: ComputedRef<string> = computed(() => {
-        return user.value?.displayName ?? localStorage.getItem(usernameStorageKey) ?? ''
+        return user.value?.displayName ?? applicationUser.value?.name ?? ''
     })
 
     const getCurrentUser: ComputedRef<User | null> = computed(() => {
@@ -31,7 +32,7 @@ export const useUserStore = defineStore('userStore', () => {
     });
 
     const getCurrentUserToken: ComputedRef<string | null> = computed(() => {
-        const token = user.value?.token ?? localStorage.getItem(tokenStorageKey)
+        const token = user.value?.token ?? applicationUser.value?.secret
         return `Bearer ${token}`
     })
 
@@ -83,8 +84,7 @@ export const useUserStore = defineStore('userStore', () => {
         const response = await fetchData(fetchParams, DataObject.CURRENT_USER, ApiEndpoints.CURRENT_USER);
 
         if (response.isSuccessful) {
-            user.value = response.data!;
-            localStorage.setItem(tokenStorageKey, response.data?.token ?? '')
+            saveUserData(response.data!)
         }
 
         return {
@@ -94,17 +94,27 @@ export const useUserStore = defineStore('userStore', () => {
     }
 
     const logoutUser = async () => {
-        localStorage.removeItem(tokenStorageKey)
-        localStorage.removeItem(usernameStorageKey)
+        setCookie(userCookieName, '', new Date(0))
         user.value = null
+        applicationUser.value = null
         router.push({ name: RouteNames.HOME })
+    }
+
+    const loadApplicationUserFromCookies = () =>{
+        const userString = getCookieValueByName(userCookieName)
+        if (!userString || userString === '') {
+            applicationUser.value = null
+        }        
+        applicationUser.value = JSON.parse(userString)
     }
 
 
     const saveUserData = (userData: User) => {
         user.value = userData;
-        localStorage.setItem(tokenStorageKey, userData.token ?? '')
-        localStorage.setItem(usernameStorageKey, userData.displayName)
+        applicationUser.value = {name: userData.displayName, secret: userData.token}
+        let userCookieExpiresIn = new Date()
+        userCookieExpiresIn.setHours(userCookieExpiresIn.getHours() + 12)
+        setCookie(userCookieName, JSON.stringify(applicationUser.value), userCookieExpiresIn)
     }
 
 
@@ -116,6 +126,7 @@ export const useUserStore = defineStore('userStore', () => {
         loginUser,
         registerUser,
         logoutUser,
-        getCurrentUserByToken
+        getCurrentUserByToken,
+        loadApplicationUserFromCookies
     }
 });

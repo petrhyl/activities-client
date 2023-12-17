@@ -1,9 +1,13 @@
 <template>
     <div class="single-activity">
         <div class="activity-header">
-            <div class="user-image">
-                <img src="@/assets/user.png" alt="user">
-            </div>
+            <ImageComponent
+                css-clases="user-image"
+                :image-url="getHostOfActivity?.attender.imageUrl"
+                alternative-image-text="attender"
+                :use-alternative-element="true">
+                <img src="@/assets/user.png" alt="attender" />
+            </ImageComponent>
             <div class="title">
                 <h2>{{ activity.title }}</h2>
                 <div class="activity-hosted-by">
@@ -25,7 +29,7 @@
             </div>
         </div>
         <div class="activity-attendors">
-            <ActivityListItemAttendees v-if="activity.attenders.length > 0" :attendors="activity.attenders" />
+            <ActivityListItemAttendees v-if="activity.attenders.length > 0" :attenders="activity.attenders" />
         </div>
         <div class="activity-footer">
             <span class="activity-category">{{ activity.category.name }}</span>
@@ -49,7 +53,8 @@ import RouteNames from '@/utils/constanses/RouteNames';
 import { DateTimeToCzechFormat } from '@/utils/stateUndependentFunctions';
 import { computed, type ComputedRef } from 'vue';
 import { type LocationAsRelativeRaw } from 'vue-router';
-import ActivityListItemAttendees from './ActivityListItemAttendees.vue';
+import ActivityListItemAttendees from '@/components/activities/attenders/ActivityListItemAttendees.vue';
+import ImageComponent from '@/components/layout/ImageComponent.vue';
 
 
 const props = defineProps<{
@@ -104,8 +109,7 @@ const getHostOfActivity: ComputedRef<Attendee | undefined> = computed(() => {
 <style scoped>
 .single-activity {
     width: 100%;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #b8bdca;
+    padding: 15px;   
 }
 
 .activity-header {

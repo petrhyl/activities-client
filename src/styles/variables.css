@@ -6,6 +6,7 @@
     --gold-color: #d8cfad;
     --blue-color:#007bc3;
     --gradient-background: linear-gradient(80deg, var(--azure-color) 7%, var(--blue-color) 50%, var(--blue-color) 80%, var(--sky-color));
+    --swapped-gradient-background: linear-gradient(75deg, var(--sky-color) 10%, #1c7db4 60%, var(--azure-color));
     --warning-color: #bb0035;
     --dark-font-color: #201b2a;
 }

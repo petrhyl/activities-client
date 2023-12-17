@@ -50,8 +50,9 @@ const { isLoggedIn, getCurrentUsername } = storeToRefs(userStore)
 const isUserLogged: Ref<boolean> = ref(isLoggedIn.value)
 
 const getUserName: ComputedRef<string> = computed(() => {
-    const userName = getCurrentUsername.value
-    return userName.length < 10 ? userName : userName.substring(0, 7) + '...'
+    let userName = getCurrentUsername.value
+    userName = userName.length < 10 ? userName : userName.substring(0, 7) + '...'
+    return userName.length === 0 ? '.' : userName
 })
 
 const handleLogout = () => {

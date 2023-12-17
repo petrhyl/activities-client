@@ -22,8 +22,8 @@ const currentWindowWidth: Ref<WindowWidth> = ref(WindowWidth.COMMON)
 provide(keyProvidedWindowWidth, currentWindowWidth)
 
 onBeforeMount(() => {  
-  addWindowWidthListeners()
-  tryLogUserIn()
+  addWindowWidthListeners()  
+  userStore.loadApplicationUserFromCookies()
 });
 
 onMounted(()=>{
@@ -64,12 +64,6 @@ const addWindowWidthListeners = () => {
   });
 }
 
-const tryLogUserIn = () => {
-  const token = userStore.getCurrentUserToken
-  if (token) {
-    userStore.getCurrentUserByToken(token)
-  }
-}
 </script>
 
 
@@ -94,14 +88,6 @@ body {
 main {
   width: 75%;
   margin: 0 auto;
-}
-
-.card {
-  background-color: #f1f7fd;
-  box-shadow: 1px 1px 4px 1px #c8c8c8;
-  overflow: hidden;
-  border-radius: 5px;
-  padding: 12px 15px;
 }
 
 h1,

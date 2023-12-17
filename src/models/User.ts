@@ -17,3 +17,8 @@ export interface UserRegistration{
     displayName: string,
     userName: string
 }
+
+export interface ApplicationUser{
+    name: string,
+    secret: string
+}

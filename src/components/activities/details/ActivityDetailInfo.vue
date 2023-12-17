@@ -1,34 +1,37 @@
 <template>
-    <div class="image-background" :style="{ backgroundImage: 'url(' + headerImageUrl + ')' }">
-        <div class="main-info">
-            <h1>{{ title }}</h1>
-            <div class="date">{{ date }}</div>
-            <div class="info-detail">
-                <span>hosted by:</span>
-                <span>{{ hostedBy }}</span>
-            </div>
-            <div class="info-detail">
-                <span>category:</span>
-                <span>{{ category }}</span>
+    <CardLayout :use-padding="false">
+        <div class="image-background" :style="{ backgroundImage: 'url(' + headerImageUrl + ')' }">
+            <div class="main-info">
+                <h1>{{ title }}</h1>
+                <div class="date">{{ date }}</div>
+                <div class="info-detail">
+                    <span>hosted by:</span>
+                    <span>{{ hostedBy }}</span>
+                </div>
+                <div class="info-detail">
+                    <span>category:</span>
+                    <span>{{ category }}</span>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="header-buttons">
-        <div class="user-actions">
-            <StyledButton css-class="join" :button-type="ButtonTypes.BUTTON" @click-button="emits('join-activity')"
+        <div class="header-buttons">
+            <div class="user-actions">
+                <StyledButton css-class="join" :button-type="ButtonTypes.BUTTON" @click-button="emits('join-activity')"
                 :text="'Join Activity'" />
-            <StyledButton css-class="cancel" :button-type="ButtonTypes.BUTTON" @click-button="emits('cancel-attendance')"
+                <StyledButton css-class="cancel" :button-type="ButtonTypes.BUTTON" @click-button="emits('cancel-attendance')"
                 :text="'Cancel Attendance'" />
-        </div>
-        <div class="edit-button">
-            <StyledButton css-class="edit" :button-type="ButtonTypes.BUTTON" @click-button="emits('triger-edit')"
+            </div>
+            <div class="edit-button">
+                <StyledButton css-class="edit" :button-type="ButtonTypes.BUTTON" @click-button="emits('triger-edit')"
                 :text="'Manage Event'" />
+            </div>
         </div>
-    </div>
+    </CardLayout>
 </template>
 
 
 <script setup lang="ts">
+import CardLayout from '@/components/layout/base/CardLayout.vue';
 import StyledButton from '@/components/layout/form/StyledButton.vue';
 import ButtonTypes from '@/utils/constanses/ButtonTypes';
 
@@ -50,7 +53,69 @@ const emits = defineEmits<{
 </script>
 
 
+
 <style>
+
+.user-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+@media screen and (max-width: 1200px) {
+   
+    .user-actions {
+        width: 100%;
+    }
+
+    .edit-button {
+        display: grid;
+        width: calc(50% - 8px);
+    }
+}
+
+@media screen and (max-width: 670px) {
+    .edit-button {
+        width: 100%;
+    }
+
+    .user-actions {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+.user-actions .join {
+    color: #2c2a2a;
+    background-color: var(--sky-color);
+}
+
+.user-actions .cancel {
+    color: #e2e2e2;
+    background-color: #8da2ae;
+}
+
+.user-actions .join:hover {
+    background-color: #93d8ff;
+}
+
+.user-actions .cancel:hover {
+    background-color: #a4b7c2;
+}
+
+.edit-button .edit {
+    color: #2c2a2a;
+    background-color: #ff8c4e;
+}
+
+.edit-button .edit:hover {
+    color: #2c2a2a;
+    background-color: #ff9b65;
+}
+</style>
+
+
+<style scoped>
 .image-background {
     position: relative;
     width: 100%;
@@ -59,7 +124,6 @@ const emits = defineEmits<{
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
     overflow: hidden;
-    margin-bottom: 15px;
 }
 
 .main-info {
@@ -93,7 +157,7 @@ const emits = defineEmits<{
     display: flex;
     flex-direction: column;
     font-family: 'Lucida Sans', Geneva, Verdana, sans-serif;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
 .main-info .info-detail span:first-child {
@@ -105,14 +169,7 @@ const emits = defineEmits<{
 .header-buttons {
     display: flex;
     justify-content: space-between;
-    padding: 0 15px;
-}
-
-
-.user-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
+    padding: 15px;
 }
 
 @media screen and (max-width: 1200px) {
@@ -121,7 +178,21 @@ const emits = defineEmits<{
         row-gap: 15px;
         align-items: end;
     }
+}
 
+</style>
+
+
+<style>
+
+.user-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+@media screen and (max-width: 1200px) {
+   
     .user-actions {
         width: 100%;
     }
@@ -142,9 +213,7 @@ const emits = defineEmits<{
         flex-direction: column;
     }
 }
-</style>
 
-<style>
 .user-actions .join {
     color: #2c2a2a;
     background-color: var(--sky-color);

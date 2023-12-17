@@ -4,11 +4,12 @@ import ContributionComponent from './ContributionComponent.vue';
 import StyledButton from '@/components/layout/form/StyledButton.vue';
 import ButtonTypes from '@/utils/constanses/ButtonTypes';
 import { ref, type Ref } from 'vue';
+import CardLayout from '@/components/layout/base/CardLayout.vue';
 
 
 const invalidMessage: Ref<string> = ref('');
 
-    
+
 const handleSubmit = () => {
 
 }
@@ -17,43 +18,35 @@ const handleSubmit = () => {
 
 
 <template>
-    <h3 class="chat-title">Chat about this event</h3>
-    <div class="chat-content">
-        <ul class="contributions">
-            <li>
-                <ContributionComponent
-                    :id="'4'"
-                    :contributor-name="'d'"
-                    :date-of-contibution="new Date()"
-                    :message="'f'" />
-            </li>
-        </ul>
-        <div class="comment">
-            <FormLayout form-styles="form" :on-submit-form="handleSubmit" :invalid-message="invalidMessage">
-                <textarea class="text" rows="7"></textarea>
-                <StyledButton :css-class="'button-add'" :button-type="ButtonTypes.SUBMIT" :text="'Add Reply'"
-                    @click-button="handleSubmit" />
-            </FormLayout>
+    <CardLayout :header-text="'Chat about this event'" :use-padding="false">
+        <div class="chat-content">
+            <ul class="contributions">
+                <li>
+                    <ContributionComponent
+                        :id="'4'"
+                        :contributor-name="'d'"
+                        :date-of-contibution="new Date()"
+                        :message="'f'" />
+                </li>
+            </ul>
+            <div class="comment">
+                <FormLayout form-styles="form" :on-submit-form="handleSubmit" :invalid-message="invalidMessage">
+                    <textarea class="text" rows="7"></textarea>
+                    <StyledButton :css-class="'button-add'" :button-type="ButtonTypes.SUBMIT" :text="'Add Reply'"
+                        @click-button="handleSubmit" />
+                </FormLayout>
+            </div>
         </div>
-    </div>
+    </CardLayout>
 </template>
 
 
 <style scoped>
-.chat-title {
-    width: 100%;
-    text-align: center;
-    font-family: 'Lucida Sans', Geneva, Verdana, sans-serif;
-    color: var(--light-gold-color);
-    background: var(--gradient-background);
-    margin: 0;
-    padding: 10px 0;
-}
 
 ul.contributions {
     list-style: none;
     padding: 0;
-    margin: 15px 15px;
+    margin: 15px;
 }
 
 .text {

@@ -63,6 +63,11 @@ export const fetchData = async <T, U>(params: FetchDataParams<T, U>, fetchingObj
                 throw new Error(`Wrong login details. ${message}`);
             }
 
+            if (response.status === 403) {
+                message = await response.text()                
+                throw new Error(`You are not logged in or you don't have sufficient privilege. ${message}`);
+            }
+
             if (response.status === 400 || response.status === 422) {
                 message = await response.text()
                 throw new Error(`Sorry, your entered data could not be processed. ${message}`);
@@ -71,7 +76,7 @@ export const fetchData = async <T, U>(params: FetchDataParams<T, U>, fetchingObj
             if (response.status === 404) {
                 throw new Error("The specific request was not found.")
             }
-
+            
             throw new Error("Something went wrong.")
         }
 

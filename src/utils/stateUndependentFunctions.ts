@@ -65,3 +65,24 @@ export const defineChangeOfInput = (formInput: FormInputToValidate) => {
         formInput.warning = '';
     }
 }
+
+
+export const getCookieValueByName = (cookieName: string) : string => {
+    let nameWithEqualSign = cookieName + "=";
+    let decodedCookie = decodeURIComponent(document.cookie);
+    let splitedCookies = decodedCookie.split(';');
+    for(let i = 0; i <splitedCookies.length; i++) {
+      let singleCookie = splitedCookies[i];
+      while (singleCookie.charAt(0) == ' ') {
+        singleCookie = singleCookie.substring(1);
+      }
+      if (singleCookie.indexOf(nameWithEqualSign) !== -1) {
+        return singleCookie.substring(nameWithEqualSign.length, singleCookie.length);
+      }
+    }
+    return "";
+}
+
+export const setCookie = (cookieName: string, valueAsString: string, expiresIn: Date) :void => {
+    document.cookie = `${cookieName}=${valueAsString};expires=${expiresIn.toUTCString()};path=/`
+}

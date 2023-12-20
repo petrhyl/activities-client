@@ -20,13 +20,16 @@ const props = defineProps<{
 
 
 <style scoped>
-
 .attender-list{
     list-style: none;
     display: flex;
     flex-wrap: wrap;
     column-gap: 25px;
     padding: 0;
+}
+
+.attender-list li{
+    margin-bottom: 7px;
 }
 
 </style>

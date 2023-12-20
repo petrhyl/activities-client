@@ -97,6 +97,10 @@ h3 {
   margin: 0;
 }
 
+a{
+  text-decoration: none;
+}
+
 .form-input-element {
     width: 100%;
     font-family: Verdana, Geneva, Tahoma, sans-serif;

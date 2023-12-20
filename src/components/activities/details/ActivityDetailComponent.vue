@@ -1,6 +1,6 @@
 <template>
     <div class="detail-component" v-if="getActivity">
-        <div class="grid-column">
+        <div class="page-section">
             <div class="detail-header">
                 <ActivityDetailInfo
                     :header-image-url="getImageLocation"
@@ -8,6 +8,9 @@
                     :date="dateTimeString"
                     :category="getActivity.category.name"
                     :hosted-by="getHostName"
+                    :is-hosted-by-current-user="isHostedByCurrentUser"
+                    :is-joined-by-current-user="isJoinedByCurrentUser"
+                    :is-current-user-logged-in="isLoggedIn"
                     @cancel-attendance="handleCancelAttendance"
                     @join-activity="handleJoinActivity"
                     @triger-edit="handleEdit" />
@@ -32,7 +35,7 @@
                 <ActivityChat />
             </div>
         </div>
-        <div class="grid-column">
+        <div class="page-section">
             <ActivityDetailAttendees :attenders="getActivity.attenders" />
         </div>
     </div>
@@ -44,19 +47,21 @@ import { useActivityStore } from '@/stores/activities';
 import { DateTimeToCzechFormat } from '@/utils/stateUndependentFunctions';
 import { storeToRefs } from 'pinia';
 import { computed, type ComputedRef } from 'vue';
-import ActivityDetailInfo from './ActivityDetailInfo.vue';
+import ActivityDetailInfo from '@/components/activities/details/info/ActivityDetailInfo.vue';
 import RowWithImageIcon from '@/components/layout/RowWithImageIcon.vue';
 import ActivityChat from './chat/ActivityChat.vue';
 import { useRouter } from 'vue-router';
 import RouteNames from '@/utils/constanses/RouteNames';
 import ActivityDetailAttendees from '../attenders/ActivityDetailAttendees.vue';
 import CardLayout from '@/components/layout/base/CardLayout.vue';
+import { useUserStore } from '@/stores/user';
 
 
 const activityStore = useActivityStore();
 const router = useRouter();
 
 const { getActivity } = storeToRefs(activityStore);
+const { getCurrentUsername, isLoggedIn } = storeToRefs(useUserStore())
 
 const dateTimeString: ComputedRef<string> = computed(() => {
     const d: Date = new Date(getActivity.value?.beginDate ?? 0);
@@ -71,6 +76,13 @@ const getHostName: ComputedRef<string> = computed(() => {
     return getActivity.value?.attenders.find(a => a.isHost)?.attender.displayName ?? '';
 });
 
+const isHostedByCurrentUser: ComputedRef<boolean> = computed(() => {
+    return getActivity.value?.attenders.some(a => a.isHost && a.attender.username === getCurrentUsername.value) ?? false
+})
+
+const isJoinedByCurrentUser: ComputedRef<boolean> = computed(()=>{
+    return getActivity.value?.attenders.some(a=> a.attender.username === getCurrentUsername.value && !a.isHost) ?? false
+})
 
 const handleCancelAttendance = () => {
 
@@ -98,7 +110,7 @@ const handleEdit = () => {
     column-gap: 20px;
 }
 
-.grid-column {
+.page-section {
     display: flex;
     flex-direction: column;
     row-gap: 20px;

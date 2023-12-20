@@ -2,7 +2,9 @@
     <CardLayout header-text="Attenders" :has-header-small-title="true">
         <ul class="attender-list">
             <li v-for="attendee in attenders">
-                <AttenderComponent :attendee="attendee" :attenders-picture-size="50" />
+                <RouterLink :to="{ name: RouteNames.USER_PROFILE, params: { username: attendee.attender.username } }">
+                    <AttenderComponent :attendee="attendee" :attenders-picture-size="50" />
+                </RouterLink>
                 <div v-if="attendee.isHost" class="host-flag">Host</div>
             </li>
         </ul>
@@ -14,11 +16,13 @@
 import type { Attendee } from '@/models/Activity';
 import AttenderComponent from './AttenderComponent.vue';
 import CardLayout from '@/components/layout/base/CardLayout.vue';
+import RouteNames from '@/utils/constanses/RouteNames';
 
 
 const props = defineProps<{
     attenders: Attendee[]
 }>();
+
 
 </script>
 
@@ -40,7 +44,7 @@ ul.attender-list {
 .host-flag {
     position: absolute;
     top: 10%;
-    right: -15px;
+    right: -18px;
     background-color: #ff8c4e;
     padding: 2px 7px;
     z-index: 5;

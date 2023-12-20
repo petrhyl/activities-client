@@ -19,6 +19,7 @@ export interface UserRegistration{
 }
 
 export interface ApplicationUser{
-    name: string,
+    identification: string,
+    displayName: string,
     secret: string
 }

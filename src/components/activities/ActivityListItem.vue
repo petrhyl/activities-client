@@ -14,6 +14,9 @@
                     <span>Hosted by </span>
                     <span class="activity-host">{{ getHostOfActivity?.attender.displayName }}</span>
                 </div>
+                <div v-if="isHostedByCurrentUser" class="current-user-host">
+                    <span>Hosting</span>
+                </div>
             </div>
         </div>
         <div class="activity-content">
@@ -33,10 +36,10 @@
         </div>
         <div class="activity-footer">
             <span class="activity-category">{{ activity.category.name }}</span>
-            <div class="activity-footer-buttons">
+            <div :class="getButtonWrapperClass">
                 <StyledButton :button-type="ButtonTypes.LINK" :link-to="getRouteLink" :css-class="getRoutLinkClass"
                     text="View" />
-                <StyledButton :button-type="ButtonTypes.BUTTON" text="Delete"
+                <StyledButton v-if="isHostedByCurrentUser" :button-type="ButtonTypes.BUTTON" text="Delete"
                     @click-button="emits('on-delete', activity.id!)" :css-class="getDeleteButtonClass"
                     :is-disabled="isDeleting" />
             </div>
@@ -55,16 +58,23 @@ import { computed, type ComputedRef } from 'vue';
 import { type LocationAsRelativeRaw } from 'vue-router';
 import ActivityListItemAttendees from '@/components/activities/attenders/ActivityListItemAttendees.vue';
 import ImageComponent from '@/components/layout/ImageComponent.vue';
+import { useUserStore } from '@/stores/user';
+import { storeToRefs } from 'pinia';
 
 
 const props = defineProps<{
     activity: Activity,
     isDeleting: boolean
-}>();
+}>()
 
 const emits = defineEmits<{
     (e: 'on-delete', activityId: string): void
-}>();
+}>()
+
+const userStore = useUserStore()
+
+
+const { getCurrentUsername } = storeToRefs(userStore)
 
 const getRouteLink: ComputedRef<LocationAsRelativeRaw> = computed(() => {
     return {
@@ -73,7 +83,7 @@ const getRouteLink: ComputedRef<LocationAsRelativeRaw> = computed(() => {
             activityId: props.activity.id!
         }
     }
-});
+})
 
 const getRoutLinkClass: ComputedRef<string> = computed(() => {
     let css = 'link';
@@ -83,7 +93,7 @@ const getRoutLinkClass: ComputedRef<string> = computed(() => {
     }
 
     return css;
-});
+})
 
 const getDeleteButtonClass: ComputedRef<string> = computed(() => {
     let css = 'delete';
@@ -93,23 +103,33 @@ const getDeleteButtonClass: ComputedRef<string> = computed(() => {
     }
 
     return css;
-});
+})
+
+const getButtonWrapperClass: ComputedRef<string> = computed(() => {
+    return isHostedByCurrentUser.value ? 'activity-footer-buttons' : 'activity-footer-detail-link'
+})
 
 const dateTimeString: ComputedRef<string> = computed(() => {
     const d: Date = new Date(props.activity.beginDate);
     return DateTimeToCzechFormat(d);
-});
+})
 
 const getHostOfActivity: ComputedRef<Attendee | undefined> = computed(() => {
     return props.activity.attenders.find(a => a.isHost)
 })
+
+const isHostedByCurrentUser: ComputedRef<boolean> = computed(() => {
+    const hostName = getHostOfActivity.value?.attender.username
+    return !!hostName && getCurrentUsername.value === hostName
+})
+
 </script>
 
 
 <style scoped>
 .single-activity {
     width: 100%;
-    padding: 15px;   
+    padding: 15px;
 }
 
 .activity-header {
@@ -133,6 +153,30 @@ const getHostOfActivity: ComputedRef<Attendee | undefined> = computed(() => {
     height: auto;
     margin: auto;
     border-radius: 50%;
+}
+
+.activity-header .title {
+    display: flex;
+    flex-direction: column;
+}
+
+.activity-hosted-by {
+    margin-bottom: 10px;
+}
+
+.current-user-host {
+    display: flex;
+}
+
+.current-user-host span {
+    width: fit-content;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 11pt;
+    font-weight: 600;
+    color: var(--sky-color);
+    border: 2px solid var(--sky-color);
+    border-radius: 5px;
+    padding: 5px 7px;
 }
 
 .activity-content {
@@ -166,6 +210,13 @@ img.icon {
     color: rgb(103, 92, 92);
 }
 
+.activity-attendors {
+    padding: 10px 10px 3px 10px;
+    background-color: #e3f0f4;
+    border: 1px solid #cddce0;
+    border-radius: 5px;
+}
+
 .activity-category {
     padding: 7px 12px;
     border: 1px solid gray;
@@ -177,6 +228,10 @@ img.icon {
     display: flex;
     justify-content: space-between;
     margin-top: 15px;
+}
+
+.activity-footer-detail-link{
+    display: flex;
 }
 
 .activity-footer-buttons {
@@ -208,10 +263,17 @@ img.icon {
 </style>
 
 <style>
+.activity-footer-detail-link .link,
 .activity-footer-buttons .link {
     text-decoration: none;
-    color: rgb(110, 2, 134);
+    color: #6e0286;
     background: linear-gradient(90deg, #abfee2 10%, #8bd3fd);
+}
+
+.activity-footer-detail-link .link:hover,
+.activity-footer-buttons .link:hover {
+    color: #8b1fa3;
+    box-shadow: 0 0 3px 0px var(--blue-color) inset;
 }
 
 .activity-footer-buttons .delete {

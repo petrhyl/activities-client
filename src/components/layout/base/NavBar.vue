@@ -9,7 +9,7 @@
         <div class="nav-menu">
             <div v-if="currentWidth! > WindowWidth.TABLET" class="menu-item-list">
                 <RouterLink class="navigation-link" :to="{ name: RouteNames.ACTIVITIES }">Show Activities</RouterLink>
-                <RouterLink class="navigation-link" :to="{ name: RouteNames.CREATE_ACTIVITY }">Create New Activity
+                <RouterLink v-if="isLoggedIn" class="navigation-link" :to="{ name: RouteNames.CREATE_ACTIVITY }">Create New Activity
                 </RouterLink>
                 <div v-if="!isUserLogged" class="account-link-container">
                     <RouterLink class="navigation-link account-link" :to="{ name: RouteNames.LOGIN }">
@@ -21,7 +21,9 @@
                 </div>
                 <div v-else class="account-link-container">
                     <input type="button" class="navigation-link account-link" @click="handleLogout" value="Log Out" />
-                    <RouterLink class="navigation-link account-link" :to="{ name: RouteNames.USER_PROFILE }">
+                    <RouterLink
+                        class="navigation-link account-link"
+                        :to="{ name: RouteNames.USER_PROFILE, params: { username: getCurrentUsername } }">
                         {{ getUserName }}
                     </RouterLink>
                 </div>
@@ -45,12 +47,12 @@ import { useUserStore } from '@/stores/user';
 const currentWidth = inject(keyProvidedWindowWidth)
 
 const userStore = useUserStore()
-const { isLoggedIn, getCurrentUsername } = storeToRefs(userStore)
+const { isLoggedIn, getCurrentUsername, getCurrentUserDisplayName } = storeToRefs(userStore)
 
 const isUserLogged: Ref<boolean> = ref(isLoggedIn.value)
 
 const getUserName: ComputedRef<string> = computed(() => {
-    let userName = getCurrentUsername.value
+    let userName = getCurrentUserDisplayName.value
     userName = userName.length < 10 ? userName : userName.substring(0, 7) + '...'
     return userName.length === 0 ? '.' : userName
 })
@@ -83,7 +85,7 @@ header {
 h1 {
     font-family: Geneva, Verdana, sans-serif;
     font-size: 22pt;
-    color: #001a68;
+    color: var(--dark-blue-color);
     margin: auto;
 }
 

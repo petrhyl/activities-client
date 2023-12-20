@@ -8,6 +8,7 @@ export interface Activity {
   category: ActivityCategory,
   city: string,
   venue: string,
+  isActive: boolean,
   attenders: Attendee[]
 }
 

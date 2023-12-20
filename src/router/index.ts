@@ -37,9 +37,10 @@ export const router = createRouter({
             name: RouteNames.REGISTERATION,
             component: () => import('@/pages/account/RegistrationPage.vue')
         },{
-            path: '/account/profile',
+            path: '/account/profile/:username',
             name: RouteNames.USER_PROFILE,
-            component: () => import('@/pages/account/ProfilePage.vue')
+            props: true,
+            component: () => import('@/pages/account/ProfilePage.vue'),            
         },{
             path: '/:notFound(.*)',
             name: RouteNames.NOT_FOUND,

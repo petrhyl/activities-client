@@ -23,11 +23,15 @@ export const useUserStore = defineStore('userStore', () => {
         return !!token && token !== ''
     });
 
-    const getCurrentUsername: ComputedRef<string> = computed(() => {
-        return user.value?.displayName ?? applicationUser.value?.name ?? ''
+    const getCurrentUserDisplayName: ComputedRef<string> = computed(() => {
+        return user.value?.displayName ?? applicationUser.value?.displayName ?? ''
     })
 
-    const getCurrentUser: ComputedRef<User | null> = computed(() => {
+    const getCurrentUsername: ComputedRef<string> = computed(()=>{
+        return user.value?.username ?? applicationUser.value?.identification ?? ''
+    })
+
+    const getCurrentUserAfterLogIn: ComputedRef<User | null> = computed(() => {
         return user.value;
     });
 
@@ -104,14 +108,17 @@ export const useUserStore = defineStore('userStore', () => {
         const userString = getCookieValueByName(userCookieName)
         if (!userString || userString === '') {
             applicationUser.value = null
-        }        
+
+            return;
+        }    
+
         applicationUser.value = JSON.parse(userString)
     }
 
 
     const saveUserData = (userData: User) => {
         user.value = userData;
-        applicationUser.value = {name: userData.displayName, secret: userData.token}
+        applicationUser.value = {identification: userData.username, displayName: userData.displayName, secret: userData.token}
         let userCookieExpiresIn = new Date()
         userCookieExpiresIn.setHours(userCookieExpiresIn.getHours() + 12)
         setCookie(userCookieName, JSON.stringify(applicationUser.value), userCookieExpiresIn)
@@ -119,8 +126,9 @@ export const useUserStore = defineStore('userStore', () => {
 
 
     return {
-        getCurrentUser,
+        getCurrentUserAfterLogIn,
         isLoggedIn,
+        getCurrentUserDisplayName,
         getCurrentUsername,
         getCurrentUserToken,
         loginUser,

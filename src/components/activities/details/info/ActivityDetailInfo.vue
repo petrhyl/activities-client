@@ -15,15 +15,31 @@
             </div>
         </div>
         <div class="header-buttons">
-            <div class="user-actions">
-                <StyledButton css-class="join" :button-type="ButtonTypes.BUTTON" @click-button="emits('join-activity')"
-                :text="'Join Activity'" />
-                <StyledButton css-class="cancel" :button-type="ButtonTypes.BUTTON" @click-button="emits('cancel-attendance')"
-                :text="'Cancel Attendance'" />
-            </div>
-            <div class="edit-button">
-                <StyledButton css-class="edit" :button-type="ButtonTypes.BUTTON" @click-button="emits('triger-edit')"
-                :text="'Manage Event'" />
+            <template v-if="isCurrentUserLoggedIn">
+                <div v-if="isHostedByCurrentUser" class="user-actions">
+                    <StyledButton
+                        css-class="user-action-button edit"
+                        :button-type="ButtonTypes.BUTTON"
+                        @click-button="emits('triger-edit')"
+                        :text="'Manage Event'" />
+                </div>
+                <div v-else class="user-actions">
+                    <StyledButton
+                        v-if="isJoinedByCurrentUser"
+                        css-class="user-action-button cancel"
+                        :button-type="ButtonTypes.BUTTON"
+                        @click-button="emits('cancel-attendance')"
+                        :text="'Cancel Attendance'" />
+                    <StyledButton
+                        v-else
+                        css-class="user-action-button join"
+                        :button-type="ButtonTypes.BUTTON"
+                        @click-button="emits('join-activity')"
+                        :text="'Join Activity'" />
+                </div>
+            </template>
+            <div v-else class="unlogged-user-message">
+                Go to 'Log In' if you want to join this activity.
             </div>
         </div>
     </CardLayout>
@@ -41,7 +57,10 @@ const props = defineProps<{
     title: string,
     date: string,
     hostedBy: string,
-    category: string
+    category: string,
+    isHostedByCurrentUser: boolean,
+    isJoinedByCurrentUser: boolean,
+    isCurrentUserLoggedIn: boolean
 }>();
 
 const emits = defineEmits<{
@@ -55,34 +74,14 @@ const emits = defineEmits<{
 
 
 <style>
-
 .user-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
+    width: 100%;
+    display: flex;
+    justify-content: end;
 }
 
-@media screen and (max-width: 1200px) {
-   
-    .user-actions {
-        width: 100%;
-    }
-
-    .edit-button {
-        display: grid;
-        width: calc(50% - 8px);
-    }
-}
-
-@media screen and (max-width: 670px) {
-    .edit-button {
-        width: 100%;
-    }
-
-    .user-actions {
-        display: flex;
-        flex-direction: column;
-    }
+.user-action-button {
+    width: 50%;
 }
 
 .user-actions .join {
@@ -103,14 +102,21 @@ const emits = defineEmits<{
     background-color: #a4b7c2;
 }
 
-.edit-button .edit {
+.user-actions .edit {
     color: #2c2a2a;
     background-color: #ff8c4e;
 }
 
-.edit-button .edit:hover {
+.user-actions .edit:hover {
     color: #2c2a2a;
     background-color: #ff9b65;
+}
+
+@media screen and (max-width: 670px) {
+    .user-actions {
+        display: flex;
+        flex-direction: column;
+    }
 }
 </style>
 
@@ -144,7 +150,7 @@ const emits = defineEmits<{
 
 .main-info h1,
 .main-info span,
-.main-info div{
+.main-info div {
     color: #f5f5e5;
 }
 
@@ -168,77 +174,15 @@ const emits = defineEmits<{
 
 .header-buttons {
     display: flex;
-    justify-content: space-between;
+    justify-content: end;
     padding: 15px;
 }
 
-@media screen and (max-width: 1200px) {
-    .header-buttons {
-        flex-direction: column;
-        row-gap: 15px;
-        align-items: end;
-    }
-}
-
-</style>
-
-
-<style>
-
-.user-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-}
-
-@media screen and (max-width: 1200px) {
-   
-    .user-actions {
-        width: 100%;
-    }
-
-    .edit-button {
-        display: grid;
-        width: calc(50% - 8px);
-    }
-}
-
-@media screen and (max-width: 670px) {
-    .edit-button {
-        width: 100%;
-    }
-
-    .user-actions {
-        display: flex;
-        flex-direction: column;
-    }
-}
-
-.user-actions .join {
-    color: #2c2a2a;
-    background-color: var(--sky-color);
-}
-
-.user-actions .cancel {
-    color: #e2e2e2;
-    background-color: #8da2ae;
-}
-
-.user-actions .join:hover {
-    background-color: #93d8ff;
-}
-
-.user-actions .cancel:hover {
-    background-color: #a4b7c2;
-}
-
-.edit-button .edit {
-    color: #2c2a2a;
-    background-color: #ff8c4e;
-}
-
-.edit-button .edit:hover {
-    color: #2c2a2a;
-    background-color: #ff9b65;
+.unlogged-user-message {
+    font-family: 'Gill Sans', Calibri, sans-serif;
+    font-weight: 600;
+    font-size: 13pt;
+    color: var(--dark-blue-color);
 }
 </style>
+

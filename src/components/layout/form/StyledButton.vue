@@ -23,7 +23,16 @@ const emits = defineEmits<{
 }>();
 
 const getCssClass: ComputedRef<{}> = computed(() => {
-    return `ordinary-button ${props.cssClass ?? ''}`;
+    let css = 'ordinary-button'
+    if (props.cssClass) {
+        css += ` ${props.cssClass}`   
+    }
+
+    if (props.isDisabled) {
+        css += ' button-disabled'
+    }
+
+    return css
 });
 
 const getType: ComputedRef<string> = computed(() => {
@@ -32,14 +41,6 @@ const getType: ComputedRef<string> = computed(() => {
 
 const isLink: ComputedRef<boolean> = computed(() => {
     return props.buttonType === ButtonTypes.LINK;
-});
-
-const isButtonDisabled: ComputedRef<boolean> = computed(()=>{
-    if (props.isDisabled === undefined || props.isDisabled === null) {
-        return false;
-    }
-
-    return props.isDisabled;
 });
 
 </script>
@@ -58,5 +59,10 @@ const isButtonDisabled: ComputedRef<boolean> = computed(()=>{
     border-radius: 5px;
     padding: 8px 15px;
     cursor: pointer;
+}
+
+.ordinary-button.button-disabled{
+    opacity: 0.6;
+    pointer-events: none;
 }
 </style>

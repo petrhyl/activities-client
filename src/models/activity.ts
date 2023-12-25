@@ -1,7 +1,7 @@
 import type { User } from "./User"
 
 export interface Activity {
-  id?: string,
+  id: string,
   title: string,
   beginDate: Date,
   description: string,
@@ -9,7 +9,20 @@ export interface Activity {
   city: string,
   venue: string,
   isActive: boolean,
-  attenders: Attendee[]
+  attenders: Attendee[],
+  host: User,
+  isCurrentUserAttender: boolean
+}
+
+export interface ActivityRequest{
+  id?: string,
+  title: string,
+  beginDate: Date,
+  description: string,
+  category: ActivityCategory,
+  city: string,
+  venue: string,
+  isActive: boolean
 }
 
 export interface ActivityCategory {

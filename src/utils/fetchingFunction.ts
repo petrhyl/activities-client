@@ -97,6 +97,11 @@ export const fetchData = async <T, U>(params: FetchDataParams<T, U>, fetchingObj
 
         if (err instanceof Error) {
             errMsg = err.message;
+            
+            if (err.message === 'Failed to fetch') {
+                errMsg = 'Sorry, we are off-line.'
+            }
+
             if (errMsg === '') {
                 errMsg = getResponseErrorMessage(params.method, fetchingObject);
             }

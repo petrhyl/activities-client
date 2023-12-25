@@ -22,7 +22,7 @@
 import ActivityForm from '@/components/activities/details/ActivityForm.vue';
 import PageContainer from '@/components/layout/base/PageContainer.vue';
 import ResponseMessage from '@/components/layout/ResponseMessage.vue';
-import type { Activity } from '@/models/Activity';
+import type { ActivityRequest } from '@/models/Activity';
 import type { SubmitResponse } from '@/models/auxillary/interfaces';
 import { useActivityStore } from '@/stores/activities';
 import RouteNames from '@/utils/constanses/RouteNames';
@@ -30,7 +30,7 @@ import { reactive, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 
-const emptyActivity: Activity = {
+const emptyActivity: ActivityRequest = {
     title: '',
     category: {
         id: '-1',
@@ -40,7 +40,8 @@ const emptyActivity: Activity = {
     description: '',
     beginDate: new Date(),
     city: '',
-    venue: ''
+    venue: '',
+    isActive: true
 }
 const clearSubmitResponse = {
     isResponded: false,
@@ -52,7 +53,7 @@ const router = useRouter();
 const activityStore = useActivityStore();
 
 const submitResponse: SubmitResponse = reactive(clearSubmitResponse);
-const activityObject: Activity = reactive(emptyActivity);
+const activityObject: ActivityRequest = reactive(emptyActivity);
 
 
 watch(activityObject, () => {
@@ -68,7 +69,7 @@ const handleViewAll = () => {
     router.push({ name: RouteNames.ACTIVITIES });
 }
 
-const handleCreateActivity = async (activity: Activity) => {
+const handleCreateActivity = async (activity: ActivityRequest) => {
     const response = await activityStore.createActivity(activity);
 
     submitResponse.isResponded = true;

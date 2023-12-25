@@ -8,12 +8,15 @@
                     :date="dateTimeString"
                     :category="getActivity.category.name"
                     :hosted-by="getHostName"
+                    :is-cancelled="!getActivity.isActive"
                     :is-hosted-by-current-user="isHostedByCurrentUser"
                     :is-joined-by-current-user="isJoinedByCurrentUser"
                     :is-current-user-logged-in="isLoggedIn"
-                    @cancel-attendance="handleCancelAttendance"
-                    @join-activity="handleJoinActivity"
-                    @triger-edit="handleEdit" />
+                    :are-manage-buttons-disabled="areManageButtonsDisabled"
+                    @cancel-attendance="emits('update-attendance')"
+                    @join-activity="emits('update-attendance')"
+                    @triger-edit="handleEdit"
+                    @toggle-cancel-activity="emits('toggle-cancel-activity')" />
             </div>
             <div class="detail-content">
                 <CardLayout>
@@ -57,6 +60,16 @@ import CardLayout from '@/components/layout/base/CardLayout.vue';
 import { useUserStore } from '@/stores/user';
 
 
+const props = defineProps<{
+    areManageButtonsDisabled: boolean
+}>()
+
+const emits = defineEmits<{
+    (e: 'update-attendance'): void,
+    (e: 'toggle-cancel-activity'): void
+}>()
+
+
 const activityStore = useActivityStore();
 const router = useRouter();
 
@@ -64,33 +77,25 @@ const { getActivity } = storeToRefs(activityStore);
 const { getCurrentUsername, isLoggedIn } = storeToRefs(useUserStore())
 
 const dateTimeString: ComputedRef<string> = computed(() => {
-    const d: Date = new Date(getActivity.value?.beginDate ?? 0);
-    return DateTimeToCzechFormat(d);
+    const d: Date = new Date(getActivity.value?.beginDate ?? 0)
+    return DateTimeToCzechFormat(d)
 });
 
 const getImageLocation: ComputedRef<string> = computed(() => {
-    return `/src/assets/categoryImages/${getActivity.value?.category.value}.jpg`;
+    return `/src/assets/categoryImages/${getActivity.value?.category.value}.jpg`
 });
 
 const getHostName: ComputedRef<string> = computed(() => {
-    return getActivity.value?.attenders.find(a => a.isHost)?.attender.displayName ?? '';
+    return getActivity.value?.host.displayName ?? ''
 });
 
 const isHostedByCurrentUser: ComputedRef<boolean> = computed(() => {
-    return getActivity.value?.attenders.some(a => a.isHost && a.attender.username === getCurrentUsername.value) ?? false
+    return getActivity.value?.host.username === getCurrentUsername.value
 })
 
-const isJoinedByCurrentUser: ComputedRef<boolean> = computed(()=>{
-    return getActivity.value?.attenders.some(a=> a.attender.username === getCurrentUsername.value && !a.isHost) ?? false
+const isJoinedByCurrentUser: ComputedRef<boolean> = computed(() => {
+    return getActivity.value?.attenders.some(a => a.attender.username === getCurrentUsername.value && !a.isHost) ?? false
 })
-
-const handleCancelAttendance = () => {
-
-}
-
-const handleJoinActivity = () => {
-
-}
 
 const handleEdit = () => {
     if (getActivity.value) {
@@ -98,6 +103,7 @@ const handleEdit = () => {
         router.push({ name: RouteNames.EDIT_ACTIVITY, params: { activityId } })
     }
 }
+
 
 </script>
 

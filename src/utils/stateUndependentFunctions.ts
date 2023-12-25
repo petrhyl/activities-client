@@ -1,3 +1,4 @@
+import type { Activity, ActivityRequest } from "@/models/Activity";
 import type { FormInputToValidate } from "@/models/auxillary/interfaces";
 
 /**
@@ -85,4 +86,21 @@ export const getCookieValueByName = (cookieName: string) : string => {
 
 export const setCookie = (cookieName: string, valueAsString: string, expiresIn: Date) :void => {
     document.cookie = `${cookieName}=${valueAsString};expires=${expiresIn.toUTCString()};path=/`
+}
+
+export const mapToActivityRequest = (activity: Activity | null): ActivityRequest | null => {
+    if (!activity) {
+        return null
+    }
+
+    return {
+        id: activity.id,
+        title: activity.title,
+        beginDate: activity.beginDate,
+        description: activity.description,
+        category: activity.category,
+        city: activity.city,
+        venue: activity.venue,
+        isActive: activity.isActive
+    }
 }

@@ -5,7 +5,7 @@ import type { FetchDataParams, FetchResponse } from "@/models/auxillary/interfac
 import { DataObject } from "@/utils/constanses/enums";
 import { fetchData } from "@/utils/fetchingFunction";
 import { ApiEndpoints } from "@/utils/constanses/ApiEndpoints";
-import type { Activity, ActivityCategory } from "@/models/Activity";
+import type { Activity, ActivityCategory, ActivityRequest } from "@/models/Activity";
 import { useUserStore } from "../user";
 
 export const useActivityStore = defineStore('activityStore', () => {
@@ -67,16 +67,16 @@ export const useActivityStore = defineStore('activityStore', () => {
 
     /**
      * Create a request on the server to update the object of type <Activity>.
-     * @param {Activity} activityObject - the modified object of type <Activity> 
+     * @param {ActivityRequest} activityObject - the modified object of type <Activity> 
      * @return {Promise<FetchResponse>} - if request was completed successfully return the property indicating success is true and error message null, 
      * otherwise false and reason in error message
      */
-    const updateActivity = async (activityObject: Activity): Promise<FetchResponse> => {
+    const updateActivity = async (activityObject: ActivityRequest): Promise<FetchResponse> => {
         if (!activityObject.id) {
             return { isSuccessful: false, errorMessage: 'You have to provide ID of the updating object.' }
         }
 
-        const fetchParams: FetchDataParams<Activity, Activity> = {
+        const fetchParams: FetchDataParams<ActivityRequest, Activity> = {
             method: HttpVerbs.PUT,
             requestBody: activityObject,
             headers: { 'Authorization': userStore.getCurrentUserToken }
@@ -92,12 +92,12 @@ export const useActivityStore = defineStore('activityStore', () => {
 
     /**
      * Create a request on the server to create a new object of type <Activity>.
-     * @param {Activity} activityObject - the object of type <Activity> 
+     * @param {ActivityRequest} activityObject - the object of type <Activity> 
      * @return {Promise<FetchResponse>} - if request was completed successfully return the property indicating success is true and error message null, 
      * otherwise false and reason in error message
      */
-    const createActivity = async (activityObject: Activity): Promise<FetchResponse> => {
-        const fetchParams: FetchDataParams<Activity, Activity> = {
+    const createActivity = async (activityObject: ActivityRequest): Promise<FetchResponse> => {
+        const fetchParams: FetchDataParams<ActivityRequest, Activity> = {
             method: HttpVerbs.POST,
             requestBody: activityObject,
             headers: { 'Authorization': userStore.getCurrentUserToken }
@@ -118,7 +118,7 @@ export const useActivityStore = defineStore('activityStore', () => {
     * otherwise false and reason in error message
     */
     const deleteActivity = async (idActivity: string): Promise<FetchResponse> => {
-        const fetchParams: FetchDataParams<Activity, Activity> = {
+        const fetchParams: FetchDataParams<null, Activity> = {
             method: HttpVerbs.DELETE,
             requestBody: null,
             headers: { 'Authorization': userStore.getCurrentUserToken }
@@ -130,6 +130,37 @@ export const useActivityStore = defineStore('activityStore', () => {
             isSuccessful: response.isSuccessful,
             errorMessage: !response.isSuccessful ? response.errorMessage : null
         }
+    }
+
+
+    const updateAttendance = async (activityId: string): Promise<FetchResponse> => {
+        const fetchParams: FetchDataParams<null, Activity> = {
+            method: HttpVerbs.PUT,
+            requestBody: null,
+            headers: { 'Authorization': userStore.getCurrentUserToken }
+        };
+
+        const response = await fetchData(fetchParams, DataObject.ACTIVITY, ApiEndpoints.ACTIVITY_ATTEND + '/' + activityId);
+
+        return {
+            isSuccessful: response.isSuccessful,
+            errorMessage: !response.isSuccessful ? response.errorMessage : null
+        }
+    }
+
+    const toggleCancelActivity = async (activityId: string): Promise<FetchResponse> => {
+        const fetchParams: FetchDataParams<null, Activity> = {
+            method: HttpVerbs.PUT,
+            requestBody: null,
+            headers: { 'Authorization': userStore.getCurrentUserToken }
+        };
+
+        const response = await fetchData(fetchParams, DataObject.ACTIVITY, ApiEndpoints.ACTIVITY_CANCEL + '/' + activityId);
+
+        return {
+            isSuccessful: response.isSuccessful,
+            errorMessage: !response.isSuccessful ? response.errorMessage : null
+        }        
     }
 
     /**
@@ -179,6 +210,8 @@ export const useActivityStore = defineStore('activityStore', () => {
         updateActivity,
         createActivity,
         deleteActivity,
+        updateAttendance,
+        toggleCancelActivity,
         loadActivityCategories,
         getActivity,
         getActivities,

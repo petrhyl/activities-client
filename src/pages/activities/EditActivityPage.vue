@@ -3,14 +3,14 @@
         <div class="edit-activity-page">
             <LoadActivity :activity-id="activityId">
                 <ResponseMessage v-if="submitResponse?.isResponded" :is-error="!submitResponse.isSuccessful"
-                :message="submitResponse.message" />
+                    :message="submitResponse.message" />
                 <ActivityForm v-if="!submitResponse"
                     @refresh-form="handleRefreshForm"
                     @submit-form="handleUpdateActivity"
-                    :activity-to-edit="activityToEdit"
-                />
+                    :activity-to-edit="activityToEdit" />
                 <div v-if="submitResponse?.isResponded" class="back-link-container">
-                    <input v-if="submitResponse.isSuccessful" class="back-link" type="button" value="View updated Activity" @click="handleLinkClick(false)">
+                    <input v-if="submitResponse.isSuccessful" class="back-link" type="button" value="View updated Activity"
+                        @click="handleLinkClick(false)">
                     <input class="back-link" type="button" value="Go back to all activities" @click="handleLinkClick(true)">
                 </div>
             </LoadActivity>
@@ -24,10 +24,11 @@ import ActivityForm from '@/components/activities/details/ActivityForm.vue';
 import LoadActivity from '@/components/activities/details/LoadActivity.vue';
 import PageContainer from '@/components/layout/base/PageContainer.vue';
 import ResponseMessage from '@/components/layout/ResponseMessage.vue';
-import type { Activity } from '@/models/Activity';
+import type { ActivityRequest } from '@/models/Activity';
 import type { SubmitResponse } from '@/models/auxillary/interfaces';
 import { useActivityStore } from '@/stores/activities';
 import RouteNames from '@/utils/constanses/RouteNames';
+import { mapToActivityRequest } from '@/utils/stateUndependentFunctions';
 import { storeToRefs } from 'pinia';
 import { ref, type Ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
@@ -42,7 +43,7 @@ const router = useRouter();
 
 const { getActivity } = storeToRefs(activityStore);
 
-const activityToEdit: Ref<Activity | null> = ref(getActivity.value);
+const activityToEdit: Ref<ActivityRequest | null> = ref(mapToActivityRequest(getActivity.value));
 const submitResponse: Ref<SubmitResponse | null> = ref(null);
 
 
@@ -52,11 +53,11 @@ watch(getActivity, () => {
 });
 
 const setActivityToNull = () => {
-    activityToEdit.value = null;    
+    activityToEdit.value = null;
 }
 
 const setActivityToItsValue = () => {
-    activityToEdit.value = getActivity.value;
+    activityToEdit.value = mapToActivityRequest(getActivity.value);
 }
 
 const handleLinkClick = (toAll: boolean) => {
@@ -68,10 +69,10 @@ const handleLinkClick = (toAll: boolean) => {
 }
 
 const handleRefreshForm = () => {
-    activityToEdit.value = getActivity.value;
+    activityToEdit.value = mapToActivityRequest(getActivity.value);
 }
 
-const handleUpdateActivity = async (activity: Activity) => {
+const handleUpdateActivity = async (activity: ActivityRequest) => {
     activity.id = props.activityId
     const response = await activityStore.updateActivity(activity);
     if (!response.isSuccessful) {
@@ -108,7 +109,7 @@ const handleUpdateActivity = async (activity: Activity) => {
     margin-top: 20px;
 }
 
-.back-link-containe .back-link:first-child{
+.back-link-containe .back-link:first-child {
     margin-bottom: 20px;
 }
 

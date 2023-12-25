@@ -79,7 +79,7 @@ import FormLayout from "@/components/layout/form/FormLayout.vue";
 import FormComponentContainer from "@/components/layout/form/FormComponentContainer.vue";
 import FormComponent from "@/components/layout/form/FormComponent.vue";
 import { DateToISOStringWithoutSeconds } from '@/utils/stateUndependentFunctions';
-import type { Activity } from '@/models/Activity';
+import type { Activity, ActivityRequest } from '@/models/Activity';
 import { onMounted, reactive, type Ref, ref, watch, type ComputedRef, computed } from 'vue';
 import type { SelectOption } from "@/models/auxillary/interfaces";
 import { ScrollPageToTop } from '@/utils/stateUndependentFunctions'
@@ -145,11 +145,11 @@ const emptyFormInputs = {
 
 
 const props = defineProps<{
-    activityToEdit: Activity | null
+    activityToEdit: ActivityRequest | null
 }>();
 
 const emits = defineEmits<{
-    (e: 'submit-form', activity: Activity): Promise<void>
+    (e: 'submit-form', activity: ActivityRequest): Promise<void>
 }>();
 
 const store = useActivityStore();
@@ -339,7 +339,7 @@ const handleSubmitForm = async () => {
         return;
     }
 
-    const activityObject: Activity = {
+    const activityObject: ActivityRequest = {
         title: formInputs.title.value,
         description: formInputs.description.value,
         category: {
@@ -350,7 +350,7 @@ const handleSubmitForm = async () => {
         beginDate: new Date(formInputs.beginDate.value),
         city: formInputs.city.value,
         venue: formInputs.venue.value,
-        attenders: []
+        isActive: true
     }
 
     await emits('submit-form', activityObject);

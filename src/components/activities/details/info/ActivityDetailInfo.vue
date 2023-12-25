@@ -18,24 +18,34 @@
             <template v-if="isCurrentUserLoggedIn">
                 <div v-if="isHostedByCurrentUser" class="user-actions">
                     <StyledButton
+                        :css-class="buttonToggleCancelCss"
+                        :button-type="ButtonTypes.BUTTON"
+                        @click-button="handleToggleCancelActivity"
+                        :text="buttonToggleCancelText"
+                        :is-disabled="areManageButtonsDisabled" />
+                    <StyledButton
+                        v-if="!isCancelled"
                         css-class="user-action-button edit"
                         :button-type="ButtonTypes.BUTTON"
-                        @click-button="emits('triger-edit')"
-                        :text="'Manage Event'" />
+                        @click-button="handleEditActivity"
+                        :text="'Manage Event'"
+                        :is-disabled="areManageButtonsDisabled" />
                 </div>
                 <div v-else class="user-actions">
                     <StyledButton
                         v-if="isJoinedByCurrentUser"
                         css-class="user-action-button cancel"
                         :button-type="ButtonTypes.BUTTON"
-                        @click-button="emits('cancel-attendance')"
-                        :text="'Cancel Attendance'" />
+                        @click-button="handleCancelAttendance"
+                        :text="'Cancel Attendance'"
+                        :is-disabled="areManageButtonsDisabled" />
                     <StyledButton
                         v-else
                         css-class="user-action-button join"
                         :button-type="ButtonTypes.BUTTON"
-                        @click-button="emits('join-activity')"
-                        :text="'Join Activity'" />
+                        @click-button="handleJoinActivity"
+                        :text="'Join Activity'"
+                        :is-disabled="areManageButtonsDisabled" />
                 </div>
             </template>
             <div v-else class="unlogged-user-message">
@@ -50,6 +60,7 @@
 import CardLayout from '@/components/layout/base/CardLayout.vue';
 import StyledButton from '@/components/layout/form/StyledButton.vue';
 import ButtonTypes from '@/utils/constanses/ButtonTypes';
+import { ref, watch, type Ref, type ComputedRef, computed } from 'vue';
 
 
 const props = defineProps<{
@@ -58,16 +69,54 @@ const props = defineProps<{
     date: string,
     hostedBy: string,
     category: string,
+    isCancelled: boolean,
     isHostedByCurrentUser: boolean,
     isJoinedByCurrentUser: boolean,
-    isCurrentUserLoggedIn: boolean
+    isCurrentUserLoggedIn: boolean,
+    areManageButtonsDisabled: boolean
 }>();
 
 const emits = defineEmits<{
     (e: 'join-activity'): void,
     (e: 'cancel-attendance'): void,
     (e: 'triger-edit'): void,
+    (e: 'toggle-cancel-activity'): void
 }>();
+
+
+const areManageButtonsDisabled: Ref<boolean> = ref(props.areManageButtonsDisabled)
+
+const buttonToggleCancelText: ComputedRef<string> = computed(() => {
+    return props.isCancelled ? 'Re-active Activity' : 'Cancel Activity'
+})
+
+const buttonToggleCancelCss: ComputedRef<string> = computed(() => {
+    return 'user-action-button' + (props.isCancelled ? ' reactive' : ' cancel')
+})
+
+const handleJoinActivity = () => {
+    areManageButtonsDisabled.value = true
+    emits('join-activity')
+}
+
+const handleCancelAttendance = () => {
+    areManageButtonsDisabled.value = true
+    emits('cancel-attendance')
+}
+
+const handleEditActivity = () => {
+    areManageButtonsDisabled.value = true
+    emits('triger-edit')
+}
+
+const handleToggleCancelActivity = () => {
+    areManageButtonsDisabled.value = true
+    emits('toggle-cancel-activity')
+}
+
+watch(props, () => {
+    areManageButtonsDisabled.value = props.areManageButtonsDisabled
+})
 
 </script>
 
@@ -78,12 +127,14 @@ const emits = defineEmits<{
     width: 100%;
     display: flex;
     justify-content: end;
+    column-gap: 2%;
 }
 
 .user-action-button {
-    width: 50%;
+    width: 49%;
 }
 
+.user-actions .reactive,
 .user-actions .join {
     color: #2c2a2a;
     background-color: var(--sky-color);
@@ -94,6 +145,7 @@ const emits = defineEmits<{
     background-color: #8da2ae;
 }
 
+.user-actions .reactive:hover,
 .user-actions .join:hover {
     background-color: #93d8ff;
 }

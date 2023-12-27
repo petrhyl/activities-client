@@ -1,9 +1,10 @@
 <template>
     <div class="single-activity">
+        <div v-if="!activity.isActive" class="is-cancelled-flag">Cancelled</div>
         <div class="activity-header">
             <ImageComponent
                 css-clases="user-image"
-                :image-url="getHostOfActivity?.attender.imageUrl"
+                :image-url="activity.host.imageUrl"
                 alternative-image-text="attender"
                 :use-alternative-element="true">
                 <img src="@/assets/user.png" alt="attender" />
@@ -12,7 +13,7 @@
                 <h2>{{ activity.title }}</h2>
                 <div class="activity-hosted-by">
                     <span>Hosted by </span>
-                    <span class="activity-host">{{ getHostOfActivity?.attender.displayName }}</span>
+                    <span class="activity-host">{{ activity.host.displayName }}</span>
                 </div>
                 <div v-if="isHostedByCurrentUser" class="current-user-host">
                     <span>Hosting</span>
@@ -50,7 +51,7 @@
 
 <script setup lang="ts">
 import StyledButton from '@/components/layout/form/StyledButton.vue';
-import type { Activity, Attendee } from '@/models/Activity';
+import type { Activity } from '@/models/Activity';
 import ButtonTypes from '@/utils/constanses/ButtonTypes';
 import RouteNames from '@/utils/constanses/RouteNames';
 import { DateTimeToCzechFormat } from '@/utils/stateUndependentFunctions';
@@ -114,12 +115,8 @@ const dateTimeString: ComputedRef<string> = computed(() => {
     return DateTimeToCzechFormat(d);
 })
 
-const getHostOfActivity: ComputedRef<Attendee | undefined> = computed(() => {
-    return props.activity.attenders.find(a => a.isHost)
-})
-
 const isHostedByCurrentUser: ComputedRef<boolean> = computed(() => {
-    const hostName = getHostOfActivity.value?.attender.username
+    const hostName = props.activity.host.username
     return !!hostName && getCurrentUsername.value === hostName
 })
 
@@ -130,6 +127,16 @@ const isHostedByCurrentUser: ComputedRef<boolean> = computed(() => {
 .single-activity {
     width: 100%;
     padding: 15px;
+}
+
+.is-cancelled-flag{
+    width: 100%;
+    text-align: center;
+    color: #e7e8e8;
+    background-color: var(--warning-color);
+    border-radius: 5px;
+    padding: 3px;
+    margin-bottom: 5px;
 }
 
 .activity-header {

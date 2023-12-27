@@ -1,6 +1,7 @@
 <template>
     <CardLayout :use-padding="false">
         <div class="image-background" :style="{ backgroundImage: 'url(' + headerImageUrl + ')' }">
+        <div v-if="isCancelled" class="main-info-flag">Cancelled</div>
             <div class="main-info">
                 <h1>{{ title }}</h1>
                 <div class="date">{{ date }}</div>
@@ -181,18 +182,14 @@ watch(props, () => {
     background-size: cover;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
-    overflow: hidden;
 }
 
 .main-info {
-    position: absolute;
     width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
     background-color: #0e060691;
-    top: 0;
-    left: 0;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
     padding-left: 40px;
@@ -222,6 +219,40 @@ watch(props, () => {
     font-size: 10pt;
     font-family: Cambria, 'Times New Roman', Times, serif;
     margin-bottom: 5px;
+}
+
+.main-info-flag{
+    position: absolute;
+    top: 5%;
+    left: -2px;
+    color: #e5e5e5;
+    background-color: var(--warning-color);
+    padding: 2px 7px;
+    z-index: 10;
+}
+
+.main-info-flag::before{
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 100%;
+    width: 7px;
+    background-color: var(--warning-color);
+    transform-origin: top;
+    transform: skewX(-15deg);
+}
+
+.main-info-flag::after{
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    height: 100%;
+    width: 7px;
+    background-color: var(--warning-color);
+    transform-origin: bottom;
+    transform: skewX(-15deg);
 }
 
 .header-buttons {

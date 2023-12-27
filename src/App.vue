@@ -18,6 +18,7 @@ import { useUserStore } from './stores/user';
 const userStore = useUserStore()
 
 const currentWindowWidth: Ref<WindowWidth> = ref(WindowWidth.COMMON)
+const mainContentWidth: Ref<string> = ref('75%')
 
 provide(keyProvidedWindowWidth, currentWindowWidth)
 
@@ -32,17 +33,23 @@ onMounted(()=>{
 
 const acertainWidth = () => {
   if (window.innerWidth <= WindowWidth.PHONE) {
-    currentWindowWidth.value = WindowWidth.PHONE;
+    currentWindowWidth.value = WindowWidth.PHONE
+    mainContentWidth.value = '95%'
   } else if (window.innerWidth <= WindowWidth.TABLET) {
-    currentWindowWidth.value = WindowWidth.TABLET;
+    currentWindowWidth.value = WindowWidth.TABLET
+    mainContentWidth.value = '95%'
   } else if (window.innerWidth <= WindowWidth.SMALL) {
-    currentWindowWidth.value = WindowWidth.SMALL;
+    currentWindowWidth.value = WindowWidth.SMALL
+    mainContentWidth.value = '95%'
   } else if (window.innerWidth >= WindowWidth.SUPER_LARGE) {
-    currentWindowWidth.value = WindowWidth.SUPER_LARGE;
+    currentWindowWidth.value = WindowWidth.SUPER_LARGE
+    mainContentWidth.value = '75%'
   } else if (window.innerWidth >= WindowWidth.LARGE) {
-    currentWindowWidth.value = WindowWidth.LARGE;
+    currentWindowWidth.value = WindowWidth.LARGE
+    mainContentWidth.value = '75%'
   } else {
-    currentWindowWidth.value = WindowWidth.COMMON;
+    currentWindowWidth.value = WindowWidth.COMMON
+    mainContentWidth.value = '75%'
   }
 }
 
@@ -86,7 +93,7 @@ body {
 }
 
 main {
-  width: 75%;
+  width: v-bind(mainContentWidth);
   margin: 0 auto;
 }
 
@@ -110,15 +117,4 @@ a{
     padding: 7px 10px;
 }
 
-@media screen and (max-width: 1200px) {
-  main {
-    width: 95%;
-  }
-}
-
-@media screen and (max-width: 980px) {
-  main {
-    width: 95%;
-  }
-}
 </style>

@@ -1,7 +1,7 @@
 export enum WindowWidth{
     PHONE = 670,
     TABLET = 980,
-    SMALL = 1200,
+    SMALL = 1400,
     COMMON = 1800,
     LARGE = 2500,
     SUPER_LARGE = 2800 

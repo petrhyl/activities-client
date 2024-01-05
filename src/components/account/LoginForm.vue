@@ -1,14 +1,14 @@
 <template>
     <FormLayout @submit-form="handleSubmit" :invalid-message="invalidMessage" form-styles="card">
-        <FormComponent label-for="login-email" label-text="E-mail" :warning-message="formInputs.email.warning">
+        <FormComponent label-for="login-username" label-text="User Name" :warning-message="formInputs.username.warning">
             <input
-                type="email"
-                id="login-email"
-                name="login-email"
+                type="text"
+                id="login-username"
+                name="login-username"
                 class="form-input-element"
-                v-model="formInputs.email.value"
-                @input="handleChangeValue(FormActions.email)"
-                @blur="handleValidateInput(FormActions.email)" />
+                v-model="formInputs.username.value"
+                @input="handleChangeValue(FormActions.username)"
+                @blur="handleValidateInput(FormActions.username)" />
         </FormComponent>
         <FormComponent label-for="login-password" label-text="Password" :warning-message="formInputs.password.warning">
             <input
@@ -42,16 +42,16 @@ import { type Ref, ref, reactive, watch } from "vue";
 import type { Login } from "@/models/User";
 import type { FormInputToValidate } from "@/models/auxillary/interfaces";
 import { defineChangeOfInput } from "@/utils/stateUndependentFunctions";
-import { isEmailValid } from "@/utils/inputValidation";
+import { isUserNameValid } from "@/utils/inputValidation";
 
 
 enum FormActions {
-    email = 'email',
+    username = 'username',
     password = 'password'
 }
 
 interface FormInputValues {
-    email: FormInputToValidate,
+    username: FormInputToValidate,
     password: FormInputToValidate
 }
 
@@ -63,7 +63,7 @@ const emptyFromInput: FormInputToValidate = {
 }
 
 const emptyFormInputs: FormInputValues = {
-    email: { ...emptyFromInput },
+    username: { ...emptyFromInput },
     password: { ...emptyFromInput }
 }
 
@@ -88,8 +88,8 @@ watch(props, ()=>{
 
 const handleChangeValue = (action: FormActions) => {
     switch (action) {
-        case FormActions.email:
-            defineChangeOfInput(formInputs.email)
+        case FormActions.username:
+            defineChangeOfInput(formInputs.username)
             break
         case FormActions.password:
             defineChangeOfInput(formInputs.password)
@@ -101,10 +101,10 @@ const handleChangeValue = (action: FormActions) => {
 
 const handleValidateInput = (action: FormActions) => {
     switch (action) {
-        case FormActions.email:
-            if (formInputs.email.isChanged && !isEmailValid(formInputs.email.value)) {
-                formInputs.email.isValid = false
-                formInputs.email.warning = 'Please, enter your e-mail correctly.'
+        case FormActions.username:
+            if (formInputs.username.isChanged && !isUserNameValid(formInputs.username.value)) {
+                formInputs.username.isValid = false
+                formInputs.username.warning = 'Please, enter your user name correctly.'
             }
             break;
         case FormActions.password:
@@ -119,10 +119,10 @@ const handleValidateInput = (action: FormActions) => {
 }
 
 const validateForm = () => {
-    handleValidateInput(FormActions.email)
+    handleValidateInput(FormActions.username)
     handleValidateInput(FormActions.password)
 
-    if (!formInputs.email.isValid || !formInputs.password.isValid) {
+    if (!formInputs.username.isValid || !formInputs.password.isValid) {
         isFormValid.value = false
 
         return
@@ -144,7 +144,7 @@ const handleSubmit = async () => {
     }
 
     const login: Login = {
-        email: formInputs.email.value,
+        username: formInputs.username.value,
         password: formInputs.password.value
     }
 

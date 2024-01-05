@@ -27,7 +27,7 @@ export const useUserStore = defineStore('userStore', () => {
         return user.value?.displayName ?? applicationUser.value?.displayName ?? ''
     })
 
-    const getCurrentUsername: ComputedRef<string> = computed(()=>{
+    const getCurrentUsername: ComputedRef<string> = computed(() => {
         return user.value?.username ?? applicationUser.value?.identification ?? ''
     })
 
@@ -55,7 +55,7 @@ export const useUserStore = defineStore('userStore', () => {
 
         return {
             isSuccessful: response.isSuccessful,
-            errorMessage: !response.isSuccessful ? response.errorMessage : null
+            errorMessage: response.errorMessage
         }
     }
 
@@ -74,7 +74,7 @@ export const useUserStore = defineStore('userStore', () => {
 
         return {
             isSuccessful: response.isSuccessful,
-            errorMessage: !response.isSuccessful ? response.errorMessage : null
+            errorMessage: response.errorMessage
         }
     }
 
@@ -93,7 +93,7 @@ export const useUserStore = defineStore('userStore', () => {
 
         return {
             isSuccessful: response.isSuccessful,
-            errorMessage: !response.isSuccessful ? response.errorMessage : null
+            errorMessage: response.errorMessage
         }
     }
 
@@ -104,13 +104,13 @@ export const useUserStore = defineStore('userStore', () => {
         router.push({ name: RouteNames.HOME })
     }
 
-    const loadApplicationUserFromCookies = () =>{
+    const loadApplicationUserFromCookies = () => {
         const userString = getCookieValueByName(userCookieName)
         if (!userString || userString === '') {
             applicationUser.value = null
 
             return;
-        }    
+        }
 
         applicationUser.value = JSON.parse(userString)
     }
@@ -118,7 +118,7 @@ export const useUserStore = defineStore('userStore', () => {
 
     const saveUserData = (userData: User) => {
         user.value = userData;
-        applicationUser.value = {identification: userData.username, displayName: userData.displayName, secret: userData.token}
+        applicationUser.value = { identification: userData.username, displayName: userData.displayName, secret: userData.token }
         let userCookieExpiresIn = new Date()
         userCookieExpiresIn.setHours(userCookieExpiresIn.getHours() + 12)
         setCookie(userCookieName, JSON.stringify(applicationUser.value), userCookieExpiresIn)

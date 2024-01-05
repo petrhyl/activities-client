@@ -23,7 +23,7 @@
                     <input type="button" class="navigation-link account-link" @click="handleLogout" value="Log Out" />
                     <RouterLink
                         class="navigation-link account-link"
-                        :to="{ name: RouteNames.USER_PROFILE, params: { username: getCurrentUsername } }">
+                        :to="{ name: RouteNames.USER_PROFILE_ABOUT, params: { username: getCurrentUsername } }">
                         {{ getUserName }}
                     </RouterLink>
                 </div>
@@ -39,7 +39,7 @@
 <script setup lang="ts">
 import RouteNames from '@/utils/constanses/RouteNames';
 import { WindowWidth } from "@/utils/constanses/enums";
-import { inject, ref, watch, type Ref, computed, type ComputedRef, onMounted } from 'vue';
+import { inject, ref, watch, type Ref, computed, type ComputedRef } from 'vue';
 import { keyProvidedWindowWidth } from '@/models/auxillary/providedKey';
 import { storeToRefs } from 'pinia';
 import { useUserStore } from '@/stores/user';

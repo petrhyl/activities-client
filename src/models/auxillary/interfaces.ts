@@ -34,3 +34,8 @@ export interface FormInputToValidate {
     isChanged: boolean,
     isValid: boolean
 }
+
+export interface AddPhotoRequest{
+    file: File,
+    isMain: boolean
+}

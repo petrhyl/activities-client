@@ -137,8 +137,8 @@ watch(props, () => {
 
 .user-actions .reactive,
 .user-actions .join {
-    color: #2c2a2a;
-    background-color: var(--sky-color);
+    color: var(--dark-blue-color);
+    background-color: var(--azure-color);
 }
 
 .user-actions .cancel {
@@ -148,7 +148,7 @@ watch(props, () => {
 
 .user-actions .reactive:hover,
 .user-actions .join:hover {
-    background-color: #93d8ff;
+    filter: brightness(1.3);
 }
 
 .user-actions .cancel:hover {
@@ -161,8 +161,7 @@ watch(props, () => {
 }
 
 .user-actions .edit:hover {
-    color: #2c2a2a;
-    background-color: #ff9b65;
+    filter: brightness(1.3);
 }
 
 @media screen and (max-width: 670px) {

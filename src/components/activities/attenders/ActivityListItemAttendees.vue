@@ -1,9 +1,9 @@
 <template>
-<ul class="attender-list">
-    <li v-for="attender in attenders">
-        <AttenderComponent :attendee="attender" :attenders-picture-size="35" />
-    </li>
-</ul>
+    <ul class="attender-list">
+        <li v-for="attender in attenders">
+            <AttenderComponent :attendee="attender" :attenders-picture-size="35" />
+        </li>
+    </ul>
 </template>
 
 
@@ -20,7 +20,7 @@ const props = defineProps<{
 
 
 <style scoped>
-.attender-list{
+.attender-list {
     list-style: none;
     display: flex;
     flex-wrap: wrap;
@@ -28,8 +28,7 @@ const props = defineProps<{
     padding: 0;
 }
 
-.attender-list li{
+.attender-list li {
     margin-bottom: 7px;
 }
-
 </style>

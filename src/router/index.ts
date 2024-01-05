@@ -40,7 +40,34 @@ export const router = createRouter({
             path: '/account/profile/:username',
             name: RouteNames.USER_PROFILE,
             props: true,
-            component: () => import('@/pages/account/ProfilePage.vue'),            
+            component: () => import('@/pages/profile/ProfilePage.vue'),     
+            children:[
+                {
+                    path: 'about',
+                    name: RouteNames.USER_PROFILE_ABOUT,
+                    component: () => import('@/pages/profile/details/AboutPage.vue')
+                },
+                {
+                    path: 'events',
+                    name: RouteNames.USER_PROFILE_EVENTS,
+                    component: () => import('@/pages/profile/details/EventsPage.vue')
+                },
+                {
+                    path: 'photos',
+                    name: RouteNames.USER_PROFILE_PHOTOS,
+                    props: true,
+                    component: () => import('@/pages/profile/details/PhotosPage.vue')
+                },{
+                    path: 'followers',
+                    name: RouteNames.USER_PROFILE_FOLLOWERS,
+                    component: () => import('@/pages/profile/details/FollowersPage.vue')
+                },
+                {
+                    path: 'following',
+                    name: RouteNames.USER_PROFILE_FOLLOWING,
+                    component: () => import('@/pages/profile/details/FollowingPage.vue')
+                },
+            ]       
         },{
             path: '/:notFound(.*)',
             name: RouteNames.NOT_FOUND,

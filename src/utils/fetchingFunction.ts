@@ -25,13 +25,13 @@ export const fetchData = async <T, U>(params: FetchDataParams<T, U>, fetchingObj
         }
     }
 
-    if (params.method === HttpVerbs.PUT || params.method === HttpVerbs.POST) {
+    if ((params.method === HttpVerbs.PUT || params.method === HttpVerbs.POST) && fetchingObject !== DataObject.FORM_DATA) {
          headers = {
             ...headers,
             'Content-Type':'application/json'
         }
     }
-
+    
     if (Object.keys(headers).length > 0) {
         parametrObject = {
             ...parametrObject,
@@ -41,10 +41,17 @@ export const fetchData = async <T, U>(params: FetchDataParams<T, U>, fetchingObj
         }
     }
 
-    if (params.requestBody) {
+    if (params.requestBody && fetchingObject !== DataObject.FORM_DATA) {
         parametrObject = {
             ...parametrObject,
             body: JSON.stringify(params.requestBody)
+        }
+    }
+
+    if (fetchingObject === DataObject.FORM_DATA) {
+        parametrObject = {
+            ...parametrObject,
+            body: params.requestBody as FormData
         }
     }
 
@@ -89,7 +96,7 @@ export const fetchData = async <T, U>(params: FetchDataParams<T, U>, fetchingObj
         return {
             data: data,
             isSuccessful: true,
-            errorMessage: ''
+            errorMessage: null
         };
 
     } catch (err) {

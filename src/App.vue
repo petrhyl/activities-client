@@ -9,7 +9,7 @@
 
 <script setup lang="ts">
 import { type Ref, ref, onBeforeMount, provide, type ComputedRef, computed, onMounted } from 'vue';
-import NavBar from './components/layout/base/NavBar.vue';
+import NavBar from './components/base/NavBar.vue';
 import { WindowWidth } from './utils/constanses/enums';
 import { keyProvidedWindowWidth } from './models/auxillary/providedKey';
 import { useUserStore } from './stores/user';

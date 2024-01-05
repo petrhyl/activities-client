@@ -14,5 +14,7 @@ export enum DataObject {
     ACTIVITY_CATEGORY,
     LOGIN,
     REGISTRATION,
-    CURRENT_USER
+    CURRENT_USER,
+    PROFILE,
+    FORM_DATA
 }

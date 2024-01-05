@@ -219,8 +219,8 @@ img.icon {
 
 .activity-attendors {
     padding: 10px 10px 3px 10px;
-    background-color: #e3f0f4;
-    border: 1px solid #cddce0;
+    background-color: #e3f4fc;
+    border: 1px solid #d0e8ed;
     border-radius: 5px;
 }
 

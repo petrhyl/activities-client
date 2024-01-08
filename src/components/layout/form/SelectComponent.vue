@@ -1,3 +1,30 @@
+<template>
+    <div
+        :id="elementId"
+        :class="getCustomSelectCssClasses"
+        ref="selecteElement"
+        @click="handleClickSelectElement"
+        @blur="handleCloseSelectElement"
+        @keyup="handleSelectOptionOnPressKey">
+        <div class="select-selected-item" :value="getSelectedOption.value" :selected-id="getSelectedOption.id">{{
+            getSelectedOption.text }}</div>
+        <div class="drop-down-arrow"></div>
+        <div class="select-items-container">
+            <div :class="`options-container ${optionsAnimationClass}`">
+                <div
+                    v-for="opt in selectOptions"
+                    :key="opt.id"
+                    :id="opt.id"
+                    :value="opt.value"
+                    @mousedown="handleSelect(opt.id)"
+                    :selected="opt.isSelected"
+                    :class="{ 'select-option': true, selected: opt.isSelected }">{{ opt.text }}</div>
+            </div>
+        </div>
+    </div>
+</template>
+
+
 <script setup lang="ts">
 import { type SelectOption } from "@/models/auxillary/interfaces";
 import { computed, ref, type ComputedRef, type Ref, reactive, onMounted, watch } from "vue";
@@ -197,31 +224,6 @@ const toggleOptionVisibility = (isOpening: boolean) => {
 
 </script>
 
-
-<template>
-    <div
-        :class="getCustomSelectCssClasses"
-        ref="selecteElement"
-        @click="handleClickSelectElement"
-        @blur="handleCloseSelectElement"
-        @keyup="handleSelectOptionOnPressKey">
-        <div class="select-selected-item" :value="getSelectedOption.value" :selected-id="getSelectedOption.id">{{
-            getSelectedOption.text }}</div>
-        <div class="drop-down-arrow"></div>
-        <div class="select-items-container">
-            <div :class="`options-container ${optionsAnimationClass}`">
-                <div
-                    v-for="opt in selectOptions"
-                    :key="opt.id"
-                    :id="opt.id"
-                    :value="opt.value"
-                    @mousedown="handleSelect(opt.id)"
-                    :selected="opt.isSelected"
-                    :class="{ 'select-option': true, selected: opt.isSelected }">{{ opt.text }}</div>
-            </div>
-        </div>
-    </div>
-</template>
 
 
 <style scoped>

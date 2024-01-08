@@ -7,7 +7,7 @@
 
 
 <script setup lang="ts">
-import ResponseMessage from "@/components/layout/ResponseMessage.vue";
+import ResponseMessage from "@/components/layout/base/ResponseMessage.vue";
 </script>
 
 

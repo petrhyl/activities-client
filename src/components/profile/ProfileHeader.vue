@@ -39,7 +39,7 @@
 import ImageComponent from '@/components/layout/ImageComponent.vue';
 import StyledButton from '@/components/layout/form/StyledButton.vue';
 import ButtonTypes from '@/utils/constanses/ButtonTypes';
-import { ref, type Ref } from 'vue';
+import { ref, type Ref, watch, render } from 'vue';
 
 
 const props = defineProps<{
@@ -54,6 +54,10 @@ const followButtonText: Ref<string> = ref('Follow')
 const handleFollow = ()=>{
     
 }
+
+watch(props,()=>{
+
+})
 
 </script>
 
@@ -77,6 +81,7 @@ const handleFollow = ()=>{
     display: flex;
     border-radius: 50%;
     overflow: hidden;
+    margin: auto;
 }
 </style>
 

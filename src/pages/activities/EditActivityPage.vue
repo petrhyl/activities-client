@@ -23,7 +23,7 @@
 import ActivityForm from '@/components/activities/details/ActivityForm.vue';
 import LoadActivity from '@/components/activities/details/LoadActivity.vue';
 import PageContainer from '@/components/layout/base/PageContainer.vue';
-import ResponseMessage from '@/components/layout/ResponseMessage.vue';
+import ResponseMessage from '@/components/layout/base/ResponseMessage.vue';
 import type { ActivityRequest } from '@/models/Activity';
 import type { SubmitResponse } from '@/models/auxillary/interfaces';
 import { useActivityStore } from '@/stores/activities';

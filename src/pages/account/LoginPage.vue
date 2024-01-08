@@ -20,9 +20,9 @@ import RouteNames from '@/utils/constanses/RouteNames';
 import type { Login } from '@/models/User';
 import type { SubmitResponse } from '@/models/auxillary/interfaces';
 import { useUserStore } from '@/stores/user';
-import { reactive, ref, type Ref } from 'vue';
+import { onBeforeMount, reactive, ref, type Ref } from 'vue';
 import { useRouter } from 'vue-router';
-import ResponseMessage from '@/components/layout/ResponseMessage.vue';
+import ResponseMessage from '@/components/layout/base/ResponseMessage.vue';
 
 
 const clearSubmitResponse = {
@@ -53,6 +53,13 @@ const handleLoginUser = async (login: Login): Promise<void> => {
 
     isSubmitting.value = false
 }
+
+onBeforeMount(() => {
+    if (userStore.isLoggedIn) {
+        router.replace({ name: RouteNames.USER_PROFILE, params: { username: userStore.getCurrentUsername } })
+    }
+})
+
 </script>
 
 

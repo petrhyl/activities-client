@@ -17,7 +17,7 @@
 <script setup lang="ts">
 import ActivityDetailComponent from '@/components/activities/details/ActivityDetailComponent.vue';
 import LoadActivity from '@/components/activities/details/LoadActivity.vue';
-import ResponseMessage from '@/components/layout/ResponseMessage.vue';
+import ResponseMessage from '@/components/layout/base/ResponseMessage.vue';
 import PageContainer from '@/components/layout/base/PageContainer.vue';
 import { useActivityStore } from '@/stores/activities';
 import { ref, type Ref } from 'vue';

@@ -7,7 +7,7 @@
 
 
 <script setup lang="ts">
-import { onBeforeMount, type Ref, ref } from 'vue';
+import { onBeforeMount, type Ref, ref, watch } from 'vue';
 
 
 const props = withDefaults(defineProps<{
@@ -23,7 +23,8 @@ const props = withDefaults(defineProps<{
 const isImageUrlValid: Ref<boolean> = ref(false)
 const validImageUrl: Ref<string> = ref('')
 
-onBeforeMount(async () => {
+
+const processUrl =async () => {
     try {
         if (!props.imageUrl) {
             throw new Error("Image URL is not defined.")
@@ -37,7 +38,16 @@ onBeforeMount(async () => {
         validImageUrl.value = props.imageUrl
     } catch (error) {
         isImageUrlValid.value = false
-    }    
+    } 
+}
+
+
+onBeforeMount(async () => {
+       processUrl()
+})
+
+watch(props, () =>{
+    processUrl()
 })
 
 </script>

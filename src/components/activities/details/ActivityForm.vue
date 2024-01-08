@@ -27,7 +27,7 @@
                 :warning-message="formInputs.category.warning">
                 <SelectComponent
                     :css-class="'category-select'"
-                    :element-id="'activity-category'"
+                    :element-id="'activity-category-select'"
                     :element-name="'activity-category'"
                     :options="getCategoryOptions"
                     @change-selected="handleChangeCategoryValue"

@@ -9,7 +9,11 @@
                 @submit-form="handleCreateActivity"
                 :activity-to-edit="activityObject" />
             <div v-else class="back-link-container">
-                <input v-if="submitResponse.isSuccessful" class="back-link" type="button" value="Create another"
+                <input
+                    v-if="submitResponse.isSuccessful"
+                    class="back-link"
+                    type="button"
+                    value="Create another"
                     @click="handleCreateAnother">
                 <input type="button" class="back-link" value="View all activities" @click="handleViewAll" />
             </div>
@@ -21,7 +25,7 @@
 <script setup lang="ts">
 import ActivityForm from '@/components/activities/details/ActivityForm.vue';
 import PageContainer from '@/components/layout/base/PageContainer.vue';
-import ResponseMessage from '@/components/layout/ResponseMessage.vue';
+import ResponseMessage from '@/components/layout/base/ResponseMessage.vue';
 import type { ActivityRequest } from '@/models/Activity';
 import type { SubmitResponse } from '@/models/auxillary/interfaces';
 import { useActivityStore } from '@/stores/activities';
@@ -90,8 +94,10 @@ const handleCreateActivity = async (activity: ActivityRequest) => {
 
 .back-link-container {
     width: 100%;
+    display: flex;
+    justify-content: center;
     margin-top: 20px;
-    column-gap: 20px;
+    column-gap: 25px;
 }
 
 

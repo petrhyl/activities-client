@@ -5,8 +5,8 @@
                 <ResponseMessage v-if="errorMesage" :is-error="true" :message="errorMesage" />
                 <ProfileHeader
                     v-if="getCurrentProfile"
-                    :displayed-name="getCurrentProfile.displayName"
-                    :user-image-url="getCurrentProfile.imageUrl" />
+                    :displayed-name="displayedName"
+                    :user-image-url="imageUrl" />
             </CardLayout>
         </div>
         <div class="body-content">
@@ -22,12 +22,12 @@
 
 
 <script setup lang="ts">
-import ResponseMessage from '@/components/layout/ResponseMessage.vue';
+import ResponseMessage from '@/components/layout/base/ResponseMessage.vue';
 import PageContainer from '@/components/layout/base/PageContainer.vue';
 import CardLayout from '@/components/layout/base/CardLayout.vue';
 import ProfileHeader from "@/components/profile/ProfileHeader.vue";
 import { useProfileStore } from '@/stores/profile';
-import { onBeforeMount, ref, type Ref } from 'vue';
+import { onBeforeMount, ref, watch, type Ref } from 'vue';
 import ProfileMenu from './ProfileMenu.vue';
 import { storeToRefs } from 'pinia';
 
@@ -40,15 +40,31 @@ const props = defineProps<{
 const profileStore = useProfileStore()
 
 const { getCurrentProfile } = storeToRefs(profileStore)
+const displayedName: Ref<string> = ref(getCurrentProfile.value?.displayName ?? '')
+const imageUrl: Ref<string> = ref(getCurrentProfile.value?.imageUrl ?? '')
 const errorMesage: Ref<string | null> = ref(null)
 
 
-onBeforeMount(async () => {
+const loadProfile = async () => {
     const profileResponse = await profileStore.loadUserProfile(props.username)
 
     if (!profileResponse.isSuccessful) {
         errorMesage.value = profileResponse.errorMessage
     }
+}
+
+
+onBeforeMount(async () => {
+    loadProfile()
+})
+
+watch(getCurrentProfile, () => {
+    imageUrl.value = getCurrentProfile.value?.imageUrl ?? ''
+    displayedName.value = getCurrentProfile.value?.displayName ?? ''
+})
+
+watch(props, () => {
+    loadProfile()
 })
 
 </script>

@@ -1,13 +1,11 @@
 <template>
     <CardLayout :use-padding="false">
         <ul class="activity-list">
-            <li v-for="activity in props.activities" :key="activity.id">
-                <ActivityListItem
-                    :activity="activity"
-                    :key="activity.id"
-                    @on-delete="handleDeleteActivity"
-                    :is-deleting="isDeletingActivity && deletingActivityId === activity.id" />
-            </li>
+            <ActivityListItem
+                v-for="activity in props.activities" :key="activity.id"
+                :activity="activity"
+                @on-delete="handleDeleteActivity"
+                :is-deleting="isDeletingActivity && deletingActivityId === activity.id" />
         </ul>
     </CardLayout>
 </template>

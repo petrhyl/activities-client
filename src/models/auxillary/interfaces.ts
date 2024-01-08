@@ -1,4 +1,5 @@
 import type HttpVerbs from "@/utils/constanses/HttpVerbs"
+import type { Ref, reactive } from "vue"
 
 export interface SubmitResponse {
     isResponded: boolean,
@@ -35,7 +36,19 @@ export interface FormInputToValidate {
     isValid: boolean
 }
 
-export interface AddPhotoRequest{
+export interface AddPhotoRequest {
     file: File,
     isMain: boolean
+}
+
+export interface ModalInState {
+    id: string,
+    isOpen: boolean,
+    elementId: string
+}
+
+export interface ModalState {
+    modalInState: ModalInState,
+    setOpenModal: (id: string, identifier: string) => void,
+    setCloseModal: () => void
 }

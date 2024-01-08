@@ -14,13 +14,15 @@ const props = defineProps<{
     buttonType: string,
     text: string,
     cssClass?: string,
+    isFontSmaller?: boolean,
     linkTo?: LocationAsRelativeRaw,
     isDisabled?: boolean
 }>()
 
 const emits = defineEmits<{
     (e: 'click-button'): void
-}>();
+}>()
+
 
 const getCssClass: ComputedRef<{}> = computed(() => {
     let css = 'ordinary-button'
@@ -33,15 +35,20 @@ const getCssClass: ComputedRef<{}> = computed(() => {
     }
 
     return css
-});
-
+})
 const getType: ComputedRef<string> = computed(() => {
     return `${props.buttonType}`
-});
-
+})
 const isLink: ComputedRef<boolean> = computed(() => {
     return props.buttonType === ButtonTypes.LINK;
-});
+})
+const getFontSize: ComputedRef<string> = computed(()=>{
+    if (props.isFontSmaller) {
+        return '11pt'
+    }
+
+    return '12pt'
+})
 
 </script>
 
@@ -49,7 +56,7 @@ const isLink: ComputedRef<boolean> = computed(() => {
 <style scoped>
 .ordinary-button {
     height: fit-content;
-    font-size: 12pt;
+    font-size: v-bind(getFontSize);
     font-weight: 600;
     font-family: Arial, Helvetica, sans-serif;
     text-decoration: none;
@@ -57,7 +64,7 @@ const isLink: ComputedRef<boolean> = computed(() => {
     outline: none;
     border: none;
     border-radius: 5px;
-    padding: 8px 15px;
+    padding: 7px 12px;
     cursor: pointer;
 }
 

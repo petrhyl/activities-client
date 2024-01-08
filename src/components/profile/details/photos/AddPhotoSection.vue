@@ -25,9 +25,9 @@
 
 
 <script setup lang="ts">
-import DropZone from "@/components/layout/base/DropZone.vue";
-import PhotoCropper from "@/components/layout/base/PhotoCropper.vue";
-import { ref, type ComputedRef, type Ref, computed } from "vue";
+import DropZone from "@/components/layout/DropZone.vue";
+import PhotoCropper from "@/components/layout/PhotoCropper.vue";
+import { ref,  type Ref } from "vue";
 
 
 const emits = defineEmits<{

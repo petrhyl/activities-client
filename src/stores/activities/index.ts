@@ -28,7 +28,7 @@ export const useActivityStore = defineStore('activityStore', () => {
             headers: null
         };
 
-        const response = await fetchData(fetchParams, DataObject.ACTIVITIES, ApiEndpoints.ACTIVITY);
+        const response = await fetchData(fetchParams, DataObject.ACTIVITIES, ApiEndpoints.ACTIVITIES);
 
         if (response.isSuccessful) {
             activities.value = response.data!;
@@ -53,7 +53,7 @@ export const useActivityStore = defineStore('activityStore', () => {
             headers: null
         };
 
-        const response = await fetchData(fetchParams, DataObject.ACTIVITY, ApiEndpoints.ACTIVITY + '/' + idActivity);
+        const response = await fetchData(fetchParams, DataObject.ACTIVITY, ApiEndpoints.ACTIVITY + idActivity);
 
         if (response.isSuccessful) {
             activity.value = response.data!;
@@ -82,7 +82,7 @@ export const useActivityStore = defineStore('activityStore', () => {
             headers: { 'Authorization': userStore.getCurrentUserToken }
         };
 
-        const response = await fetchData(fetchParams, DataObject.ACTIVITY, ApiEndpoints.ACTIVITY + '/' + activityObject.id);
+        const response = await fetchData(fetchParams, DataObject.ACTIVITY, ApiEndpoints.ACTIVITY + activityObject.id);
 
         return {
             isSuccessful: response.isSuccessful,
@@ -103,7 +103,7 @@ export const useActivityStore = defineStore('activityStore', () => {
             headers: { 'Authorization': userStore.getCurrentUserToken }
         };
 
-        const response = await fetchData(fetchParams, DataObject.ACTIVITY, ApiEndpoints.ACTIVITY);
+        const response = await fetchData(fetchParams, DataObject.ACTIVITY, ApiEndpoints.ACTIVITIES);
 
         return {
             isSuccessful: response.isSuccessful,
@@ -124,7 +124,7 @@ export const useActivityStore = defineStore('activityStore', () => {
             headers: { 'Authorization': userStore.getCurrentUserToken }
         };
 
-        const response = await fetchData(fetchParams, DataObject.ACTIVITY, ApiEndpoints.ACTIVITY + '/' + idActivity);
+        const response = await fetchData(fetchParams, DataObject.ACTIVITY, ApiEndpoints.ACTIVITY + idActivity);
 
         return {
             isSuccessful: response.isSuccessful,
@@ -140,7 +140,7 @@ export const useActivityStore = defineStore('activityStore', () => {
             headers: { 'Authorization': userStore.getCurrentUserToken }
         };
 
-        const response = await fetchData(fetchParams, DataObject.ACTIVITY, ApiEndpoints.ACTIVITY_ATTEND + '/' + activityId);
+        const response = await fetchData(fetchParams, DataObject.ACTIVITY, ApiEndpoints.ACTIVITY_ATTEND + activityId);
 
         return {
             isSuccessful: response.isSuccessful,
@@ -155,7 +155,7 @@ export const useActivityStore = defineStore('activityStore', () => {
             headers: { 'Authorization': userStore.getCurrentUserToken }
         };
 
-        const response = await fetchData(fetchParams, DataObject.ACTIVITY, ApiEndpoints.ACTIVITY_CANCEL + '/' + activityId);
+        const response = await fetchData(fetchParams, DataObject.ACTIVITY, ApiEndpoints.ACTIVITY_CANCEL + activityId);
 
         return {
             isSuccessful: response.isSuccessful,
@@ -175,7 +175,7 @@ export const useActivityStore = defineStore('activityStore', () => {
             headers: null
         };
 
-        const response = await fetchData(fetchParams, DataObject.ACTIVITY_CATEGORIES, ApiEndpoints.ACTIVITY_CATEGORY);
+        const response = await fetchData(fetchParams, DataObject.ACTIVITY_CATEGORIES, ApiEndpoints.ACTIVITY_CATEGORIES);
 
         if (response.isSuccessful) {
             categories.value = response.data!;

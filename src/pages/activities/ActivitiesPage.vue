@@ -24,7 +24,7 @@ import { useActivityStore } from '@/stores/activities';
 import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router';
 import RouteNames from '@/utils/constanses/RouteNames';
-import LoadingComponent from '@/components/layout/LoadingComponent.vue';
+import LoadingComponent from '@/components/layout/base/LoadingComponent.vue';
 import ActivityGroupedList from '@/components/activities/ActivityGroupedList.vue';
 import PageContainer from '@/components/layout/base/PageContainer.vue';
 import ActivityFilters from '@/components/activities/ActivityFilters.vue';
@@ -80,7 +80,7 @@ onBeforeMount(async () => {
 <style scoped>
 .activities-page{
   display: grid;
-  grid-template-columns: 3fr 2fr;
+  grid-template-columns: 3fr 1fr;
   column-gap: 20px;
 }
 

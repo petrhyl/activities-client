@@ -2,7 +2,6 @@
     <div class="user-photos">
         <div class="photo-list-header">
             <h3>Photos</h3>
-            <span v-if="errorMessage" class="warning">Something's happend. Photo could not be uploaded.</span>
             <div class="add-photo-button-section">
                 <StyledButton
                     v-if="profileStore.isProfileFromCurrentUser"
@@ -13,21 +12,36 @@
             </div>
         </div>
         <AddPhotoSection v-if="isAddPhotoOpen" @upload-photo="handleUploadPhoto" />
-        <PhotoList v-else :photos="photos" />
+        <LoadingLayer
+            v-else
+            :is-loading="photos.length === 0 && !isAddPhotoOpen"
+            :error-message="errorMessage && photos.length > 0 ? errorMessage : ''">
+            <PhotoList :photos="photos" @set-as-main="handleSetPhotoAsMain" @delete-photo="handleDeletePhoto" />
+        </LoadingLayer>
+        <TeleportedModal
+            v-if="isSetMainModalOpened || isDeletePhotoModalOpen"
+            :content="getModalText"
+            @cancel-button="handleCancelModal"
+            @click-background="handleCancelModal"
+            @="{ confirmButton: isSetMainModalOpened ? handleConfirmSetMainPhoto : handleConfirmdeletePhoto }" />
     </div>
 </template>
 
 
 <script setup lang="ts">
 import StyledButton from '@/components/layout/form/StyledButton.vue';
-import AddPhotoSection from '@/components/profile/details/AddPhotoSection.vue';
-import PhotoList from '@/components/profile/details/PhotoList.vue';
+import AddPhotoSection from '@/components/profile/details/photos/AddPhotoSection.vue';
+import PhotoList from '@/components/profile/details/photos/PhotoList.vue';
 import type { PhotoImage } from '@/models/User';
-import type { AddPhotoRequest } from '@/models/auxillary/interfaces';
+import type { AddPhotoRequest, FetchResponse, ModalState } from '@/models/auxillary/interfaces';
+import { keyProvidedModalState } from '@/models/auxillary/providedKey';
 import { useProfileStore } from '@/stores/profile';
 import ButtonTypes from '@/utils/constanses/ButtonTypes';
-import { type Ref, ref, onBeforeMount, type ComputedRef, computed } from 'vue';
-
+import { ModalInState } from '@/utils/objects/ModalInState';
+import { type Ref, ref, onBeforeMount, type ComputedRef, computed, inject } from 'vue';
+import LoadingLayer from "@/components/layout/base/LoadingLayer.vue";
+import TeleportedModal from '@/components/layout/TeleportedModal.vue';
+import { ScrollPageToTop } from '@/utils/stateUndependentFunctions';
 
 
 const props = defineProps<{
@@ -37,39 +51,86 @@ const props = defineProps<{
 
 const profileStore = useProfileStore()
 
+const { setCloseModal } = inject<ModalState>(keyProvidedModalState, { modalInState: new ModalInState(), setOpenModal: () => { }, setCloseModal: () => { } })
+
 const photos: Ref<PhotoImage[]> = ref([])
 const isAddPhotoOpen: Ref<boolean> = ref(false)
 const errorMessage: Ref<string | null> = ref(null)
+const isSetMainModalOpened: Ref<boolean> = ref(false)
+const isDeletePhotoModalOpen: Ref<boolean> = ref(false)
+const processingPhotoId: Ref<string> = ref('')
 const getAddPhotoButtonText: ComputedRef<string> = computed(() => {
     return isAddPhotoOpen.value ? 'Cancel Adding' : 'Add Photo'
 })
 const getAddPhotoButtonCss: ComputedRef<string> = computed(() => {
     return isAddPhotoOpen.value ? 'cancel-photo' : 'add-photo'
 })
-
+const getModalText: ComputedRef<string> = computed(() => {
+    let text = 'Do you really want to'
+    if (isSetMainModalOpened.value) {
+        return text + ' set this photo as your profile image?'
+    }
+    return text + ' delete this photo?'
+})
 
 const handleAddPhoto = () => {
     isAddPhotoOpen.value = !isAddPhotoOpen.value
 }
 
 const handleUploadPhoto = async (photoFile: File) => {
-    isAddPhotoOpen.value = false
-
     const request: AddPhotoRequest = {
         file: photoFile,
         isMain: false
     }
 
     const addPhotoResponse = await profileStore.addPhotoToProfile(request)
+    resolveError(addPhotoResponse)
 
-    if (!addPhotoResponse.isSuccessful) {
-        errorMessage.value = addPhotoResponse.errorMessage
-    }
-    
+    await loadPhotos()
+
+    isAddPhotoOpen.value = false
+}
+
+const handleSetPhotoAsMain = (photoId: string) => {
+    processingPhotoId.value = photoId
+    setCloseModal()
+    isSetMainModalOpened.value = true
+}
+
+const handleDeletePhoto = (photoId: string) => {
+    processingPhotoId.value = photoId
+    setCloseModal()
+    isDeletePhotoModalOpen.value = true
+}
+
+const handleCancelModal = () => {
+    isSetMainModalOpened.value = false
+    isDeletePhotoModalOpen.value = false
+}
+
+const handleConfirmSetMainPhoto = async () => {
+    const response = await profileStore.setPhotoAsMain(processingPhotoId.value)
+    resolveError(response)
+    isSetMainModalOpened.value = false
+    const profileResponse = await profileStore.loadUserProfile(profileStore.getCurrentProfile!.username)
+    resolveError(profileResponse)
+}
+
+const handleConfirmdeletePhoto = async () => {
+    const response = await profileStore.deletePhoto(processingPhotoId.value)
+    resolveError(response)
+    isDeletePhotoModalOpen.value = false
     loadPhotos()
 }
 
-const loadPhotos =async () => {
+const resolveError = (response: FetchResponse) => {
+    if (!response.isSuccessful) {
+        errorMessage.value = response.errorMessage
+        ScrollPageToTop()
+    }
+}
+
+const loadPhotos = async () => {
     const response = await profileStore.loadProfilePhotos(props.username)
     if (!response.isSuccessful) {
         errorMessage.value = response.errorMessage
@@ -84,6 +145,7 @@ const loadPhotos =async () => {
 onBeforeMount(() => {
     loadPhotos()
 })
+
 </script>
 
 
@@ -99,8 +161,9 @@ onBeforeMount(() => {
     background-color: #8da2ae;
 }
 
+.add-photo:hover,
 .cancel-photo:hover {
-    background-color: #a4b7c2;
+    filter: brightness(1.2);
 }
 </style>
 

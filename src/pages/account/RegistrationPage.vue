@@ -12,13 +12,13 @@
 <script setup lang="ts">
 import AccountPageLayout from "@/components/account/base/AccountPageLayout.vue";
 import PageContainer from '@/components/layout/base/PageContainer.vue';
-import ResponseMessage from "@/components/layout/ResponseMessage.vue";
+import ResponseMessage from "@/components/layout/base/ResponseMessage.vue";
 import RegistrationForm from '@/components/account/RegistrationForm.vue';
 import RouteNames from '@/utils/constanses/RouteNames';
 import type { UserRegistration } from "@/models/User";
 import { useUserStore } from "@/stores/user";
 import type { SubmitResponse } from "@/models/auxillary/interfaces";
-import { reactive, ref, type Ref } from "vue";
+import { onBeforeMount, reactive, ref, type Ref } from "vue";
 import { useRouter } from "vue-router";
 
 
@@ -49,6 +49,12 @@ const handleCreateRegistration = async (user: UserRegistration): Promise<void> =
 
     isSubmitting.value = false
 }
+
+onBeforeMount(() => {
+    if (userStore.isLoggedIn) {
+        router.replace({ name: RouteNames.USER_PROFILE, params: { username: userStore.getCurrentUsername } })
+    }
+})
 
 </script>
 

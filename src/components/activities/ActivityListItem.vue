@@ -1,51 +1,63 @@
 <template>
-    <div class="single-activity">
-        <div v-if="!activity.isActive" class="is-cancelled-flag">Cancelled</div>
-        <div class="activity-header">
-            <ImageComponent
-                css-clases="user-image"
-                :image-url="activity.host.imageUrl"
-                alternative-image-text="attender"
-                :use-alternative-element="true">
-                <img src="@/assets/user.png" alt="attender" />
-            </ImageComponent>
-            <div class="title">
-                <h2>{{ activity.title }}</h2>
-                <div class="activity-hosted-by">
-                    <span>Hosted by </span>
-                    <span class="activity-host">{{ activity.host.displayName }}</span>
+    <li :id="getTeleportToId">
+        <div class="single-activity">
+            <div v-if="!activity.isActive" class="is-cancelled-flag">Cancelled</div>
+            <div class="activity-header">
+                <div class="user-image-container">
+                    <ImageComponent
+                        css-clases="user-image"
+                        :image-url="activity.host.imageUrl"
+                        alternative-image-text="attender"
+                        :use-alternative-element="true">
+                        <img src="@/assets/user.png" alt="attender" />
+                    </ImageComponent>
                 </div>
-                <div v-if="isHostedByCurrentUser" class="current-user-host">
-                    <span>Hosting</span>
-                </div>
-            </div>
-        </div>
-        <div class="activity-content">
-            <div class="date-city-category">
-                <div>
-                    <img class="icon" src="@/assets/clock-icon.png" alt="date">
-                    <span>{{ dateTimeString }}</span>
-                </div>
-                <div>
-                    <img class="icon" src="@/assets/location-pin-icon.png" alt="location">
-                    <span>{{ activity.city }}</span>
+                <div class="title">
+                    <h2>{{ activity.title }}</h2>
+                    <div class="activity-hosted-by">
+                        <span>Hosted by </span>
+                        <span class="activity-host">{{ activity.host.displayName }}</span>
+                    </div>
+                    <div v-if="isHostedByCurrentUser" class="current-user-host">
+                        <span>Hosting</span>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="activity-attendors">
-            <ActivityListItemAttendees v-if="activity.attenders.length > 0" :attenders="activity.attenders" />
-        </div>
-        <div class="activity-footer">
-            <span class="activity-category">{{ activity.category.name }}</span>
-            <div :class="getButtonWrapperClass">
-                <StyledButton :button-type="ButtonTypes.LINK" :link-to="getRouteLink" :css-class="getRoutLinkClass"
-                    text="View" />
-                <StyledButton v-if="isHostedByCurrentUser" :button-type="ButtonTypes.BUTTON" text="Delete"
-                    @click-button="emits('on-delete', activity.id!)" :css-class="getDeleteButtonClass"
-                    :is-disabled="isDeleting" />
+            <div class="activity-content">
+                <div class="date-city-category">
+                    <div>
+                        <img class="icon" src="@/assets/clock-icon.png" alt="date">
+                        <span>{{ dateTimeString }}</span>
+                    </div>
+                    <div>
+                        <img class="icon" src="@/assets/location-pin-icon.png" alt="location">
+                        <span>{{ activity.city }}</span>
+                    </div>
+                </div>
             </div>
+            <div class="activity-attendors">
+                <ActivityListItemAttendees v-if="activity.attenders.length > 0" :attenders="activity.attenders" />
+            </div>
+            <div class="activity-footer">
+                <span class="activity-category">{{ activity.category.name }}</span>
+                <div :class="getButtonWrapperClass">
+                    <StyledButton :button-type="ButtonTypes.LINK" :link-to="getRouteLink" :css-class="getRoutLinkClass"
+                        text="View" />
+                    <StyledButton v-if="isHostedByCurrentUser" :button-type="ButtonTypes.BUTTON" text="Delete"
+                        @click-button="handleOpenModal" :css-class="getDeleteButtonClass"
+                        :is-disabled="isDeleting" />
+                </div>
+            </div>
+            <TeleportedModal
+                v-if="isModalOpen"
+                :teleport-to="`#${getTeleportToId}`"
+                :title="`Activity: ${activity.title}`"
+                :content="'Do you really want to delete this activity?'"
+                @click-background="handleCloseModal"
+                @cancel-button="handleCloseModal"
+                @confirm-button="handleConfirmDelete" />
         </div>
-    </div>
+    </li>
 </template>
 
 
@@ -55,12 +67,13 @@ import type { Activity } from '@/models/Activity';
 import ButtonTypes from '@/utils/constanses/ButtonTypes';
 import RouteNames from '@/utils/constanses/RouteNames';
 import { DateTimeToCzechFormat } from '@/utils/stateUndependentFunctions';
-import { computed, type ComputedRef } from 'vue';
+import { computed, ref, type ComputedRef, type Ref } from 'vue';
 import { type LocationAsRelativeRaw } from 'vue-router';
 import ActivityListItemAttendees from '@/components/activities/attenders/ActivityListItemAttendees.vue';
 import ImageComponent from '@/components/layout/ImageComponent.vue';
 import { useUserStore } from '@/stores/user';
 import { storeToRefs } from 'pinia';
+import TeleportedModal from '../layout/TeleportedModal.vue';
 
 
 const props = defineProps<{
@@ -72,10 +85,12 @@ const emits = defineEmits<{
     (e: 'on-delete', activityId: string): void
 }>()
 
+
 const userStore = useUserStore()
 
-
 const { getCurrentUsername } = storeToRefs(userStore)
+
+const isModalOpen: Ref<boolean> = ref(false)
 
 const getRouteLink: ComputedRef<LocationAsRelativeRaw> = computed(() => {
     return {
@@ -85,7 +100,6 @@ const getRouteLink: ComputedRef<LocationAsRelativeRaw> = computed(() => {
         }
     }
 })
-
 const getRoutLinkClass: ComputedRef<string> = computed(() => {
     let css = 'link';
 
@@ -95,7 +109,6 @@ const getRoutLinkClass: ComputedRef<string> = computed(() => {
 
     return css;
 })
-
 const getDeleteButtonClass: ComputedRef<string> = computed(() => {
     let css = 'delete';
 
@@ -105,22 +118,47 @@ const getDeleteButtonClass: ComputedRef<string> = computed(() => {
 
     return css;
 })
-
 const getButtonWrapperClass: ComputedRef<string> = computed(() => {
     return isHostedByCurrentUser.value ? 'activity-footer-buttons' : 'activity-footer-detail-link'
 })
-
 const dateTimeString: ComputedRef<string> = computed(() => {
     const d: Date = new Date(props.activity.beginDate);
     return DateTimeToCzechFormat(d);
 })
-
 const isHostedByCurrentUser: ComputedRef<boolean> = computed(() => {
     const hostName = props.activity.host.username
     return !!hostName && getCurrentUsername.value === hostName
 })
+const getTeleportToId: ComputedRef<string> = computed(() => `single-activity-item-${props.activity.id}`)
+
+
+const handleCloseModal = () => {
+    isModalOpen.value = false
+}
+
+const handleOpenModal = () => {
+    isModalOpen.value = true
+}
+
+const handleConfirmDelete = () => {
+    emits('on-delete', props.activity.id)
+}
 
 </script>
+
+
+<style>
+.activity-header .user-image {
+    display: flex;
+    overflow: hidden;
+    border-radius: 50%;
+    margin: auto;
+}
+
+.activity-header .user-image img {
+    width: 100%;
+}
+</style>
 
 
 <style scoped>
@@ -129,7 +167,7 @@ const isHostedByCurrentUser: ComputedRef<boolean> = computed(() => {
     padding: 15px;
 }
 
-.is-cancelled-flag{
+.is-cancelled-flag {
     width: 100%;
     text-align: center;
     color: #e7e8e8;
@@ -155,11 +193,8 @@ const isHostedByCurrentUser: ComputedRef<boolean> = computed(() => {
     margin: 0 0 auto 0;
 }
 
-.activity-header .user-image img {
-    width: 100%;
-    height: auto;
-    margin: auto;
-    border-radius: 50%;
+.user-image-container {
+    display: flex;
 }
 
 .activity-header .title {
@@ -237,7 +272,7 @@ img.icon {
     margin-top: 15px;
 }
 
-.activity-footer-detail-link{
+.activity-footer-detail-link {
     display: flex;
 }
 

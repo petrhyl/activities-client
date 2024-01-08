@@ -8,8 +8,8 @@
 
 
 <script setup lang="ts">
-import LoadingComponent from '@/components/layout/LoadingComponent.vue';
-import ResponseMessage from '@/components/layout/ResponseMessage.vue';
+import LoadingComponent from '@/components/layout/base/LoadingComponent.vue';
+import ResponseMessage from '@/components/layout/base/ResponseMessage.vue';
 
 
 const props = withDefaults(defineProps<{

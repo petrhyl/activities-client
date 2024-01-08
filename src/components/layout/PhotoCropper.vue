@@ -1,5 +1,8 @@
 <template>
     <div class="photo-cropper">
+        <div v-if="isUploading" class="loading-container">
+            <LoadingComponent />
+        </div>
         <div
             class="image-workspace"
             :class="{ toMove: !isSaving }"
@@ -25,7 +28,7 @@
                 <input v-if="!isSaving" :class="{ confirm: true, hide: isImageGrapped }" type="button"
                     value="Continue To Save" @click="handleContinue">
                 <div v-else class="upload-prompt">
-                    <span>Do you want to upload this prompt?</span>
+                    <span>Do you want to upload this photo?</span>
                     <div class="upload-controls">
                         <input class="back" type="button" value="Back" @click="handleBack">
                         <input class="upload" type="button" value="Upload" @click="handleUpload">
@@ -39,6 +42,7 @@
 
 <script setup lang="ts">
 import { type ComputedRef, computed, onUnmounted, ref, type Ref, onMounted } from 'vue';
+import LoadingComponent from '@/components/layout/base/LoadingComponent.vue';
 
 
 interface Dims {
@@ -82,6 +86,7 @@ const initialImageWidthChangeRatio: Ref<number> = ref(1)
 const initialImageHeightChangeRatio: Ref<number> = ref(1)
 const croppedImage = ref<HTMLCanvasElement | null>(null)
 const isSaving: Ref<boolean> = ref(false)
+const isUploading: Ref<boolean> = ref(false)
 
 const requiredDimentionsRatio: ComputedRef<number> = computed(() => getRatio(props.requiredWidth, props.requiredHeight))
 const getWidth: ComputedRef<string> = computed(() => `${props.width}px`)
@@ -247,6 +252,8 @@ const handleContinue = async () => {
 }
 
 const handleUpload = () => {
+    isUploading.value = true
+
     let croppedImageFile: File
 
     croppedImage.value?.toBlob((blo) => {
@@ -354,7 +361,7 @@ onUnmounted(() => {
     justify-content: center;
     align-items: center;
     border: 2px solid var(--light-gray-color);
-    overflow: hidden;
+    overflow: hidden !important;
 }
 
 .image-workspace.toMove:hover {
@@ -369,7 +376,7 @@ onUnmounted(() => {
     display: flex;
     justify-content: center;
     padding-top: 5px;
-    z-index: 10;
+    z-index: 5;
 }
 
 .image-workspace .prompt {
@@ -391,7 +398,7 @@ onUnmounted(() => {
     display: flex;
     justify-content: center;
     padding-bottom: 5px;
-    z-index: 10;
+    z-index: 5;
 }
 
 .image-workspace .confirm {
@@ -443,7 +450,7 @@ onUnmounted(() => {
     cursor: pointer;
 }
 
-.image-workspace .upload-controls input:hover{
+.image-workspace .upload-controls input:hover {
     filter: brightness(0.8);
 }
 
@@ -474,5 +481,18 @@ onUnmounted(() => {
     position: absolute;
     width: v-bind(getImageWidth);
     height: v-bind(getImageHeight);
+}
+
+.loading-container{
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    background-color: #b8deff;
+    width: calc(100% - 10px);
+    height: calc(100% - 10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
 }
 </style>

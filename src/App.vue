@@ -1,6 +1,6 @@
 <template>
   <NavBar />
-  <main>
+  <main @click="handleCloseModal">
     <RouterView />
   </main>
 </template>
@@ -8,48 +8,81 @@
 
 
 <script setup lang="ts">
-import { type Ref, ref, onBeforeMount, provide, type ComputedRef, computed, onMounted } from 'vue';
-import NavBar from './components/base/NavBar.vue';
+import { type Ref, ref, onBeforeMount, provide, onMounted, reactive } from 'vue';
+import NavBar from './components/definite/NavBar.vue';
 import { WindowWidth } from './utils/constanses/enums';
-import { keyProvidedWindowWidth } from './models/auxillary/providedKey';
+import { keyProvidedModalState, keyProvidedWindowWidth } from './models/auxillary/providedKey';
 import { useUserStore } from './stores/user';
+import { ModalInState } from './utils/objects/ModalInState';
+import { PhotoOptionsParentElementsCount } from './utils/constanses/photoModalConst';
 
 
 const userStore = useUserStore()
 
 const currentWindowWidth: Ref<WindowWidth> = ref(WindowWidth.COMMON)
-const mainContentWidth: Ref<string> = ref('75%')
+const modalInState = reactive<ModalInState>(new ModalInState())
+
+const setOpenModal = (id: string, identifier: string) => {
+  modalInState.id = id
+  modalInState.isOpen = true
+  modalInState.elementId = identifier
+}
+
+const setCloseModal = () => {
+  modalInState.isOpen = false
+}
 
 provide(keyProvidedWindowWidth, currentWindowWidth)
+provide(keyProvidedModalState, { modalInState, setOpenModal, setCloseModal })
 
-onBeforeMount(() => {  
-  addWindowWidthListeners()  
+
+const handleCloseModal = (ev: Event) => {
+  if (!modalInState.isOpen) {
+    return
+  }
+  
+  if (ev.target instanceof HTMLElement) {
+    let resolvingTarget = ev.target as HTMLElement
+
+    for (let index = 0; index < PhotoOptionsParentElementsCount; index++) {
+      if (resolvingTarget?.id === modalInState.elementId) {
+        return
+      }
+
+      if (!resolvingTarget.parentElement) {
+        break
+      }
+
+      resolvingTarget = resolvingTarget.parentElement
+    }
+
+    modalInState.isOpen = false
+  }
+}
+
+
+onBeforeMount(() => {
+  addWindowWidthListeners()
   userStore.loadApplicationUserFromCookies()
 });
 
-onMounted(()=>{
-  acertainWidth()  
+onMounted(() => {
+  acertainWidth()
 })
 
 const acertainWidth = () => {
   if (window.innerWidth <= WindowWidth.PHONE) {
     currentWindowWidth.value = WindowWidth.PHONE
-    mainContentWidth.value = '95%'
   } else if (window.innerWidth <= WindowWidth.TABLET) {
     currentWindowWidth.value = WindowWidth.TABLET
-    mainContentWidth.value = '95%'
   } else if (window.innerWidth <= WindowWidth.SMALL) {
     currentWindowWidth.value = WindowWidth.SMALL
-    mainContentWidth.value = '95%'
   } else if (window.innerWidth >= WindowWidth.SUPER_LARGE) {
     currentWindowWidth.value = WindowWidth.SUPER_LARGE
-    mainContentWidth.value = '75%'
   } else if (window.innerWidth >= WindowWidth.LARGE) {
     currentWindowWidth.value = WindowWidth.LARGE
-    mainContentWidth.value = '75%'
   } else {
     currentWindowWidth.value = WindowWidth.COMMON
-    mainContentWidth.value = '75%'
   }
 }
 
@@ -88,13 +121,12 @@ body {
   margin: 0;
   padding: 0;
   width: 100%;
-  min-height: 100vh;
-  background-color: #fef8e6;
 }
 
 main {
-  width: v-bind(mainContentWidth);
-  margin: 0 auto;
+  width: 100%;
+  min-height: calc(100vh - 85px);
+  background-color: antiquewhite;
 }
 
 h1,
@@ -104,17 +136,17 @@ h3 {
   margin: 0;
 }
 
-a{
+a {
   text-decoration: none;
 }
 
 .form-input-element {
-    width: 100%;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-    outline: none;
-    border-radius: 5px;
-    border: 1px solid var(--light-gray-color);
-    padding: 7px 10px;
+  width: 100%;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  outline: none;
+  border-radius: 5px;
+  border: 1px solid var(--light-gray-color);
+  padding: 7px 10px;
 }
-
 </style>
+./utils/constanses/photoModalConst

@@ -6,19 +6,15 @@ import { DataObject } from "@/utils/constanses/enums";
 import { fetchData } from "@/utils/fetchingFunction";
 import { defineStore, storeToRefs } from "pinia";
 import { useUserStore } from "../user";
-import { computed, ref, type ComputedRef, type Ref } from "vue";
+import { computed, ref, type ComputedRef, type Ref, reactive } from "vue";
 
 export const useProfileStore = defineStore('profileStore', () => {
 
     const { getCurrentUserToken, getCurrentUsername } = storeToRefs(useUserStore())
 
-    const currentProfile: Ref<Profile | null> = ref(null)
+    const currentProfile: Ref<Profile|null> = ref(null)
 
     const getCurrentProfile: ComputedRef<Profile | null> = computed(() => {
-        if (!currentProfile.value) {
-            loadUserProfile(getCurrentUsername.value)
-        }
-
         return currentProfile.value
     })
 
@@ -41,10 +37,10 @@ export const useProfileStore = defineStore('profileStore', () => {
             headers: { 'Authorization': getCurrentUserToken.value }
         };
 
-        const response = await fetchData(fetchParams, DataObject.PROFILE, ApiEndpoints.USER_PROFILE + `/${username}`);
+        const response = await fetchData(fetchParams, DataObject.PROFILE, ApiEndpoints.USER_PROFILE + username);
 
         if (response.isSuccessful) {
-            currentProfile.value = response.data;
+            currentProfile.value = response.data
         }
 
         return {
@@ -60,10 +56,11 @@ export const useProfileStore = defineStore('profileStore', () => {
             headers: { 'Authorization': getCurrentUserToken.value }
         };
 
-        return await fetchData(fetchParams, DataObject.PROFILE, ApiEndpoints.PHOTO_PROFILE + `/${username}`);
+        return await fetchData(fetchParams, DataObject.USER_PHOTOS, ApiEndpoints.PHOTO_PROFILE + username);
     }
 
     const addPhotoToProfile = async (photoRequest: AddPhotoRequest): Promise<FetchResponse> => {
+
         let formData = new FormData()
 
         formData.append('file', photoRequest.file)
@@ -79,9 +76,39 @@ export const useProfileStore = defineStore('profileStore', () => {
 
         const response = await fetchData(fetchParams, DataObject.FORM_DATA, ApiEndpoints.PHOTO_ADD);
 
-        if (response.isSuccessful) {
-            currentProfile.value = response.data;
+        return {
+            isSuccessful: response.isSuccessful,
+            errorMessage: response.errorMessage
         }
+    }
+
+    const setPhotoAsMain = async (photoId: string): Promise<FetchResponse> => {
+        const fetchParams: FetchDataParams<null, null> = {
+            method: HttpVerbs.POST,
+            requestBody: null,
+            headers: {
+                'Authorization': getCurrentUserToken.value
+            }
+        };
+
+        const response = await fetchData(fetchParams, DataObject.USER_PHOTOS, ApiEndpoints.PHOTO_SET_MAIN + photoId);
+
+        return {
+            isSuccessful: response.isSuccessful,
+            errorMessage: response.errorMessage
+        }
+    }
+
+    const deletePhoto = async (photoId: string): Promise<FetchResponse> => {
+        const fetchParams: FetchDataParams<null, null> = {
+            method: HttpVerbs.DELETE,
+            requestBody: null,
+            headers: {
+                'Authorization': getCurrentUserToken.value
+            }
+        };
+
+        const response = await fetchData(fetchParams, DataObject.USER_PHOTOS, ApiEndpoints.PHOTO_DELETE + photoId);
 
         return {
             isSuccessful: response.isSuccessful,
@@ -96,6 +123,8 @@ export const useProfileStore = defineStore('profileStore', () => {
         isProfileFromCurrentUser,
         loadUserProfile,
         loadProfilePhotos,
-        addPhotoToProfile
+        addPhotoToProfile,
+        setPhotoAsMain,
+        deletePhoto
     }
 })

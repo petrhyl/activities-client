@@ -47,11 +47,6 @@ const activityToEdit: Ref<ActivityRequest | null> = ref(mapToActivityRequest(get
 const submitResponse: Ref<SubmitResponse | null> = ref(null);
 
 
-watch(getActivity, () => {
-    setActivityToNull();
-    setActivityToItsValue();
-});
-
 const setActivityToNull = () => {
     activityToEdit.value = null;
 }
@@ -89,6 +84,12 @@ const handleUpdateActivity = async (activity: ActivityRequest) => {
         };
     }
 }
+
+
+watch(getActivity, () => {
+    setActivityToNull();
+    setActivityToItsValue();
+});
 
 </script>
 

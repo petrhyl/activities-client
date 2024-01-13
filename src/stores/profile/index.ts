@@ -1,4 +1,4 @@
-import type { PhotoImage, Profile } from "@/models/User";
+import type { AboutSection, PhotoImage, Profile } from "@/models/User";
 import type { AddPhotoRequest, FetchDataParams, FetchDataResponse, FetchResponse, } from "@/models/auxillary/interfaces";
 import { ApiEndpoints } from "@/utils/constanses/ApiEndpoints";
 import HttpVerbs from "@/utils/constanses/HttpVerbs";
@@ -12,14 +12,17 @@ export const useProfileStore = defineStore('profileStore', () => {
 
     const { getCurrentUserToken, getCurrentUsername } = storeToRefs(useUserStore())
 
-    const currentProfile: Ref<Profile|null> = ref(null)
+    const currentProfile: Ref<Profile | null> = ref(null)
 
     const getCurrentProfile: ComputedRef<Profile | null> = computed(() => {
         return currentProfile.value
     })
 
-    const getCurrentAboutSection: ComputedRef<string> = computed(() => {
-        return currentProfile.value?.bio ?? ''
+    const getCurrentAboutSection: ComputedRef<AboutSection> = computed(() => {
+        return {
+            displayName: currentProfile.value?.displayName ?? '',
+            bio: currentProfile.value?.bio ?? ''
+        }
     })
 
     const isProfileFromCurrentUser: Ref<boolean> = computed(() => {
@@ -116,6 +119,25 @@ export const useProfileStore = defineStore('profileStore', () => {
         }
     }
 
+    const editUserProfile = async (aboutUser: AboutSection): Promise<FetchResponse> => {
+        aboutUser.username = currentProfile.value?.username
+
+        const fetchParams: FetchDataParams<AboutSection, null> = {
+            method: HttpVerbs.PUT,
+            requestBody: aboutUser,
+            headers: {
+                'Authorization': getCurrentUserToken.value
+            }
+        }
+
+        const response = await fetchData(fetchParams, DataObject.PROFILE, ApiEndpoints.USER_PROFILE)
+
+        return {
+            isSuccessful: response.isSuccessful,
+            errorMessage: response.errorMessage
+        }
+    }
+
 
     return {
         getCurrentAboutSection,
@@ -125,6 +147,7 @@ export const useProfileStore = defineStore('profileStore', () => {
         loadProfilePhotos,
         addPhotoToProfile,
         setPhotoAsMain,
-        deletePhoto
+        deletePhoto,
+        editUserProfile
     }
 })

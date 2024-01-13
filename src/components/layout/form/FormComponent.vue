@@ -1,3 +1,15 @@
+<template>
+    <div class="form-component">
+        <div class="lable-and-warning">
+            <label v-if="labelText !== ''" :for="labelFor">{{ labelText }}</label>
+            <span v-if="warningMessage !== ''" class="warning-message">{{ warningMessage }}</span>
+        </div>
+        <slot></slot>
+    </div>
+</template>
+
+
+
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue';
 
@@ -10,18 +22,7 @@ const props = withDefaults(defineProps<{
 
 
 </script>
-
-
-<template>
-    <div class="form-component">
-        <div class="lable-and-warning">
-            <label v-if="labelText !== ''" :for="labelFor">{{ labelText }}</label>
-            <span v-if="warningMessage !== ''" class="warning-message">{{ warningMessage }}</span>
-        </div>
-        <slot></slot>
-    </div>
-</template>
-    
+   
 
 
 <style scoped>

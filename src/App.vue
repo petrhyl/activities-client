@@ -149,4 +149,3 @@ a {
   padding: 7px 10px;
 }
 </style>
-./utils/constanses/photoModalConst

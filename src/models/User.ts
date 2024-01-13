@@ -37,3 +37,9 @@ export interface PhotoImage {
     url: string,
     isMain: boolean
 }
+
+export interface AboutSection {
+    username?: string
+    displayName: string,
+    bio: string
+}

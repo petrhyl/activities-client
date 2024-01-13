@@ -3,7 +3,7 @@
         <ul class="attender-list">
             <li v-for="attendee in attenders">
                 <RouterLink :to="{ name: RouteNames.USER_PROFILE, params: { username: attendee.attender.username } }">
-                    <AttenderComponent :attendee="attendee" :attenders-picture-size="50" />
+                    <AttenderComponent :attendee="attendee" :attenders-picture-size="50" :image-text-gap="25" />
                 </RouterLink>
                 <div v-if="attendee.isHost" class="host-flag">Host</div>
             </li>

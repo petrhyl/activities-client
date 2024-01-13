@@ -79,7 +79,7 @@ import FormLayout from "@/components/layout/form/FormLayout.vue";
 import FormComponentContainer from "@/components/layout/form/FormComponentContainer.vue";
 import FormComponent from "@/components/layout/form/FormComponent.vue";
 import { DateToISOStringWithoutSeconds } from '@/utils/stateUndependentFunctions';
-import type { Activity, ActivityRequest } from '@/models/Activity';
+import type { ActivityRequest } from '@/models/Activity';
 import { onMounted, reactive, type Ref, ref, watch, type ComputedRef, computed } from 'vue';
 import type { SelectOption } from "@/models/auxillary/interfaces";
 import { ScrollPageToTop } from '@/utils/stateUndependentFunctions'

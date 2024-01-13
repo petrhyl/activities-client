@@ -2,6 +2,7 @@ const BASE_URL = 'https://localhost:5000/api'
 const ACTIVITY_URL = BASE_URL + '/activities'
 const ACCOUNT_URL = BASE_URL + '/account'
 const PHOTO_URL = BASE_URL + '/photos'
+const USER_PROFILE = BASE_URL + '/profile/'
 
 export const ApiEndpoints = {
     ACTIVITIES: ACTIVITY_URL,
@@ -12,9 +13,10 @@ export const ApiEndpoints = {
     USER_LOGIN: ACCOUNT_URL + '/login',
     USER_REGISTRATION: ACCOUNT_URL + '/register',
     CURRENT_USER: ACCOUNT_URL + '/current',
-    USER_PROFILE: BASE_URL + '/profile/',
+    USER_PROFILE: USER_PROFILE,
     PHOTO_PROFILE: PHOTO_URL + '/user/',
     PHOTO_ADD: PHOTO_URL,
     PHOTO_SET_MAIN: PHOTO_URL + '/set-main/',
-    PHOTO_DELETE: PHOTO_URL + '/'
+    PHOTO_DELETE: PHOTO_URL + '/',
+    SIGNALR_CHAT: BASE_URL + '/chat'
 }

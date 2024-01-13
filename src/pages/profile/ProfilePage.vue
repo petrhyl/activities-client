@@ -28,7 +28,7 @@ import CardLayout from '@/components/layout/base/CardLayout.vue';
 import ProfileHeader from "@/components/profile/ProfileHeader.vue";
 import { useProfileStore } from '@/stores/profile';
 import { onBeforeMount, ref, watch, type Ref } from 'vue';
-import ProfileMenu from './ProfileMenu.vue';
+import ProfileMenu from '@/components/profile/ProfileMenu.vue';
 import { storeToRefs } from 'pinia';
 
 

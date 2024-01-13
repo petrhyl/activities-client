@@ -24,9 +24,9 @@ const props = withDefaults(defineProps<{
     height: 100%;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
     background-color: transparent;
-    padding-top: 20%;
     z-index: 100;
 }
 

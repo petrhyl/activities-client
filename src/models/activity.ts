@@ -14,7 +14,7 @@ export interface Activity {
   isCurrentUserAttender: boolean
 }
 
-export interface ActivityRequest{
+export interface ActivityRequest {
   id?: string,
   title: string,
   beginDate: Date,
@@ -26,12 +26,26 @@ export interface ActivityRequest{
 }
 
 export interface ActivityCategory {
-    id: string,
-    name: string,
-    value: string
- }
+  id: string,
+  name: string,
+  value: string
+}
 
-export interface Attendee{
+export interface Attendee {
   attender: User,
   isHost: boolean
+}
+
+export interface ChatPost {
+  id: number,
+  content: string,
+  createdAt: Date,
+  username: string,
+  displayName: string,
+  UserImage: string
+}
+
+export interface ChatPostRequest {
+  activityId: string,
+  content: string
 }

@@ -158,6 +158,34 @@ const handleConfirmDelete = () => {
 .activity-header .user-image img {
     width: 100%;
 }
+
+.activity-footer-detail-link .link,
+.activity-footer-buttons .link {
+    text-decoration: none;
+    color: #30006d;
+    background: linear-gradient(90deg, #abfee2 10%, #8bd3fd);
+}
+
+.activity-footer-detail-link .link:hover,
+.activity-footer-buttons .link:hover {
+    color: #51218f;
+    box-shadow: 0 0 3px 0px var(--blue-color) inset;
+}
+
+.activity-footer-buttons .delete {
+    color: #e2e2e2;
+    background-color: #8da2ae;
+}
+
+.activity-footer-buttons .delete:hover {
+    background-color: #a4b7c2;
+}
+
+.disabled {
+    pointer-events: none;
+    background-color: #c5c5c5;
+    color: #9f9f9f;
+}
 </style>
 
 
@@ -249,7 +277,7 @@ img.icon {
 
 .activity-content .date-city-category span {
     font-family: 'Lucida Sans', Geneva, sans-serif;
-    color: rgb(103, 92, 92);
+    color: #675c5c;
 }
 
 .activity-attendors {
@@ -301,35 +329,5 @@ img.icon {
         grid-template-columns: 1fr 3fr;
         gap: 20px;
     }
-}
-</style>
-
-<style>
-.activity-footer-detail-link .link,
-.activity-footer-buttons .link {
-    text-decoration: none;
-    color: #6e0286;
-    background: linear-gradient(90deg, #abfee2 10%, #8bd3fd);
-}
-
-.activity-footer-detail-link .link:hover,
-.activity-footer-buttons .link:hover {
-    color: #8b1fa3;
-    box-shadow: 0 0 3px 0px var(--blue-color) inset;
-}
-
-.activity-footer-buttons .delete {
-    color: #e2e2e2;
-    background-color: #8da2ae;
-}
-
-.activity-footer-buttons .delete:hover {
-    background-color: #a4b7c2;
-}
-
-.disabled {
-    pointer-events: none;
-    background-color: #c5c5c5;
-    color: #9f9f9f;
 }
 </style>

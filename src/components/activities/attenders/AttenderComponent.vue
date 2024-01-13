@@ -17,33 +17,38 @@ import { computed, type ComputedRef } from 'vue';
 
 const props = defineProps<{
     attendee: Attendee,
-    attendersPictureSize: number
+    attendersPictureSize: number,
+    imageTextGap?: number
 }>()
 
 
-const getImageEdgeSize: ComputedRef<string> = computed(()=>{
-    return `${props.attendersPictureSize}px`
+const getImageEdgeSize: ComputedRef<string> = computed(() => `${props.attendersPictureSize}px`)
+const getGap: ComputedRef<string> = computed(()=>{
+    if (!props.imageTextGap) {
+        return '15px'
+    }
+
+    return `${props.imageTextGap}px`
 })
 </script>
 
-<style>
-.attender-image{
-    width: v-bind(getImageEdgeSize);
-    height: v-bind(getImageEdgeSize);
-    border-radius: 50%;
-    overflow: hidden;
-}
-</style>
 
 <style scoped>
-img{
+img {
     width: 100%;
     height: auto;
 }
 
-.single-attender{
+.single-attender {
     display: flex;
     align-items: center;
-    column-gap: 15px;
+    column-gap: v-bind(getGap);
+}
+
+.single-attender:deep() .attender-image {
+    width: v-bind(getImageEdgeSize);
+    height: v-bind(getImageEdgeSize);
+    border-radius: 50%;
+    overflow: hidden;
 }
 </style>

@@ -66,7 +66,8 @@ const props = defineProps<{
 
 const emits = defineEmits<{
     (e: 'update-attendance'): void,
-    (e: 'toggle-cancel-activity'): void
+    (e: 'toggle-cancel-activity'): void,
+    (e: 'add-chat-post'): void
 }>()
 
 
@@ -112,8 +113,8 @@ const handleEdit = () => {
 <style scoped>
 .detail-component {
     display: grid;
-    grid-template-columns: 3fr 2fr;
-    column-gap: 20px;
+    grid-template-columns: 3.5fr 2fr;
+    column-gap: 25px;
 }
 
 .page-section {

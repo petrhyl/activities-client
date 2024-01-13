@@ -6,7 +6,7 @@
                 <span></span>
                 <span></span>
             </div>
-            <PhotoItemOptions v-if="isModalOpened" @set-as-main="handleSetAsMain" @delte-photo="handleDelete" />
+            <PhotoItemOptions v-if="isModalOpened" :is-set-as-main="photo.isMain" @set-as-main="handleSetAsMain" @delte-photo="handleDelete" />
         </div>
         <img
             :src="photo.url"

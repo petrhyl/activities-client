@@ -9,7 +9,7 @@
         <div class="nav-menu">
             <div v-if="currentWidth! > WindowWidth.TABLET" class="menu-item-list">
                 <RouterLink class="navigation-link" :to="{ name: RouteNames.ACTIVITIES }">Show Activities</RouterLink>
-                <RouterLink v-if="isLoggedIn" class="navigation-link" :to="{ name: RouteNames.CREATE_ACTIVITY }">Create New Activity
+                <RouterLink v-if="isLoggedIn" class="navigation-link" :to="{ name: RouteNames.CREATE_ACTIVITY }">Create Activity
                 </RouterLink>
                 <div v-if="!isUserLogged" class="account-link-container">
                     <RouterLink class="navigation-link account-link" :to="{ name: RouteNames.LOGIN }">

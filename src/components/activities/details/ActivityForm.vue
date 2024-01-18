@@ -150,6 +150,7 @@ const props = defineProps<{
 
 const emits = defineEmits<{
     (e: 'submit-form', activity: ActivityRequest): Promise<void>
+    (e: 'refresh-form'): void
 }>();
 
 const store = useActivityStore();
@@ -255,13 +256,13 @@ const handleValidateComponent = (action: FormActions) => {
             }
             break;
         case FormActions.CATEGORY:
-            if ((formInputs.category.value.value === '' || formInputs.category.value.id === '-1') && formInputs.category.isChanged) {
+            if ((formInputs.category.value.value.trim() === '' || formInputs.category.value.id === '-1') && formInputs.category.isChanged) {
                 formInputs.category.isValid = false;
                 formInputs.category.warning = 'Please, select the type.';
             }
             break;
         case FormActions.DESC:
-            if (formInputs.description.value === '' && formInputs.description.isChanged) {
+            if (formInputs.description.value.trim() === '' && formInputs.description.isChanged) {
                 formInputs.description.isValid = false;
                 formInputs.description.warning = 'Please, provide some description.';
             }

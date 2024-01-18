@@ -5,6 +5,7 @@
                 <ResponseMessage v-if="submitResponse?.isResponded" :is-error="!submitResponse.isSuccessful"
                     :message="submitResponse.message" />
                 <ActivityForm v-if="!submitResponse"
+                    :key="refreshKey"
                     @refresh-form="handleRefreshForm"
                     @submit-form="handleUpdateActivity"
                     :activity-to-edit="activityToEdit" />
@@ -45,6 +46,7 @@ const { getActivity } = storeToRefs(activityStore);
 
 const activityToEdit: Ref<ActivityRequest | null> = ref(mapToActivityRequest(getActivity.value));
 const submitResponse: Ref<SubmitResponse | null> = ref(null);
+const refreshKey: Ref<string> = ref('a-f')
 
 
 const setActivityToNull = () => {
@@ -65,6 +67,7 @@ const handleLinkClick = (toAll: boolean) => {
 
 const handleRefreshForm = () => {
     activityToEdit.value = mapToActivityRequest(getActivity.value);
+    refreshKey.value = refreshKey + '1'
 }
 
 const handleUpdateActivity = async (activity: ActivityRequest) => {

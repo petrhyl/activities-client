@@ -40,6 +40,10 @@ export const useUserStore = defineStore('userStore', () => {
         return `Bearer ${token}`
     })
 
+    const getCurrentUserTokenWithoutBearer: ComputedRef<string | null> = computed(()=>{
+        return user.value?.token ?? applicationUser.value?.secret ?? null
+    })
+
     const loginUser = async (login: Login): Promise<FetchResponse> => {
         const fetchParams: FetchDataParams<Login, User> = {
             method: HttpVerbs.POST,
@@ -131,6 +135,7 @@ export const useUserStore = defineStore('userStore', () => {
         getCurrentUserDisplayName,
         getCurrentUsername,
         getCurrentUserToken,
+        getCurrentUserTokenWithoutBearer,
         loginUser,
         registerUser,
         logoutUser,

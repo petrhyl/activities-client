@@ -6,7 +6,9 @@
                 :message="submitResponse.message" />
             <ActivityForm
                 v-if="!submitResponse.isResponded"
+                :key="refreshKey"
                 @submit-form="handleCreateActivity"
+                @refresh-form="handleRefreshForm"
                 :activity-to-edit="activityObject" />
             <div v-else class="back-link-container">
                 <input
@@ -30,7 +32,7 @@ import type { ActivityRequest } from '@/models/Activity';
 import type { SubmitResponse } from '@/models/auxillary/interfaces';
 import { useActivityStore } from '@/stores/activities';
 import RouteNames from '@/utils/constanses/RouteNames';
-import { reactive, watch } from 'vue';
+import { reactive, ref, watch, type Ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 
@@ -58,10 +60,8 @@ const activityStore = useActivityStore();
 
 const submitResponse: SubmitResponse = reactive(clearSubmitResponse);
 const activityObject: ActivityRequest = reactive(emptyActivity);
+const refreshKey: Ref<string> = ref('a-f')
 
-
-watch(activityObject, () => {
-})
 
 const handleCreateAnother = () => {
     submitResponse.isResponded = clearSubmitResponse.isResponded;
@@ -79,6 +79,10 @@ const handleCreateActivity = async (activity: ActivityRequest) => {
     submitResponse.isResponded = true;
     submitResponse.isSuccessful = response.isSuccessful
     submitResponse.message = response.errorMessage ?? 'Event was successfully created!';
+}
+
+const handleRefreshForm = () =>{
+    refreshKey.value = refreshKey.value + '1'
 }
 
 </script>

@@ -42,7 +42,7 @@ export interface ChatPost {
   createdAt: Date,
   username: string,
   displayName: string,
-  UserImage: string
+  userImage: string
 }
 
 export interface ChatPostRequest {

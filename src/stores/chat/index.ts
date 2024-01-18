@@ -5,6 +5,7 @@ import { defineStore } from "pinia";
 import { ref, type ComputedRef, type Ref, computed } from "vue";
 import { useUserStore } from "../user";
 import type { FetchResponse } from "@/models/auxillary/interfaces";
+import { ChatPostObject } from "@/utils/objects/auxillary";
 
 export const useChatStore = defineStore('chatStore', () => {
     const chatPosts: Ref<ChatPost[]> = ref([])
@@ -20,7 +21,7 @@ export const useChatStore = defineStore('chatStore', () => {
                 skipNegotiation: true,
                 transport: HttpTransportType.WebSockets,
                 accessTokenFactory() {
-                    return userStore.getCurrentUserToken!
+                    return userStore.getCurrentUserTokenWithoutBearer!
                 }
             })
             .withAutomaticReconnect()
@@ -33,8 +34,13 @@ export const useChatStore = defineStore('chatStore', () => {
             chatPosts.value = posts
         })
 
-        hubConnection.value.on('ReceiveChatPosts', (post: ChatPost) => {
-            chatPosts.value.push(post)
+        hubConnection.value.on('ReceiveChatPost', (post: ChatPost | any) => {
+            if (!(post !== typeof ChatPostObject)) {
+                console.log('Could not save a post.')
+
+                return
+            }
+            chatPosts.value.unshift(post)
         })
     }
 
@@ -47,7 +53,7 @@ export const useChatStore = defineStore('chatStore', () => {
         stopHubConnection()
     }
 
-    const addChatPost = async (post: ChatPostRequest):Promise<FetchResponse> =>{
+    const addChatPost = async (post: ChatPostRequest): Promise<FetchResponse> => {
         try {
             await hubConnection.value?.invoke('SendChatPost', post)
         } catch (error) {
@@ -62,7 +68,7 @@ export const useChatStore = defineStore('chatStore', () => {
             }
         }
 
-        return{
+        return {
             isSuccessful: true,
             errorMessage: null
         }
@@ -71,6 +77,7 @@ export const useChatStore = defineStore('chatStore', () => {
     return {
         getChatPosts,
         createHubConnection,
-        clearChatPosts
+        clearChatPosts,
+        addChatPost
     }
 }) 

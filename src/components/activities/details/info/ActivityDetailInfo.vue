@@ -1,7 +1,7 @@
 <template>
     <CardLayout :use-padding="false">
         <div class="image-background" :style="{ backgroundImage: 'url(' + headerImageUrl + ')' }">
-        <div v-if="isCancelled" class="main-info-flag">Cancelled</div>
+        <div v-if="isCancelled" class="main-info-flag">Canceled</div>
             <div class="main-info">
                 <h1>{{ title }}</h1>
                 <div class="date">{{ date }}</div>

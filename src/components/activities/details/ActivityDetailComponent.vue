@@ -35,7 +35,7 @@
                 </CardLayout>
             </div>
             <div class="detail-chat">
-                <ActivityChat />
+                <ActivityChat :is-canceled="!getActivity.isActive" :activity-id="getActivity.id" :is-user-logged-in="isLoggedIn" />
             </div>
         </div>
         <div class="page-section">
@@ -66,8 +66,7 @@ const props = defineProps<{
 
 const emits = defineEmits<{
     (e: 'update-attendance'): void,
-    (e: 'toggle-cancel-activity'): void,
-    (e: 'add-chat-post'): void
+    (e: 'toggle-cancel-activity'): void
 }>()
 
 
@@ -80,20 +79,14 @@ const { getCurrentUsername, isLoggedIn } = storeToRefs(useUserStore())
 const dateTimeString: ComputedRef<string> = computed(() => {
     const d: Date = new Date(getActivity.value?.beginDate ?? 0)
     return DateTimeToCzechFormat(d)
-});
-
+})
 const getImageLocation: ComputedRef<string> = computed(() => {
     return `/src/assets/categoryImages/${getActivity.value?.category.value}.jpg`
-});
-
-const getHostName: ComputedRef<string> = computed(() => {
-    return getActivity.value?.host.displayName ?? ''
-});
-
+})
+const getHostName: ComputedRef<string> = computed(() => getActivity.value?.host.displayName ?? '')
 const isHostedByCurrentUser: ComputedRef<boolean> = computed(() => {
     return getActivity.value?.host.username === getCurrentUsername.value
 })
-
 const isJoinedByCurrentUser: ComputedRef<boolean> = computed(() => {
     return getActivity.value?.attenders.some(a => a.attender.username === getCurrentUsername.value && !a.isHost) ?? false
 })

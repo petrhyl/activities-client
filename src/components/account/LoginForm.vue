@@ -108,7 +108,7 @@ const handleValidateInput = (action: FormActions) => {
             }
             break;
         case FormActions.password:
-            if (formInputs.password.value.length < 4 && formInputs.password.isChanged) {
+            if (formInputs.password.value.trim().length < 4 && formInputs.password.isChanged) {
                 formInputs.password.isValid = false
                 formInputs.password.warning = 'Please, fill the password'
             }

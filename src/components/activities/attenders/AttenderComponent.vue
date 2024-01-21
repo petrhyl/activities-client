@@ -1,17 +1,23 @@
 <template>
-    <div class="single-attender">
+    <RouterLink
+        :to="{ name: RouteNames.USER_PROFILE, params: { username: attendee.attender.username } }"
+        class="single-attender">
         <ImageComponent css-clases="attender-image" :image-url="attendee.attender.imageUrl"
             alternative-image-text="attender" :use-alternative-element="true">
             <img src="@/assets/user.png" alt="attender" />
         </ImageComponent>
-        <div class="attender-name">{{ attendee.attender.displayName }}</div>
-    </div>
+        <div class="attender-info">
+            <div class="attender-name">{{ attendee.attender.displayName }}</div>
+            <slot></slot>
+        </div>
+    </RouterLink>
 </template>
 
 
 <script setup lang="ts">
 import ImageComponent from '@/components/layout/ImageComponent.vue';
 import type { Attendee } from '@/models/Activity';
+import RouteNames from '@/utils/constanses/RouteNames';
 import { computed, type ComputedRef } from 'vue';
 
 
@@ -23,7 +29,7 @@ const props = defineProps<{
 
 
 const getImageEdgeSize: ComputedRef<string> = computed(() => `${props.attendersPictureSize}px`)
-const getGap: ComputedRef<string> = computed(()=>{
+const getGap: ComputedRef<string> = computed(() => {
     if (!props.imageTextGap) {
         return '15px'
     }
@@ -50,5 +56,11 @@ img {
     height: v-bind(getImageEdgeSize);
     border-radius: 50%;
     overflow: hidden;
+}
+
+.attender-info{
+    display: flex;
+    align-items: center;
+    gap: v-bind(getGap);
 }
 </style>

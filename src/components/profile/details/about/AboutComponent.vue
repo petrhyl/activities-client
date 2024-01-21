@@ -1,25 +1,37 @@
 <template>
     <div class="about-component">
-        <FormComponentContainer>
-            <FormComponent labelFor="about-dispalayedname" :labelText="'Profile Name'" :warningMessage="nameWarning">
-                <input
-                    v-if="isEditing"
-                    type="text"
-                    class="form-input-element"
-                    name="about-dispalayedname"
-                    id="about-dispalayedname"
-                    v-model="displayedNameInput"
-                    @input="handleNameInput"
-                    @blur="handleLeaveNameInput">
-                <div v-else
-                    class="dispalayedname"
-                    id="about-dispalayedname">
-                    <span class="name">{{ displayedName }}</span>
-                </div>
-            </FormComponent>
-        </FormComponentContainer>
+        <div class="header" v-if="isCurrentUser">
+            <FormComponentContainer>
+                <FormComponent
+                    :class="'name-input'"
+                    labelFor="about-dispalayedname"
+                    :labelText="'Profile Name'"
+                    :warningMessage="nameWarning">
+                    <input
+                        v-if="isEditing"
+                        type="text"
+                        class="form-input-element"
+                        name="about-dispalayedname"
+                        id="about-dispalayedname"
+                        v-model="displayedNameInput"
+                        @input="handleNameInput"
+                        @blur="handleLeaveNameInput">
+                    <div v-else
+                        class="dispalayedname"
+                        id="about-dispalayedname">
+                        <span class="name">{{ displayedName }}</span>
+                    </div>
+                </FormComponent>
+            </FormComponentContainer>
+            <StyledButton
+                :button-type="ButtonTypes.BUTTON"
+                :text="getEditButtonText"
+                :css-class="getEditButtonCss"
+                :is-disabled="isUploading"
+                @click-button="emits('start-edit')" />
+        </div>
 
-        <FormComponent labelFor="about-bio" :labelText="isEditing ? 'Bio' : ''" :warningMessage="''">
+        <FormComponent labelFor="about-bio" labelText="Bio" :warningMessage="''">
             <textarea
                 class="form-input-element"
                 name="about-bio"
@@ -33,7 +45,7 @@
             <div></div>
             <StyledButton
                 :buttonType="ButtonTypes.BUTTON"
-                cssClass="save-edit"
+                cssClass="confirm-btn"
                 text="Save"
                 @click-button="handleSave"
                 :isDisabled="isSaving" />
@@ -47,7 +59,7 @@ import FormComponentContainer from '@/components/layout/form/FormComponentContai
 import FormComponent from "@/components/layout/form/FormComponent.vue";
 import StyledButton from '@/components/layout/form/StyledButton.vue';
 import ButtonTypes from '@/utils/constanses/ButtonTypes';
-import { ref, type Ref, watch, onBeforeMount, onUpdated } from 'vue';
+import { ref, type Ref, watch, onBeforeMount, onUpdated, computed, type ComputedRef } from 'vue';
 import { isNameValid } from "@/utils/inputValidation";
 import type { AboutSection } from '@/models/User';
 
@@ -56,14 +68,19 @@ const props = defineProps<{
     displayedName: string,
     content: string,
     isEditing: boolean,
-    isUploading: boolean
+    isUploading: boolean,
+    isCurrentUser: boolean
 }>()
 
 const emits = defineEmits<{
-    (e: 'confirm-edit', aboutProfile: AboutSection): void
+    (e: 'confirm-edit', aboutProfile: AboutSection): void,
+    (e: 'start-edit'): void
 }>()
 
 
+
+const getEditButtonText: ComputedRef = computed(() => props.isEditing ? 'Cancel Edit' : 'Edit Informations')
+const getEditButtonCss: ComputedRef = computed(() => props.isEditing ? 'cancel-btn' : 'confirm-btn')
 const displayedNameInput: Ref<string> = ref(props.displayedName)
 const isNameInputValid: Ref<boolean> = ref(true)
 const nameWarning: Ref<string> = ref('')
@@ -128,20 +145,19 @@ onBeforeMount(() => {
 </script>
 
 
-<style></style>
 
 <style scoped>
-.about-component:deep() .save-edit {
-    color: var(--dark-blue-color);
-    background-color: var(--azure-color);
+.about-component {
+    padding-top: 5px;
 }
 
-.about-component:deep() .save-edit:hover {
-    filter: brightness(1.2);
+.header {
+    display: flex;
+    justify-content: space-between;
 }
 
 .dispalayedname {
-    padding: 5px 10px;
+    padding: 3px 10px 0 10px;
 }
 
 .dispalayedname .name {

@@ -2,9 +2,11 @@
     <CardLayout :header-text="'Chat about this event'" :use-padding="false">
         <div class="chat-content">
             <div class="write-post">
-                <FormLayout v-if="!isCanceled && isUserLoggedIn" form-styles="post-form" @submit-form="handleSubmit"
+                <FormLayout
+                    form-styles="post-form"
+                    @submit-form="handleSubmit"
                     :invalid-message="invalidMessage">
-                    <div class="text-input-container">
+                    <div v-if="!isCanceled && isUserLoggedIn" class="text-input-container">
                         <textarea
                             id="chat-post-text"
                             class="form-input-element"
@@ -23,13 +25,13 @@
                                 :is-disabled="isSubmiting" />
                         </div>
                     </div>
+                    <div class="unlogged-text" v-else-if="!isUserLoggedIn">
+                        Please, log in for adding a post.
+                    </div>
+                    <div v-else class="cancel-text">
+                        This activity is canceled.
+                    </div>
                 </FormLayout>
-                <div v-else-if="!isUserLoggedIn">
-                    Please, log in for adding a post.
-                </div>
-                <div v-else class="cancel-text">
-                    This activity is canceled.
-                </div>
             </div>
             <ul class="contributions" v-for="post in chatPosts">
                 <li>
@@ -164,7 +166,7 @@ ul.contributions {
 
 .button-container {
     position: absolute;
-    bottom: 1px;
+    bottom: 0px;
     right: 4px;
     outline: 1px solid var(--sky-color);
     outline-offset: -5px;
@@ -187,11 +189,21 @@ ul.contributions {
     align-items: end;
 }
 
-.cancel-text {
-    font-family: 'Times New Roman', Times, serif;
+.cancel-text,
+.unlogged-text{
     font-size: 13pt;
     text-align: center;
+    width: 100%;
+}
+
+.cancel-text {
+    font-family: 'Times New Roman', Times, serif;   
     color: var(--warning-color);
-    padding: 10px 15px;
+}
+
+.unlogged-text{
+    font-family: 'Gill Sans', Calibri, sans-serif;
+    font-weight: 600;
+    color: var(--dark-blue-color);
 }
 </style>

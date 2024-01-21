@@ -3,7 +3,11 @@
         <ul class="attender-list">
             <li v-for="attendee in attenders">
                 <RouterLink :to="{ name: RouteNames.USER_PROFILE, params: { username: attendee.attender.username } }">
-                    <AttenderComponent :attendee="attendee" :attenders-picture-size="50" :image-text-gap="25" />
+                    <AttenderComponent :attendee="attendee" :attenders-picture-size="50" :image-text-gap="25">
+                        <div v-if="attendee.attender.isCurrentUserFollowing" class="following-indicator">
+                            <span>Following</span>
+                        </div>
+                    </AttenderComponent>
                 </RouterLink>
                 <div v-if="attendee.isHost" class="host-flag">Host</div>
             </li>
@@ -72,5 +76,17 @@ ul.attender-list {
     background-color: #ff8c4e;
     transform-origin: bottom;
     transform: skewX(-15deg);
+}
+
+.following-indicator{
+    border: 1px solid #00e9b2;
+    border-radius: 5px;
+    padding: 3px 7px;
+}
+
+.following-indicator>span{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 10pt;
+    color: #00e9b2;
 }
 </style>

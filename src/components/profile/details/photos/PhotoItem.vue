@@ -17,7 +17,7 @@
 
 <script setup lang="ts">
 import type { PhotoImage } from '@/models/User';
-import { keyProvidedModalState, keyProvidedWindowWidth } from '@/models/auxillary/providedKey';
+import { keyProvidedModalState, keyProvidedWindowWidth } from '@/utils/providedKey';
 import { WindowWidth } from '@/utils/constanses/enums';
 import { type Ref, ref, computed, inject, type ComputedRef, watch } from 'vue';
 import PhotoItemOptions from './PhotoItemOptions.vue';
@@ -137,4 +137,4 @@ watch(modalInState, () => {
     background-color: var(--dark-blue-color);
     border-radius: 50%;
 }
-</style>../../../../utils/constanses/photoModalConst
+</style>

@@ -1,4 +1,4 @@
-import type { User } from "./User"
+import type { Profile } from "./User"
 
 export interface Activity {
   id: string,
@@ -10,7 +10,7 @@ export interface Activity {
   venue: string,
   isActive: boolean,
   attenders: Attendee[],
-  host: User,
+  host: Profile,
   isCurrentUserAttender: boolean
 }
 
@@ -32,7 +32,7 @@ export interface ActivityCategory {
 }
 
 export interface Attendee {
-  attender: User,
+  attender: Profile,
   isHost: boolean
 }
 

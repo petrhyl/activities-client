@@ -1,5 +1,4 @@
 import type { ChatPost, ChatPostRequest } from "@/models/Activity";
-import { ApiEndpoints } from "@/utils/constanses/ApiEndpoints";
 import { HttpTransportType, HubConnection, HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import { defineStore } from "pinia";
 import { ref, type ComputedRef, type Ref, computed } from "vue";

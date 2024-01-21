@@ -11,7 +11,7 @@
 import { type Ref, ref, onBeforeMount, provide, onMounted, reactive } from 'vue';
 import NavBar from './components/definite/NavBar.vue';
 import { WindowWidth } from './utils/constanses/enums';
-import { keyProvidedModalState, keyProvidedWindowWidth } from './models/auxillary/providedKey';
+import { keyProvidedModalState, keyProvidedWindowWidth } from './utils/providedKey';
 import { useUserStore } from './stores/user';
 import { ModalInState } from './utils/objects/ModalInState';
 import { PhotoOptionsParentElementsCount } from './utils/constanses/photoModalConst';
@@ -40,7 +40,7 @@ const handleCloseModal = (ev: Event) => {
   if (!modalInState.isOpen) {
     return
   }
-  
+
   if (ev.target instanceof HTMLElement) {
     let resolvingTarget = ev.target as HTMLElement
 
@@ -147,5 +147,21 @@ a {
   border-radius: 5px;
   border: 1px solid var(--light-gray-color);
   padding: 7px 10px;
+}
+
+.cancel-btn {
+  color: #e2e2e2;
+  background-color: #8da2ae;
+}
+
+
+.confirm-btn:hover,
+.cancel-btn:hover {
+  filter: brightness(1.2);
+}
+
+.confirm-btn {
+  color: var(--dark-blue-color);
+  background-color: var(--azure-color);
 }
 </style>

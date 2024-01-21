@@ -138,6 +138,23 @@ export const useProfileStore = defineStore('profileStore', () => {
         }
     }
 
+    const toggleFollowing =async (username:string):Promise<FetchResponse> => {
+        const fetchParams: FetchDataParams<null, null> = {
+            method: HttpVerbs.POST,
+            requestBody: null,
+            headers: {
+                'Authorization': getCurrentUserToken.value
+            }
+        }
+
+        const response = await fetchData(fetchParams, DataObject.PROFILE, ApiEndpoints.TOGGLE_FOLLOW + username)
+
+        return {
+            isSuccessful: response.isSuccessful,
+            errorMessage: response.errorMessage
+        }
+    }
+
 
     return {
         getCurrentAboutSection,
@@ -148,6 +165,7 @@ export const useProfileStore = defineStore('profileStore', () => {
         addPhotoToProfile,
         setPhotoAsMain,
         deletePhoto,
-        editUserProfile
+        editUserProfile,
+        toggleFollowing
     }
 })

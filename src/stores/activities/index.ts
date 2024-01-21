@@ -50,7 +50,7 @@ export const useActivityStore = defineStore('activityStore', () => {
         const fetchParams: FetchDataParams<Activity, Activity> = {
             method: HttpVerbs.GET,
             requestBody: null,
-            headers: null
+            headers: { 'Authorization': userStore.getCurrentUserToken }
         };
 
         const response = await fetchData(fetchParams, DataObject.ACTIVITY, ApiEndpoints.ACTIVITY + idActivity);

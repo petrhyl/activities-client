@@ -14,9 +14,9 @@ export const ApiEndpoints = {
     USER_REGISTRATION: ACCOUNT_URL + '/register',
     CURRENT_USER: ACCOUNT_URL + '/current',
     USER_PROFILE: USER_PROFILE,
+    TOGGLE_FOLLOW:USER_PROFILE + 'following/',
     PHOTO_PROFILE: PHOTO_URL + '/user/',
     PHOTO_ADD: PHOTO_URL,
     PHOTO_SET_MAIN: PHOTO_URL + '/set-main/',
     PHOTO_DELETE: PHOTO_URL + '/',
-    SIGNALR_CHAT: BASE_URL + '/chat'
 }

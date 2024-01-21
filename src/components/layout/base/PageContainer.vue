@@ -6,7 +6,7 @@
 
 
 <script setup lang="ts">
-import { keyProvidedWindowWidth } from '@/models/auxillary/providedKey';
+import { keyProvidedWindowWidth } from '@/utils/providedKey';
 import { WindowWidth } from '@/utils/constanses/enums';
 import { inject, watch, ref, type Ref, onBeforeMount } from 'vue';
 

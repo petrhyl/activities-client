@@ -40,7 +40,7 @@
 import RouteNames from '@/utils/constanses/RouteNames';
 import { WindowWidth } from "@/utils/constanses/enums";
 import { inject, ref, watch, type Ref, computed, type ComputedRef } from 'vue';
-import { keyProvidedWindowWidth } from '@/models/auxillary/providedKey';
+import { keyProvidedWindowWidth } from '@/utils/providedKey';
 import { storeToRefs } from 'pinia';
 import { useUserStore } from '@/stores/user';
 

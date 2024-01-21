@@ -34,7 +34,7 @@ import AddPhotoSection from '@/components/profile/details/photos/AddPhotoSection
 import PhotoList from '@/components/profile/details/photos/PhotoList.vue';
 import type { PhotoImage } from '@/models/User';
 import type { AddPhotoRequest, FetchResponse, ModalState } from '@/models/auxillary/interfaces';
-import { keyProvidedModalState } from '@/models/auxillary/providedKey';
+import { keyProvidedModalState } from '@/utils/providedKey';
 import { useProfileStore } from '@/stores/profile';
 import ButtonTypes from '@/utils/constanses/ButtonTypes';
 import { ModalInState } from '@/utils/objects/ModalInState';
@@ -176,5 +176,3 @@ onBeforeMount(() => {
     margin-bottom: 15px;
 }
 </style>
-
-

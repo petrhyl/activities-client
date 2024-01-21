@@ -29,7 +29,10 @@ export interface Profile {
     displayName: string,
     email: string,
     bio: string | null,
-    imageUrl: string | null
+    imageUrl: string | null,
+    isCurrentUserFollowing: boolean,
+    followersCount: number,
+    followingsCount: number
 }
 
 export interface PhotoImage {

@@ -9,7 +9,8 @@
         <div class="nav-menu">
             <div v-if="currentWidth! > WindowWidth.TABLET" class="menu-item-list">
                 <RouterLink class="navigation-link" :to="{ name: RouteNames.ACTIVITIES }">Show Activities</RouterLink>
-                <RouterLink v-if="isLoggedIn" class="navigation-link" :to="{ name: RouteNames.CREATE_ACTIVITY }">Create Activity
+                <RouterLink v-if="isUserLogged" class="navigation-link" :to="{ name: RouteNames.CREATE_ACTIVITY }">Create
+                    Activity
                 </RouterLink>
                 <div v-if="!isUserLogged" class="account-link-container">
                     <RouterLink class="navigation-link account-link" :to="{ name: RouteNames.LOGIN }">
@@ -23,8 +24,8 @@
                     <input type="button" class="navigation-link account-link" @click="handleLogout" value="Log Out" />
                     <RouterLink
                         class="navigation-link account-link"
-                        :to="{ name: RouteNames.USER_PROFILE_ABOUT, params: { username: getCurrentUsername } }">
-                        {{ getUserName }}
+                        :to="{ name: RouteNames.USER_PROFILE_ABOUT, params: { username: userName } }">
+                        {{ getDisplayName }}
                     </RouterLink>
                 </div>
             </div>
@@ -50,9 +51,11 @@ const userStore = useUserStore()
 const { isLoggedIn, getCurrentUsername, getCurrentUserDisplayName } = storeToRefs(userStore)
 
 const isUserLogged: Ref<boolean> = ref(isLoggedIn.value)
+const displayName: Ref<string> = ref(getCurrentUserDisplayName.value)
+const userName: Ref<string> = ref(getCurrentUsername.value)
 
-const getUserName: ComputedRef<string> = computed(() => {
-    let userName = getCurrentUserDisplayName.value
+const getDisplayName: ComputedRef<string> = computed(() => {
+    let userName = displayName.value
     userName = userName.length < 10 ? userName : userName.substring(0, 7) + '...'
     return userName.length === 0 ? '.' : userName
 })
@@ -61,8 +64,10 @@ const handleLogout = () => {
     userStore.logoutUser()
 }
 
-watch(isLoggedIn, () => {
+watch([isLoggedIn, getCurrentUserDisplayName, getCurrentUsername], () => {
     isUserLogged.value = isLoggedIn.value
+    displayName.value = getCurrentUserDisplayName.value
+    userName.value = getCurrentUsername.value
 })
 
 </script>

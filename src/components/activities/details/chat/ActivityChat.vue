@@ -1,22 +1,22 @@
 <template>
     <CardLayout :header-text="'Chat about this event'" :use-padding="false">
         <div class="chat-content">
-            <div class="write-post">
-                <FormLayout
-                    form-styles="post-form"
-                    @submit-form="handleSubmit"
-                    :invalid-message="invalidMessage">
-                    <div v-if="!isCanceled && isUserLoggedIn" class="text-input-container">
+            <div class="write-post-container">
+                <ResponseMessage v-if="invalidMessage !== ''" :is-error="true" :message="invalidMessage" />
+                <div class="write-post">
+                    <div
+                        v-if="!isCanceled && isUserLoggedIn"
+                        class="text-input-container"
+                        @focusout="handleBlurInput">
                         <textarea
                             id="chat-post-text"
                             class="form-input-element"
                             :rows="newMessageRows"
                             v-model="textContent"
                             @focus="handleFocusInput"
-                            @blur="handleBlurInput"
                             @keydown="handleInputKeyDown">
-                            </textarea>
-                        <div class="button-container">
+                    </textarea>
+                        <div @mousedown="handleClickSend" class="button-container">
                             <StyledButton
                                 :css-class="'button-add'"
                                 :button-type="ButtonTypes.SUBMIT"
@@ -31,7 +31,7 @@
                     <div v-else class="cancel-text">
                         This activity is canceled.
                     </div>
-                </FormLayout>
+                </div>
             </div>
             <ul class="contributions" v-for="post in chatPosts">
                 <li>
@@ -44,7 +44,6 @@
 
 
 <script setup lang="ts">
-import FormLayout from '@/components/layout/form/FormLayout.vue';
 import ChatPostComponent from '@/components/activities/details/chat/ChatPostComponent.vue';
 import StyledButton from '@/components/layout/form/StyledButton.vue';
 import ButtonTypes from '@/utils/constanses/ButtonTypes';
@@ -53,6 +52,7 @@ import CardLayout from '@/components/layout/base/CardLayout.vue';
 import { useChatStore } from "@/stores/chat";
 import { storeToRefs } from 'pinia';
 import type { ChatPost } from '@/models/Activity';
+import ResponseMessage from '@/components/layout/base/ResponseMessage.vue';
 
 
 const props = defineProps<{
@@ -85,6 +85,12 @@ const handleInputKeyDown = (ev: KeyboardEvent) => {
         ev.preventDefault()
         handleSubmit()
     }
+}
+
+const handleClickSend = async (ev: MouseEvent) => {
+    ev.stopPropagation()
+    await handleSubmit()
+    handleBlurInput()
 }
 
 const handleFocusInput = () => {
@@ -127,8 +133,10 @@ watch(getChatPosts, () => {
 })
 
 onBeforeMount(() => {
-    chatStore.createHubConnection(props.activityId)
-    chatPosts.value = getChatPosts.value
+    if (props.isUserLoggedIn) {
+        chatStore.createHubConnection(props.activityId)
+        chatPosts.value = getChatPosts.value
+    }
 })
 
 onUnmounted(() => {
@@ -139,13 +147,16 @@ onUnmounted(() => {
 
 
 <style scoped>
+.write-post-container{
+    padding: 15px 15px 20px 15px;
+}
 ul.contributions {
     list-style: none;
     display: flex;
     flex-direction: column;
     row-gap: 10px;
-    padding: 0;
-    margin: 0px 15px 15px 15px;
+    margin: 0;
+    padding: 0 15px 10px 15px;
 }
 
 .contributions li {
@@ -190,18 +201,18 @@ ul.contributions {
 }
 
 .cancel-text,
-.unlogged-text{
+.unlogged-text {
     font-size: 13pt;
     text-align: center;
     width: 100%;
 }
 
 .cancel-text {
-    font-family: 'Times New Roman', Times, serif;   
+    font-family: 'Times New Roman', Times, serif;
     color: var(--warning-color);
 }
 
-.unlogged-text{
+.unlogged-text {
     font-family: 'Gill Sans', Calibri, sans-serif;
     font-weight: 600;
     color: var(--dark-blue-color);

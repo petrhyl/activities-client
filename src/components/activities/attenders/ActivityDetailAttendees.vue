@@ -2,13 +2,16 @@
     <CardLayout header-text="Attenders" :has-header-small-title="true">
         <ul class="attender-list">
             <li v-for="attendee in attenders">
-                <RouterLink :to="{ name: RouteNames.USER_PROFILE, params: { username: attendee.attender.username } }">
+                <RouterLink
+                    v-if="isUserLoggedIn"
+                    :to="{ name: RouteNames.USER_PROFILE, params: { username: attendee.attender.username } }">
                     <AttenderComponent :attendee="attendee" :attenders-picture-size="50" :image-text-gap="25">
                         <div v-if="attendee.attender.isCurrentUserFollowing" class="following-indicator">
                             <span>Following</span>
                         </div>
                     </AttenderComponent>
                 </RouterLink>
+                <AttenderComponent v-else :attendee="attendee" :attenders-picture-size="50" :image-text-gap="25" />
                 <div v-if="attendee.isHost" class="host-flag">Host</div>
             </li>
         </ul>
@@ -24,7 +27,8 @@ import RouteNames from '@/utils/constanses/RouteNames';
 
 
 const props = defineProps<{
-    attenders: Attendee[]
+    attenders: Attendee[],
+    isUserLoggedIn: boolean
 }>();
 
 
@@ -78,13 +82,13 @@ ul.attender-list {
     transform: skewX(-15deg);
 }
 
-.following-indicator{
+.following-indicator {
     border: 1px solid #00e9b2;
     border-radius: 5px;
     padding: 3px 7px;
 }
 
-.following-indicator>span{
+.following-indicator>span {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 10pt;
     color: #00e9b2;

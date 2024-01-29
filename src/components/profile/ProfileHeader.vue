@@ -2,11 +2,11 @@
     <div class="profile-header">
         <div class="user-displaying">
             <ImageComponent
-                css-clases="user-image"
+                image-css="user-image"
                 :image-url="userImageUrl"
                 alternative-image-text="profile-image"
                 :use-alternative-element="true">
-                <img src="@/assets/user.png" alt="profile-image" />
+                <img src="@/assets/user.png" alt="profile-image" class="user-image" />
             </ImageComponent>
             <h1 class="display-name">{{ displayedName }}</h1>
         </div>
@@ -129,12 +129,11 @@ watch(props, () => {
     align-items: center;
 }
 
-.user-displaying:deep() .user-image img {
+.user-displaying:deep() .user-image {
     width: 100%;
 }
 
 .user-displaying:deep() .user-image {
-    display: flex;
     border-radius: 50%;
     overflow: hidden;
     margin: auto;

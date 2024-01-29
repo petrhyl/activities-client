@@ -2,11 +2,11 @@
     <div class="chat-contribution">
         <div class="image-container">
             <ImageComponent
-                css-clases="contributor-image"
+                image-css="contributor-image"
                 :image-url="chatPost.userImage"
                 alternative-image-text="contributor"
                 :use-alternative-element="true">
-                <img src="@/assets/user.png" alt="attender" />
+                <img src="@/assets/user.png" alt="attender" class="contributor-image" />
             </ImageComponent>
         </div>
         <div class="contribution-header">
@@ -55,8 +55,8 @@ const emits = defineEmits<{
     grid-area: m;
 }
 
-.image-container:deep() .contributor-image img {
-    width: 100%;
+.image-container:deep() .contributor-image,
+.contributor-image {
     border-radius: 50%;
 }
 

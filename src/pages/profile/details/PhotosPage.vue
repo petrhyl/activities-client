@@ -16,7 +16,11 @@
             v-else
             :is-loading="photos.length === 0 && !isAddPhotoOpen"
             :error-message="errorMessage && photos.length > 0 ? errorMessage : ''">
-            <PhotoList :photos="photos" @set-as-main="handleSetPhotoAsMain" @delete-photo="handleDeletePhoto" />
+            <PhotoList
+                :photos="photos"
+                :is-current-user-profile="getCurrentUsername === username"
+                @set-as-main="handleSetPhotoAsMain"
+                @delete-photo="handleDeletePhoto" />
         </LoadingLayer>
         <TeleportedModal
             v-if="isSetMainModalOpened || isDeletePhotoModalOpen"
@@ -42,6 +46,8 @@ import { type Ref, ref, onBeforeMount, type ComputedRef, computed, inject } from
 import LoadingLayer from "@/components/layout/base/LoadingLayer.vue";
 import TeleportedModal from '@/components/layout/TeleportedModal.vue';
 import { ScrollPageToTop } from '@/utils/stateUndependentFunctions';
+import { storeToRefs } from 'pinia';
+import { useUserStore } from '@/stores/user';
 
 
 const props = defineProps<{
@@ -50,6 +56,7 @@ const props = defineProps<{
 
 
 const profileStore = useProfileStore()
+const { getCurrentUsername } = storeToRefs(useUserStore())
 
 const { setCloseModal } = inject<ModalState>(keyProvidedModalState, { modalInState: new ModalInState(), setOpenModal: () => { }, setCloseModal: () => { } })
 

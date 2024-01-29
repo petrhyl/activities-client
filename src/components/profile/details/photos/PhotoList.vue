@@ -3,6 +3,7 @@
         <PhotoItem
             v-for="photo in photos"
             :photo="photo"
+            :is-current-user-profile="isCurrentUserProfile"
             @set-as-main="handleSetAsMain"
             @delete-photo="handleDelete" />
     </ul>
@@ -15,7 +16,8 @@ import PhotoItem from './PhotoItem.vue';
 
 
 const props = defineProps<{
-    photos: PhotoImage[]
+    photos: PhotoImage[],
+    isCurrentUserProfile: boolean
 }>()
 
 const emits = defineEmits<{

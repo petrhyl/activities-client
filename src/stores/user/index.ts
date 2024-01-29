@@ -19,8 +19,8 @@ export const useUserStore = defineStore('userStore', () => {
     const applicationUser: Ref<ApplicationUser | null> = ref(null)
 
     const isLoggedIn: ComputedRef<boolean> = computed(() => {
-        const token = user.value?.token ?? applicationUser.value?.secret
-        return !!token && token !== ''
+        loadApplicationUserFromCookies()
+        return !!applicationUser.value?.secret && applicationUser.value?.secret !== ''
     });
 
     const getCurrentUserDisplayName: ComputedRef<string> = computed(() => {
@@ -36,11 +36,15 @@ export const useUserStore = defineStore('userStore', () => {
     });
 
     const getCurrentUserToken: ComputedRef<string | null> = computed(() => {
+        loadApplicationUserFromCookies()
+        loadCurrentUserWithRefreshedToken()
         const token = user.value?.token ?? applicationUser.value?.secret
         return `Bearer ${token}`
     })
 
-    const getCurrentUserTokenWithoutBearer: ComputedRef<string | null> = computed(()=>{
+    const getCurrentUserTokenWithoutBearer: ComputedRef<string | null> = computed(() => {
+        loadApplicationUserFromCookies()
+        loadCurrentUserWithRefreshedToken()
         return user.value?.token ?? applicationUser.value?.secret ?? null
     })
 
@@ -82,22 +86,17 @@ export const useUserStore = defineStore('userStore', () => {
         }
     }
 
-    const getCurrentUserByToken = async (token: string): Promise<FetchResponse> => {
+    const loadCurrentUserWithRefreshedToken = async (): Promise<void> => {
         const fetchParams: FetchDataParams<null, User> = {
             method: HttpVerbs.GET,
             requestBody: null,
-            headers: { 'Authorization': getCurrentUserToken.value }
+            headers: { 'Authorization': `Bearer ${applicationUser.value?.secret}` }
         };
 
-        const response = await fetchData(fetchParams, DataObject.CURRENT_USER, ApiEndpoints.CURRENT_USER);
+        const response = await fetchData(fetchParams, DataObject.CURRENT_USER, ApiEndpoints.REFRESH_TOKEN);
 
         if (response.isSuccessful) {
             saveUserData(response.data!)
-        }
-
-        return {
-            isSuccessful: response.isSuccessful,
-            errorMessage: response.errorMessage
         }
     }
 
@@ -109,22 +108,25 @@ export const useUserStore = defineStore('userStore', () => {
     }
 
     const loadApplicationUserFromCookies = () => {
+        applicationUser.value = getLoggedUserFromCookies()
+    }
+
+    const getLoggedUserFromCookies = (): ApplicationUser | null => {
         const userString = getCookieValueByName(userCookieName)
         if (!userString || userString === '') {
             applicationUser.value = null
 
-            return;
+            return null;
         }
 
-        applicationUser.value = JSON.parse(userString)
+        return JSON.parse(userString)
     }
-
 
     const saveUserData = (userData: User) => {
         user.value = userData;
         applicationUser.value = { identification: userData.username, displayName: userData.displayName, secret: userData.token }
         let userCookieExpiresIn = new Date()
-        userCookieExpiresIn.setHours(userCookieExpiresIn.getHours() + 12)
+        userCookieExpiresIn.setHours(userCookieExpiresIn.getHours() + 3)
         setCookie(userCookieName, JSON.stringify(applicationUser.value), userCookieExpiresIn)
     }
 
@@ -139,7 +141,6 @@ export const useUserStore = defineStore('userStore', () => {
         loginUser,
         registerUser,
         logoutUser,
-        getCurrentUserByToken,
         loadApplicationUserFromCookies
     }
 });

@@ -15,9 +15,11 @@ import { keyProvidedModalState, keyProvidedWindowWidth } from './utils/providedK
 import { useUserStore } from './stores/user';
 import { ModalInState } from './utils/objects/ModalInState';
 import { PhotoOptionsParentElementsCount } from './utils/constanses/photoModalConst';
+import { useRouter } from 'vue-router';
 
 
 const userStore = useUserStore()
+const router = useRouter()
 
 const currentWindowWidth: Ref<WindowWidth> = ref(WindowWidth.COMMON)
 const modalInState = reactive<ModalInState>(new ModalInState())
@@ -60,11 +62,10 @@ const handleCloseModal = (ev: Event) => {
   }
 }
 
-
 onBeforeMount(() => {
   addWindowWidthListeners()
   userStore.loadApplicationUserFromCookies()
-});
+})
 
 onMounted(() => {
   acertainWidth()

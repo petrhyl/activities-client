@@ -5,11 +5,11 @@
             <div class="activity-header">
                 <div class="user-image-container">
                     <ImageComponent
-                        css-clases="user-image"
+                        image-css="user-image"
                         :image-url="activity.host.imageUrl"
                         alternative-image-text="attender"
                         :use-alternative-element="true">
-                        <img src="@/assets/user.png" alt="attender" />
+                        <img src="@/assets/user.png" alt="attender" class="user-image" />
                     </ImageComponent>
                 </div>
                 <div class="title">
@@ -147,49 +147,43 @@ const handleConfirmDelete = () => {
 </script>
 
 
-<style>
-.activity-header .user-image {
-    display: flex;
-    overflow: hidden;
-    border-radius: 50%;
-    margin: auto;
-}
 
-.activity-header .user-image img {
-    width: 100%;
-}
-
-.activity-footer-detail-link .link,
-.activity-footer-buttons .link {
+<style scoped>
+.activity-footer-detail-link:deep() .link,
+.activity-footer-buttons:deep() .link {
     text-decoration: none;
     color: #30006d;
     background: linear-gradient(90deg, #abfee2 10%, #8bd3fd);
 }
 
-.activity-footer-detail-link .link:hover,
-.activity-footer-buttons .link:hover {
+.activity-footer-detail-link:deep() .link:hover,
+.activity-footer-buttons:deep() .link:hover {
     color: #51218f;
     box-shadow: 0 0 3px 0px var(--blue-color) inset;
 }
 
-.activity-footer-buttons .delete {
+.activity-footer-buttons:deep() .delete {
     color: #e2e2e2;
     background-color: #8da2ae;
 }
 
-.activity-footer-buttons .delete:hover {
+.activity-footer-buttons:deep() .delete:hover {
     background-color: #a4b7c2;
 }
 
-.disabled {
+
+.activity-footer-buttons:deep() .disabled {
     pointer-events: none;
     background-color: #c5c5c5;
     color: #9f9f9f;
 }
-</style>
+.activity-header:deep() .user-image {
+    width: 100%;
+    overflow: hidden;
+    border-radius: 50%;
+    margin: auto;
+}
 
-
-<style scoped>
 .single-activity {
     width: 100%;
     padding: 15px;

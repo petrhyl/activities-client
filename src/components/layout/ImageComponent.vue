@@ -1,19 +1,19 @@
 <template>
-    <div :class="cssClases">
-        <img v-if="isImageUrlValid" class="valid-image" :src="validImageUrl" :alt="alternativeImageText" />
+    <div>
+        <img v-if="isImageUrlValid" :class="getCssClasses" :src="validImageUrl" :alt="alternativeImageText" />
         <slot v-if="useAlternativeElement && !isImageUrlValid"></slot>
     </div>
 </template>
 
 
 <script setup lang="ts">
-import { onBeforeMount, type Ref, ref, watch } from 'vue';
+import { onBeforeMount, type Ref, ref, watch, type ComputedRef, computed } from 'vue';
 
 
 const props = withDefaults(defineProps<{
     imageUrl: string | null | undefined,
     alternativeImageText: string,
-    cssClases: string,
+    imageCss: string,
     useAlternativeElement: boolean
 }>(),{
     useAlternativeElement : false
@@ -22,6 +22,10 @@ const props = withDefaults(defineProps<{
 
 const isImageUrlValid: Ref<boolean> = ref(false)
 const validImageUrl: Ref<string> = ref('')
+
+const getCssClasses: ComputedRef<string> = computed(()=>{
+    return 'valid-image ' + props.imageCss
+})
 
 
 const processUrl =async () => {
@@ -54,6 +58,9 @@ watch(props, () =>{
 
 
 <style scoped>
+div{
+    display: flex;
+}
 .valid-image{
     width: 100%;
 }

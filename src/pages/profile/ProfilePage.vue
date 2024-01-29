@@ -16,12 +16,16 @@
             </CardLayout>
         </div>
         <div class="body-content">
-            <CardLayout :use-padding="false">
-                <ProfileMenu />
-            </CardLayout>
-            <CardLayout :key="subRouteChangeKey" :use-padding="true">
-                <RouterView />
-            </CardLayout>
+            <div class="grid-item-container">
+                <CardLayout :use-padding="false">
+                    <ProfileMenu />
+                </CardLayout>
+            </div>
+            <div class="grid-item-container">
+                <CardLayout :key="subRouteChangeKey" :use-padding="true">
+                    <RouterView />
+                </CardLayout>
+            </div>
         </div>
     </PageContainer>
 </template>

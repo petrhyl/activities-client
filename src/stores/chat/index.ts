@@ -1,5 +1,5 @@
 import type { ChatPost, ChatPostRequest } from "@/models/Activity";
-import { HttpTransportType, HubConnection, HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
+import { HttpTransportType, HubConnection, HubConnectionBuilder, HubConnectionState, LogLevel } from "@microsoft/signalr";
 import { defineStore } from "pinia";
 import { ref, type ComputedRef, type Ref, computed } from "vue";
 import { useUserStore } from "../user";
@@ -44,6 +44,12 @@ export const useChatStore = defineStore('chatStore', () => {
     }
 
     const stopHubConnection = () => {
+        if (hubConnection.value?.state === HubConnectionState.Disconnected
+            || hubConnection.value?.state === HubConnectionState.Disconnecting) {
+            return
+        }
+        console.log('disconecting');
+        
         hubConnection.value?.stop().catch(err => console.log('Error while stopping hub connection. ', err))
     }
 

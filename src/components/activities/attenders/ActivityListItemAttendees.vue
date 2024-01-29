@@ -1,7 +1,12 @@
 <template>
     <ul class="attender-list">
-        <li v-for="attender in attenders">            
-            <AttenderComponent :attendee="attender" :attenders-picture-size="35" :image-text-gap="10" />
+        <li v-for="attender in attenders">
+            <RouterLink
+                v-if="isLoggedIn"
+                :to="{ name: RouteNames.USER_PROFILE, params: { username: attender.attender.username } }">
+                <AttenderComponent :attendee="attender" :attenders-picture-size="35" :image-text-gap="10" />
+            </RouterLink>
+            <AttenderComponent v-else :attendee="attender" :attenders-picture-size="35" :image-text-gap="10" />
         </li>
     </ul>
 </template>
@@ -10,11 +15,17 @@
 <script setup lang="ts">
 import type { Attendee } from '@/models/Activity';
 import AttenderComponent from './AttenderComponent.vue';
+import { useUserStore } from '@/stores/user';
+import { storeToRefs } from 'pinia';
+import RouteNames from '@/utils/constanses/RouteNames';
 
 
 const props = defineProps<{
     attenders: Attendee[]
 }>()
+
+
+const { isLoggedIn } = storeToRefs(useUserStore())
 
 </script>
 

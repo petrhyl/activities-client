@@ -1,12 +1,20 @@
 <template>
     <li class="photo-element">
         <div :id="`${PhotoOptionsElementIdPrefix}${photo.id}`" class="photo-options-container">
-            <div class="photo-options-button" :class="{ active: isModalOpened }" @click="handleToggleOptions">
+            <div
+                v-if="isCurrentUserProfile"
+                class="photo-options-button"
+                :class="{ active: isModalOpened }"
+                @click="handleToggleOptions">
                 <span></span>
                 <span></span>
                 <span></span>
             </div>
-            <PhotoItemOptions v-if="isModalOpened" :is-set-as-main="photo.isMain" @set-as-main="handleSetAsMain" @delte-photo="handleDelete" />
+            <PhotoItemOptions
+                v-if="isModalOpened"
+                :is-set-as-main="photo.isMain"
+                @set-as-main="handleSetAsMain"
+                @delte-photo="handleDelete" />
         </div>
         <img
             :src="photo.url"
@@ -22,11 +30,12 @@ import { WindowWidth } from '@/utils/constanses/enums';
 import { type Ref, ref, computed, inject, type ComputedRef, watch } from 'vue';
 import PhotoItemOptions from './PhotoItemOptions.vue';
 import { type ModalInState, type ModalState } from '@/models/auxillary/interfaces';
-import { PhotoOptionsElementIdPrefix} from '@/utils/constanses/photoModalConst';
+import { PhotoOptionsElementIdPrefix } from '@/utils/constanses/photoModalConst';
 
 
 const props = defineProps<{
-    photo: PhotoImage
+    photo: PhotoImage,
+    isCurrentUserProfile: boolean
 }>()
 
 const emits = defineEmits<{

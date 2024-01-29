@@ -40,7 +40,7 @@ export const router = createRouter({
             path: '/account/profile/:username',
             name: RouteNames.USER_PROFILE,
             props: true,
-            component: () => import('@/pages/profile/ProfilePage.vue'),   
+            component: () => import('@/pages/profile/ProfilePage.vue'),  
             redirect(to) {
                 return {
                     name: RouteNames.USER_PROFILE_ABOUT
@@ -65,12 +65,14 @@ export const router = createRouter({
                 },{
                     path: 'followers',
                     name: RouteNames.USER_PROFILE_FOLLOWERS,
+                    props: true,
                     component: () => import('@/pages/profile/details/FollowersPage.vue')
                 },
                 {
-                    path: 'following',
+                    path: 'followees',
                     name: RouteNames.USER_PROFILE_FOLLOWING,
-                    component: () => import('@/pages/profile/details/FollowingPage.vue')
+                    props: true,
+                    component: () => import('@/pages/profile/details/FolloweesPage.vue')
                 },
             ]       
         },{

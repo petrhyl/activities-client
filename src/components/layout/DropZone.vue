@@ -207,6 +207,10 @@ const processFile = (insertedFile: File): File | null => {
     border-radius: 50%;
 }
 
+.file-over .drop-cross{
+    border-style: solid;
+}
+
 .drop-cross::before,
 .drop-cross::after {
     content: '';
@@ -227,6 +231,15 @@ const processFile = (insertedFile: File): File | null => {
     left: 20%;
     width: 60%;
     height: 2px;
+}
+
+.file-over .drop-cross::before{
+    top: 27%;
+    height: 46%;
+}
+.file-over .drop-cross::after{
+    left: 27%;
+    width: 46%;
 }
 
 .file-warning {

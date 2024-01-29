@@ -1,23 +1,23 @@
 <template>
-    <RouterLink
-        :to="{ name: RouteNames.USER_PROFILE, params: { username: attendee.attender.username } }"
-        class="single-attender">
-        <ImageComponent css-clases="attender-image" :image-url="attendee.attender.imageUrl"
-            alternative-image-text="attender" :use-alternative-element="true">
-            <img src="@/assets/user.png" alt="attender" />
+    <div class="single-attender">
+        <ImageComponent
+            image-css="attender-image"
+            :image-url="attendee.attender.imageUrl"
+            alternative-image-text="attender"
+            :use-alternative-element="true">
+            <img src="@/assets/user.png" alt="attender" class="attender-image" />
         </ImageComponent>
         <div class="attender-info">
             <div class="attender-name">{{ attendee.attender.displayName }}</div>
             <slot></slot>
         </div>
-    </RouterLink>
+    </div>
 </template>
 
 
 <script setup lang="ts">
 import ImageComponent from '@/components/layout/ImageComponent.vue';
 import type { Attendee } from '@/models/Activity';
-import RouteNames from '@/utils/constanses/RouteNames';
 import { computed, type ComputedRef } from 'vue';
 
 
@@ -58,7 +58,7 @@ img {
     overflow: hidden;
 }
 
-.attender-info{
+.attender-info {
     display: flex;
     align-items: center;
     gap: v-bind(getGap);

@@ -80,10 +80,9 @@ const imageContainerAxisX: Ref<number> = ref(0)
 const imageContainerAxisY: Ref<number> = ref(0)
 const workspaceWidth: Ref<number> = ref(0)
 const workspaceHeight: Ref<number> = ref(0)
-const isImageGrapped: Ref<boolean> = ref(false)
+const initialImageSizeChangeRatio: Ref<number> = ref(1)
 const zoom: Ref<number> = ref(1)
-const initialImageWidthChangeRatio: Ref<number> = ref(1)
-const initialImageHeightChangeRatio: Ref<number> = ref(1)
+const isImageGrapped: Ref<boolean> = ref(false)
 const croppedImage = ref<HTMLCanvasElement | null>(null)
 const isSaving: Ref<boolean> = ref(false)
 const isUploading: Ref<boolean> = ref(false)
@@ -122,49 +121,6 @@ const getImageContainerPositionY: ComputedRef<string> = computed(() => {
     return `${imageContainerAxisY.value}px`
 })
 
-const resolveDimentionSize = (resolvingDimention: number, comparingDimention: number): number => {
-    if (resolvingDimention <= comparingDimention) {
-        return comparingDimention
-    }
-
-    if (zoom.value === 1) {
-        const resolvinComparingRatio = getRatio(resolvingDimention, comparingDimention)
-
-        if (resolvinComparingRatio < 2.2) {
-            return resolvingDimention
-        } else {
-            return comparingDimention * 2.2
-        }
-    }
-
-    return resolvingDimention
-}
-
-const resolvedImageDimentions = (width: number, height: number): Dims => {
-    const imageDimentionsRatio = getRatio(width, height)
-
-    let resolvedImageWidth: number
-    let resolvedImageHeight: number
-
-    if (imageDimentionsRatio < requiredDimentionsRatio.value) {
-        resolvedImageWidth = resolveDimentionSize(width, workspaceWidth.value)
-        const changeSizeRation = getRatio(resolvedImageWidth, width)
-        resolvedImageHeight = height * changeSizeRation
-    } else {
-        resolvedImageHeight = resolveDimentionSize(height, workspaceHeight.value)
-        const changeSizeRatio = getRatio(resolvedImageHeight, height)
-        resolvedImageWidth = width * changeSizeRatio
-    }
-
-    return {
-        width: resolvedImageWidth,
-        height: resolvedImageHeight
-    }
-}
-
-const getRatio = (dividend: number, divisor: number) => {
-    return divisor !== 0 ? dividend / divisor : 1
-}
 
 const handleGrapImage = () => {
     if (isSaving.value) {
@@ -200,27 +156,35 @@ const handleZoom = (ev: WheelEvent) => {
         return
     }
 
-    let currentZoom = zoom.value + ev.deltaY / 1000
+    let precision = 1000
+    let currentZoom = zoom.value + ev.deltaY / precision
 
     if (currentZoom > 4) {
         return
     }
 
-    const zoomedWidth = imageWidth.value * currentZoom
-    const zoomedHeight = imageHeight.value * currentZoom
+    let zoomedWidth = imageWidth.value * currentZoom
+    let zoomedHeight = imageHeight.value * currentZoom
 
     if (getRatio(zoomedWidth, workspaceWidth.value) <= 1
         || getRatio(zoomedHeight, workspaceHeight.value) <= 1) {
-        const zoomedOutDimentions = resolvedImageDimentions(zoomedWidth, zoomedHeight)
-        zoomedImageWidth.value = zoomedOutDimentions.width
-        zoomedImageHeight.value = zoomedOutDimentions.height
 
-        return
+        currentZoom = zoom.value
+
+        while (getRatio(imageWidth.value * currentZoom, workspaceWidth.value) >= 1
+            && getRatio(imageHeight.value * currentZoom, workspaceHeight.value) >= 1) {
+
+            currentZoom += ev.deltaY / (precision * 10)
+        }
+
+        currentZoom -= ev.deltaY / (precision * 10)
+        zoomedWidth = imageWidth.value * currentZoom
+        zoomedHeight = imageHeight.value * currentZoom
     }
 
+    zoom.value = currentZoom
     zoomedImageWidth.value = zoomedWidth
     zoomedImageHeight.value = zoomedHeight
-    zoom.value = currentZoom
 }
 
 const handleContinue = async () => {
@@ -229,17 +193,22 @@ const handleContinue = async () => {
     croppedImage.value!.width = props.requiredWidth
     croppedImage.value!.height = props.requiredHeight
 
-    const context = croppedImage.value?.getContext('2d')
+    const context = croppedImage.value!.getContext('2d')
+
+    const requiredToWorkspaceRatio = props.requiredHeight / workspaceHeight.value
+    console.log('width ', ((props.requiredWidth / requiredToWorkspaceRatio) * initialImageSizeChangeRatio.value) / zoom.value);
+    console.log('height ', ((props.requiredHeight / requiredToWorkspaceRatio) * initialImageSizeChangeRatio.value) / zoom.value);
+
 
     await new Promise((resolve) => {
         const img = new Image()
         img.onload = () => {
             resolve(context?.drawImage(
                 img,
-                Math.abs(imageContainerAxisX.value * initialImageWidthChangeRatio.value) / zoom.value,
-                Math.abs(imageContainerAxisY.value * initialImageHeightChangeRatio.value) / zoom.value,
-                props.requiredWidth / zoom.value,
-                props.requiredHeight / zoom.value,
+                Math.abs(imageContainerAxisX.value * initialImageSizeChangeRatio.value) / zoom.value,
+                Math.abs(imageContainerAxisY.value * initialImageSizeChangeRatio.value) / zoom.value,
+                ((props.requiredWidth / requiredToWorkspaceRatio) * initialImageSizeChangeRatio.value) / zoom.value,
+                ((props.requiredHeight / requiredToWorkspaceRatio) * initialImageSizeChangeRatio.value) / zoom.value,
                 0,
                 0,
                 props.requiredWidth,
@@ -269,6 +238,51 @@ const handleBack = () => {
     isSaving.value = false
 }
 
+
+const getRatio = (dividend: number, divisor: number) => {
+    return divisor !== 0 ? dividend / divisor : 1
+}
+
+const resolveDimentionSize = (resolvingDimention: number, comparingDimention: number): number => {
+    if (resolvingDimention <= comparingDimention) {
+        return comparingDimention
+    }
+
+    if (zoom.value === 1) {
+        const resolvinComparingRatio = getRatio(resolvingDimention, comparingDimention)
+
+        if (resolvinComparingRatio < 2.2) {
+            return resolvingDimention
+        } else {
+            return comparingDimention * 2.2
+        }
+    }
+
+    return resolvingDimention
+}
+
+const resolvedImageDimentions = (width: number, height: number): Dims => {
+    const imageDimentionsRatio = getRatio(width, height)
+
+    let resolvedImageWidth: number
+    let resolvedImageHeight: number
+    let changeRatio: number
+
+    if (imageDimentionsRatio < requiredDimentionsRatio.value) {
+        resolvedImageWidth = resolveDimentionSize(width, workspaceWidth.value)
+        changeRatio = getRatio(resolvedImageWidth, width)
+        resolvedImageHeight = height * changeRatio
+    } else {
+        resolvedImageHeight = resolveDimentionSize(height, workspaceHeight.value)
+        changeRatio = getRatio(resolvedImageHeight, height)
+        resolvedImageWidth = width * changeRatio
+    }
+
+    return {
+        width: resolvedImageWidth,
+        height: resolvedImageHeight
+    }
+}
 
 const initializePosition = () => {
     const limitX = getAxisXPositionLimit.value
@@ -315,8 +329,7 @@ const initializeWorkspaceDimentions = () => {
 const initializeImageDimentions = (width: number, height: number) => {
     const resolveDimentions = resolvedImageDimentions(width, height)
 
-    initialImageWidthChangeRatio.value = width / resolveDimentions.width
-    initialImageHeightChangeRatio.value = height / resolveDimentions.height
+    initialImageSizeChangeRatio.value = getRatio(height, resolveDimentions.height)
 
     imageWidth.value = resolveDimentions.width
     imageHeight.value = resolveDimentions.height
@@ -483,7 +496,7 @@ onUnmounted(() => {
     height: v-bind(getImageHeight);
 }
 
-.loading-container{
+.loading-container {
     position: absolute;
     top: 5px;
     left: 5px;

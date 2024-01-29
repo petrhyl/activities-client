@@ -39,7 +39,7 @@
             </div>
         </div>
         <div class="page-section">
-            <ActivityDetailAttendees :attenders="getActivity.attenders" />
+            <ActivityDetailAttendees :attenders="getActivity.attenders" :is-user-logged-in="isLoggedIn" />
         </div>
     </div>
 </template>

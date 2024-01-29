@@ -5,7 +5,7 @@ const RouteNames = {
     CREATE_ACTIVITY: 'createActivity',
     EDIT_ACTIVITY: 'editActivity',
     LOGIN: 'login',
-    REGISTERATION: 'regiteration',
+    REGISTERATION: 'regiteration',    
     USER_PROFILE: 'userProfile',
     USER_PROFILE_ABOUT: 'userProfileAbout',
     USER_PROFILE_PHOTOS: 'userProfilePhotos',

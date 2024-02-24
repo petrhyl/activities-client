@@ -26,6 +26,7 @@ import type { Profile } from "@/models/User";
 import { useProfileStore } from "@/stores/profile";
 import { ScrollPageToTop } from "@/utils/stateUndependentFunctions";
 import ResponseMessage from "@/components/layout/base/ResponseMessage.vue";
+import { useUserStore } from "@/stores/user";
 
 
 const props = defineProps<{
@@ -35,6 +36,7 @@ const props = defineProps<{
 
 
 const profileStore = useProfileStore()
+const { getCurrentUsername } = useUserStore()
 
 const warningMessage: Ref<string> = ref('')
 const changeListWarningMessage: Ref<string> = ref('')
@@ -53,6 +55,9 @@ const handleRemoveFollower = async (username: string) => {
     }
 
     changeListWarningMessage.value = ''
+    if (profileStore.getCurrentProfile?.username == getCurrentUsername) {
+        profileStore.loadUserProfile(getCurrentUsername)
+    }
     await retrieveFollowings()
 }
 
@@ -67,6 +72,10 @@ const handleFollowUnfollow = async (username: string) => {
     }
 
     changeListWarningMessage.value = ''
+
+    if (profileStore.getCurrentProfile?.username == getCurrentUsername) {
+        profileStore.loadUserProfile(getCurrentUsername)
+    }
     await retrieveFollowings()
 }
 
@@ -88,6 +97,7 @@ const retrieveFollowings = async () => {
 onBeforeMount(() => {
     retrieveFollowings()
 })
+
 </script>
     
     

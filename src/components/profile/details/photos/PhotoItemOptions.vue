@@ -28,7 +28,7 @@ const emits = defineEmits<{
     box-shadow: 0 0 3px 2px #fcffeacc;
 }
 
-.photo-option-item{
+.photo-option-item {
     font-family: sans-serif;
     font-size: 11pt;
     padding: 5px 8px;

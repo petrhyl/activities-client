@@ -14,7 +14,7 @@
         <AddPhotoSection v-if="isAddPhotoOpen" @upload-photo="handleUploadPhoto" />
         <LoadingLayer
             v-else
-            :is-loading="photos.length === 0 && !isAddPhotoOpen"
+            :is-loading="isListLoading && !isAddPhotoOpen"
             :error-message="errorMessage && photos.length > 0 ? errorMessage : ''">
             <PhotoList
                 :photos="photos"
@@ -66,6 +66,7 @@ const errorMessage: Ref<string | null> = ref(null)
 const isSetMainModalOpened: Ref<boolean> = ref(false)
 const isDeletePhotoModalOpen: Ref<boolean> = ref(false)
 const processingPhotoId: Ref<string> = ref('')
+const isListLoading: Ref<boolean> = ref(false)
 const getAddPhotoButtonText: ComputedRef<string> = computed(() => {
     return isAddPhotoOpen.value ? 'Cancel Adding' : 'Add Photo'
 })
@@ -127,18 +128,21 @@ const handleConfirmdeletePhoto = async () => {
     const response = await profileStore.deletePhoto(processingPhotoId.value)
     resolveError(response)
     isDeletePhotoModalOpen.value = false
+    isListLoading.value = true
     loadPhotos()
 }
 
 const resolveError = (response: FetchResponse) => {
     if (!response.isSuccessful) {
-        errorMessage.value = response.errorMessage
+        errorMessage.value = response.errorMessage        
         ScrollPageToTop()
     }
 }
 
 const loadPhotos = async () => {
     const response = await profileStore.loadProfilePhotos(props.username)
+    isListLoading.value = false
+
     if (!response.isSuccessful) {
         errorMessage.value = response.errorMessage
 
@@ -150,6 +154,7 @@ const loadPhotos = async () => {
 
 
 onBeforeMount(() => {
+    isListLoading.value = true
     loadPhotos()
 })
 

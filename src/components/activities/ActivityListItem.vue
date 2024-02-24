@@ -228,6 +228,11 @@ const handleConfirmDelete = () => {
     margin-bottom: 10px;
 }
 
+.activity-hosted-by span{
+    font-family: 'Lucida Sans', Geneva, sans-serif;
+    font-size: 11pt;
+}
+
 .current-user-host {
     display: flex;
 }
@@ -282,9 +287,11 @@ img.icon {
 }
 
 .activity-category {
-    padding: 7px 12px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 11pt;
     border: 1px solid gray;
     border-radius: 5px;
+    padding: 7px 12px;
 }
 
 .activity-footer {

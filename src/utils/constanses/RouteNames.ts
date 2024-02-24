@@ -11,7 +11,7 @@ const RouteNames = {
     USER_PROFILE_PHOTOS: 'userProfilePhotos',
     USER_PROFILE_EVENTS: 'userProfileEvents',
     USER_PROFILE_FOLLOWERS: 'userProfileFollowers',
-    USER_PROFILE_FOLLOWING: 'userProfileFollowing',
+    USER_PROFILE_FOLLOWEES: 'userProfileFollowees',
     NOT_FOUND: 'notFound'
 }
 

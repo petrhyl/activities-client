@@ -30,9 +30,10 @@ export interface Profile {
     email: string,
     bio: string | null,
     imageUrl: string | null,
-    isCurrentUserFollowing: boolean,
+    isFollowedByCurrentUser: boolean,
+    isFollowingCurrentUser: boolean,
     followersCount: number,
-    followingsCount: number
+    followeesCount: number
 }
 
 export interface PhotoImage {

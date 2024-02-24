@@ -1,11 +1,18 @@
 <template>
-<div class="user-followees">
-
-</div>
+    <FollowingComponent :list-title="'Followees'" :api-endpoint="ApiEndpoints.FOLLOWEES + username" />
 </template>
 
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import FollowingComponent from '@/components/profile/details/followings/FollowingComponent.vue';
+import { ApiEndpoints } from '@/utils/constanses/ApiEndpoints';
 
 
-<style></style>
+const props = defineProps<{
+    username: string
+}>()
+
+</script>
+
+
+<style scoped></style>

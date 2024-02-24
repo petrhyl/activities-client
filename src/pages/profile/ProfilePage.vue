@@ -8,9 +8,9 @@
                     :displayed-name="displayedName"
                     :user-image-url="imageUrl"
                     :is-following-button-visible="isFollowingButtonVisible"
-                    :is-following="isFollowing"
+                    :is-followed="isFollowing"
                     :followers-count="followersCount"
-                    :followings-count="followingsCount"
+                    :followees-count="followingsCount"
                     :is-updating="isLoading"
                     @toggle-follow="handleToggleFollow" />
             </CardLayout>
@@ -54,9 +54,9 @@ const { isLoggedIn, getCurrentUsername } = storeToRefs(useUserStore())
 const { getCurrentProfile } = storeToRefs(profileStore)
 const displayedName: Ref<string> = ref(getCurrentProfile.value?.displayName ?? '')
 const imageUrl: Ref<string> = ref(getCurrentProfile.value?.imageUrl ?? '')
-const isFollowing: Ref<boolean> = ref(getCurrentProfile.value?.isCurrentUserFollowing ?? false)
+const isFollowing: Ref<boolean> = ref(getCurrentProfile.value?.isFollowedByCurrentUser ?? false)
 const followersCount: Ref<number> = ref(getCurrentProfile.value?.followersCount ?? 0)
-const followingsCount: Ref<number> = ref(getCurrentProfile.value?.followingsCount ?? 0)
+const followingsCount: Ref<number> = ref(getCurrentProfile.value?.followeesCount ?? 0)
 const isLoading: Ref<boolean> = ref(true)
 const errorMesage: Ref<string | null> = ref(null)
 const isFollowingButtonVisible: ComputedRef<boolean> = computed(() =>
@@ -100,9 +100,9 @@ onBeforeMount(async () => {
 watch([getCurrentProfile, isLoggedIn], () => {
     imageUrl.value = getCurrentProfile.value?.imageUrl ?? ''
     displayedName.value = getCurrentProfile.value?.displayName ?? ''
-    isFollowing.value = getCurrentProfile.value?.isCurrentUserFollowing ?? false
+    isFollowing.value = getCurrentProfile.value?.isFollowedByCurrentUser ?? false
     followersCount.value = getCurrentProfile.value?.followersCount ?? 0
-    followingsCount.value = getCurrentProfile.value?.followingsCount ?? 0
+    followingsCount.value = getCurrentProfile.value?.followeesCount ?? 0
 })
 
 watch(props, () => {

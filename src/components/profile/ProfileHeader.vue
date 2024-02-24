@@ -18,7 +18,7 @@
                         <span class="title">Followers</span>
                     </div>
                     <div class="user-following">
-                        <span class="amount">{{ followingsCount }}</span>
+                        <span class="amount">{{ followeesCount }}</span>
                         <span class="title">Following</span>
                     </div>
                 </div>
@@ -30,8 +30,8 @@
                         :is-disabled="isButtonDisabled"
                         @click-button="emits('toggle-follow')" />
                 </div>
-                <div v-if="isFollowing" class="following-indicator">
-                    <span>Following</span>
+                <div v-if="isFollowed" class="following-indicator">
+                    <span>Followed</span>
                 </div>
             </div>
         </div>
@@ -49,9 +49,9 @@ import { watch, type ComputedRef, computed, type Ref, ref } from 'vue';
 const props = defineProps<{
     userImageUrl: string | null,
     displayedName: string,
-    isFollowing: boolean,
+    isFollowed: boolean,
     followersCount: number,
-    followingsCount: number,
+    followeesCount: number,
     isFollowingButtonVisible: boolean
     isUpdating: boolean
 }>()
@@ -62,8 +62,8 @@ const emits = defineEmits<{
 
 
 const isButtonDisabled: Ref<boolean> = ref(props.isUpdating)
-const getFollowButtonText: ComputedRef<string> = computed(() => props.isFollowing ? 'Unfollow' : 'Follow')
-const getFollowButtonCss: ComputedRef<string> = computed(() => props.isFollowing ? 'cancel-btn' : 'confirm-btn')
+const getFollowButtonText: ComputedRef<string> = computed(() => props.isFollowed ? 'Unfollow' : 'Follow')
+const getFollowButtonCss: ComputedRef<string> = computed(() => props.isFollowed ? 'cancel-btn' : 'confirm-btn')
 
 watch(props, () => {
     isButtonDisabled.value = props.isUpdating
@@ -88,7 +88,8 @@ watch(props, () => {
 .user-displaying .display-name {
     display: flex;
     align-items: center;
-    font-family: Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Gill Sans', Calibri, sans-serif;
+    font-size: 27pt;
 }
 
 .user-following {
@@ -157,7 +158,7 @@ watch(props, () => {
 }
 
 .following-indicator>span {
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-family: Verdana, Geneva, sans-serif;
     color: #00e9b2;
 }
 </style>

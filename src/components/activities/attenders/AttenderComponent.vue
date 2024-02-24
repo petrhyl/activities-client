@@ -63,4 +63,8 @@ img {
     align-items: center;
     gap: v-bind(getGap);
 }
+
+.attender-name{
+    font-family: 'Gill Sans', Calibri, sans-serif;
+}
 </style>

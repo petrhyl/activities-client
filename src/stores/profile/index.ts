@@ -155,6 +155,35 @@ export const useProfileStore = defineStore('profileStore', () => {
         }
     }
 
+    const removeFollower = async (username:string):Promise<FetchResponse> => {
+        const fetchParams: FetchDataParams<null, null> = {
+            method: HttpVerbs.POST,
+            requestBody: null,
+            headers: {
+                'Authorization': getCurrentUserToken.value
+            }
+        }
+
+        const response = await fetchData(fetchParams, DataObject.PROFILE, ApiEndpoints.REMOVE_FOLLOWER + username)
+
+        return {
+            isSuccessful: response.isSuccessful,
+            errorMessage: response.errorMessage
+        }
+    }
+
+    const loadFollowings = async (endpoint: string):Promise<FetchDataResponse<Profile[]>> => {
+        const fetchParams: FetchDataParams<null, Profile[]> = {
+            method: HttpVerbs.GET,
+            requestBody: null,
+            headers: {
+                'Authorization': getCurrentUserToken.value
+            }
+        }
+
+        return await fetchData(fetchParams, DataObject.PROFILE, endpoint)
+    }
+
 
     return {
         getCurrentAboutSection,
@@ -166,6 +195,8 @@ export const useProfileStore = defineStore('profileStore', () => {
         setPhotoAsMain,
         deletePhoto,
         editUserProfile,
-        toggleFollowing
+        toggleFollowing,
+        removeFollower,
+        loadFollowings
     }
 })

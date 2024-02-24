@@ -130,7 +130,7 @@ const handleEdit = () => {
 .detail-content-items span {
     display: flex;
     align-items: center;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Lucida Sans', Geneva, sans-serif;
 }
 
 

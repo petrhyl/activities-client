@@ -70,7 +70,7 @@ export const router = createRouter({
                 },
                 {
                     path: 'followees',
-                    name: RouteNames.USER_PROFILE_FOLLOWING,
+                    name: RouteNames.USER_PROFILE_FOLLOWEES,
                     props: true,
                     component: () => import('@/pages/profile/details/FolloweesPage.vue')
                 },

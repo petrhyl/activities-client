@@ -210,7 +210,8 @@ watch(props, () => {
 .main-info .info-detail {
     display: flex;
     flex-direction: column;
-    font-family: 'Lucida Sans', Geneva, Verdana, sans-serif;
+    font-family: 'Gill Sans', Calibri, sans-serif;
+    font-size: 13pt;
     margin-bottom: 10px;
 }
 

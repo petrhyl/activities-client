@@ -29,12 +29,14 @@ const emits = defineEmits<{
 }
 
 .photo-option-item{
-    padding: 5px 8px;
     font-family: sans-serif;
     font-size: 11pt;
+    padding: 5px 8px;
 }
 
 .photo-options>input {
+    width: 100%;
+    text-align: start;
     border: none;
     outline: none;
     background-color: transparent;

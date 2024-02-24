@@ -14,7 +14,7 @@ import { WindowWidth } from './utils/constanses/enums';
 import { keyProvidedModalState, keyProvidedWindowWidth } from './utils/providedKey';
 import { useUserStore } from './stores/user';
 import { ModalInState } from './utils/objects/ModalInState';
-import { PhotoOptionsParentElementsCount } from './utils/constanses/photoModalConst';
+import { OptionsParentElementsCount } from './utils/constanses/optionsPopupConsts';
 import { useRouter } from 'vue-router';
 
 
@@ -46,7 +46,7 @@ const handleCloseModal = (ev: Event) => {
   if (ev.target instanceof HTMLElement) {
     let resolvingTarget = ev.target as HTMLElement
 
-    for (let index = 0; index < PhotoOptionsParentElementsCount; index++) {
+    for (let index = 0; index < OptionsParentElementsCount; index++) {
       if (resolvingTarget?.id === modalInState.elementId) {
         return
       }
@@ -165,4 +165,4 @@ a {
   color: var(--dark-blue-color);
   background-color: var(--azure-color);
 }
-</style>
+</style>./utils/constanses/optionsPopupConsts

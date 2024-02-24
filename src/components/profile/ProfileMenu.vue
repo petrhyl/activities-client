@@ -13,7 +13,7 @@
         <RouterLink :to="{name: RouteNames.USER_PROFILE_FOLLOWERS}">Followers</RouterLink>
     </li>
     <li>
-        <RouterLink :to="{name: RouteNames.USER_PROFILE_FOLLOWING}">Following</RouterLink>
+        <RouterLink :to="{name: RouteNames.USER_PROFILE_FOLLOWEES}">Followees</RouterLink>
     </li>
 </ul>
 </template>
@@ -36,8 +36,9 @@ import RouteNames from '@/utils/constanses/RouteNames';
 
 .menu-links li a{
     display: flex;
-    font-family: 'Gill Sans', Calibri, 'Trebuchet MS', sans-serif;
+    font-family: 'Franklin Gothic Medium', sans-serif;
     font-weight: 600;
+    font-size: 13pt;
     color: var(--dark-blue-color);
     padding: 10px 15px;
     border-bottom: 1px solid var(--light-gray-color);

@@ -12,7 +12,7 @@ export const router = createRouter({
             component: HomePage
         }, {
             path: '/activities',
-            name: RouteNames.ACTIVITIES,
+            name: RouteNames.ACTIVITIES,            
             component: () => import('@/pages/activities/ActivitiesPage.vue')
         },{
             path: '/activities/:activityId',

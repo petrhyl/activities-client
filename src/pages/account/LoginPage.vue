@@ -23,6 +23,7 @@ import { useUserStore } from '@/stores/user';
 import { onBeforeMount, reactive, ref, type Ref } from 'vue';
 import { useRouter } from 'vue-router';
 import ResponseMessage from '@/components/layout/base/ResponseMessage.vue';
+import { useFetchUserStore } from '@/stores/fetchingUser';
 
 
 const clearSubmitResponse = {
@@ -32,6 +33,7 @@ const clearSubmitResponse = {
 };
 
 const userStore = useUserStore()
+const fetchUserStore = useFetchUserStore()
 const router = useRouter()
 
 const submitResponse: SubmitResponse = reactive(clearSubmitResponse)
@@ -41,7 +43,7 @@ const isSubmitting: Ref<boolean> = ref(false)
 const handleLoginUser = async (login: Login): Promise<void> => {
     isSubmitting.value = true
 
-    const response = await userStore.loginUser(login)
+    const response = await fetchUserStore.loginUser(login)
 
     submitResponse.isResponded = true;
     submitResponse.isSuccessful = response.isSuccessful

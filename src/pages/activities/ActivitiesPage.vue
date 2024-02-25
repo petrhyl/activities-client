@@ -29,6 +29,8 @@ import ActivityGroupedList from '@/components/activities/ActivityGroupedList.vue
 import PageContainer from '@/components/layout/base/PageContainer.vue';
 import ActivityFilters from '@/components/activities/ActivityFilters.vue';
 import { ScrollPageToTop } from '@/utils/stateUndependentFunctions';
+import type { ActivityListOptions } from '@/models/Activity';
+import { ActivityListQuery } from "@/utils/objects/ActivityListQuery";
 
 
 const activityStore = useActivityStore();
@@ -58,7 +60,19 @@ const handleDeleteActivity = async (idItem: string) => {
 }
 
 const loadActivities = async () => {
-  const responseMessage = await activityStore.loadActivities();
+  const queries = router.currentRoute.value.query
+  let activityListOptions = new ActivityListQuery()
+
+  for (const key in queries) {
+    if (Object.prototype.hasOwnProperty.call(queries, key)) {
+      const element = queries[key];
+      if(typeof element === 'string'){
+        activityListOptions.setQuery(key, element)
+      }
+    }
+  }
+
+  const responseMessage = await activityStore.loadActivities(activityListOptions);
 
   if (!responseMessage.isSuccessful && responseMessage.errorMessage) {
     errorMessage.value = responseMessage.errorMessage;

@@ -21,7 +21,8 @@ export interface UserRegistration {
 export interface ApplicationUser {
     identification: string,
     displayName: string,
-    secret: string
+    secret: string,
+    lastFetch: Date
 }
 
 export interface Profile {

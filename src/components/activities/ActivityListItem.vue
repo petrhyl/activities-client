@@ -86,9 +86,7 @@ const emits = defineEmits<{
 }>()
 
 
-const userStore = useUserStore()
-
-const { getCurrentUsername } = storeToRefs(userStore)
+const { getCurrentUsername } = storeToRefs(useUserStore())
 
 const isModalOpen: Ref<boolean> = ref(false)
 

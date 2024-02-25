@@ -5,6 +5,7 @@ import { router } from "@/router/index";
 import App from './App.vue'
 import RouteNames from './utils/constanses/RouteNames';
 import { useUserStore } from './stores/user';
+import { useFetchUserStore } from "./stores/fetchingUser";
 
 const app = createApp(App)
 
@@ -13,6 +14,8 @@ app.use(router)
 
 router.beforeEach((to, _, next) => {
     let isMatched = false
+    const userStore = useUserStore()
+    const fetchUserStore = useFetchUserStore()
 
     to.matched.forEach((el) => {
         if (el.name === RouteNames.CREATE_ACTIVITY
@@ -23,13 +26,26 @@ router.beforeEach((to, _, next) => {
     })
 
     if (isMatched) {
-        const userStore = useUserStore()
         if (!userStore.isLoggedIn) {
             next({ name: RouteNames.LOGIN })
             
             return
         }
     }
+
+    let isTimeToRefreshToken = false 
+
+    if (userStore.getLastFetchingDate) {
+        let hours = new Date(userStore.getLastFetchingDate).getHours()
+        hours = hours >= 22 ? 0 : hours + 2
+        isTimeToRefreshToken = hours === new Date().getHours()
+    }
+
+    if (userStore.isLoggedIn && isTimeToRefreshToken) {
+        console.log('refresh token');
+        
+        fetchUserStore.loadCurrentUserWithRefreshedToken()
+      }
 
     next()
 })

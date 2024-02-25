@@ -3,14 +3,15 @@ import type { AddPhotoRequest, FetchDataParams, FetchDataResponse, FetchResponse
 import { ApiEndpoints } from "@/utils/constanses/ApiEndpoints";
 import HttpVerbs from "@/utils/constanses/HttpVerbs";
 import { DataObject } from "@/utils/constanses/enums";
-import { fetchData } from "@/utils/fetchingFunction";
 import { defineStore, storeToRefs } from "pinia";
 import { useUserStore } from "../user";
 import { computed, ref, type ComputedRef, type Ref, reactive } from "vue";
+import { useFetchStore } from "../fetch";
 
 export const useProfileStore = defineStore('profileStore', () => {
 
-    const { getCurrentUserToken, getCurrentUsername } = storeToRefs(useUserStore())
+    const { getCurrentUsername } = storeToRefs(useUserStore())
+    const { fetchData } = useFetchStore()
 
     const currentProfile: Ref<Profile | null> = ref(null)
 
@@ -36,9 +37,8 @@ export const useProfileStore = defineStore('profileStore', () => {
     const loadUserProfile = async (username: string): Promise<FetchResponse> => {
         const fetchParams: FetchDataParams<null, Profile> = {
             method: HttpVerbs.GET,
-            requestBody: null,
-            headers: { 'Authorization': getCurrentUserToken.value }
-        };
+            requestBody: null
+        }
 
         const response = await fetchData(fetchParams, DataObject.PROFILE, ApiEndpoints.USER_PROFILE + username);
 
@@ -55,9 +55,8 @@ export const useProfileStore = defineStore('profileStore', () => {
     const loadProfilePhotos = async (username: string): Promise<FetchDataResponse<PhotoImage[]>> => {
         const fetchParams: FetchDataParams<null, PhotoImage[]> = {
             method: HttpVerbs.GET,
-            requestBody: null,
-            headers: { 'Authorization': getCurrentUserToken.value }
-        };
+            requestBody: null
+        }
 
         return await fetchData(fetchParams, DataObject.USER_PHOTOS, ApiEndpoints.PHOTO_PROFILE + username);
     }
@@ -71,10 +70,7 @@ export const useProfileStore = defineStore('profileStore', () => {
 
         const fetchParams: FetchDataParams<FormData, null> = {
             method: HttpVerbs.POST,
-            requestBody: formData,
-            headers: {
-                'Authorization': getCurrentUserToken.value
-            }
+            requestBody: formData
         };
 
         const response = await fetchData(fetchParams, DataObject.FORM_DATA, ApiEndpoints.PHOTO_ADD);
@@ -88,10 +84,7 @@ export const useProfileStore = defineStore('profileStore', () => {
     const setPhotoAsMain = async (photoId: string): Promise<FetchResponse> => {
         const fetchParams: FetchDataParams<null, null> = {
             method: HttpVerbs.POST,
-            requestBody: null,
-            headers: {
-                'Authorization': getCurrentUserToken.value
-            }
+            requestBody: null
         };
 
         const response = await fetchData(fetchParams, DataObject.USER_PHOTOS, ApiEndpoints.PHOTO_SET_MAIN + photoId);
@@ -105,10 +98,7 @@ export const useProfileStore = defineStore('profileStore', () => {
     const deletePhoto = async (photoId: string): Promise<FetchResponse> => {
         const fetchParams: FetchDataParams<null, null> = {
             method: HttpVerbs.DELETE,
-            requestBody: null,
-            headers: {
-                'Authorization': getCurrentUserToken.value
-            }
+            requestBody: null
         };
 
         const response = await fetchData(fetchParams, DataObject.USER_PHOTOS, ApiEndpoints.PHOTO_DELETE + photoId);
@@ -124,10 +114,7 @@ export const useProfileStore = defineStore('profileStore', () => {
 
         const fetchParams: FetchDataParams<AboutSection, null> = {
             method: HttpVerbs.PUT,
-            requestBody: aboutUser,
-            headers: {
-                'Authorization': getCurrentUserToken.value
-            }
+            requestBody: aboutUser
         }
 
         const response = await fetchData(fetchParams, DataObject.PROFILE, ApiEndpoints.USER_PROFILE)
@@ -138,13 +125,10 @@ export const useProfileStore = defineStore('profileStore', () => {
         }
     }
 
-    const toggleFollowing =async (username:string):Promise<FetchResponse> => {
+    const toggleFollowing = async (username: string): Promise<FetchResponse> => {
         const fetchParams: FetchDataParams<null, null> = {
             method: HttpVerbs.POST,
-            requestBody: null,
-            headers: {
-                'Authorization': getCurrentUserToken.value
-            }
+            requestBody: null
         }
 
         const response = await fetchData(fetchParams, DataObject.PROFILE, ApiEndpoints.TOGGLE_FOLLOW + username)
@@ -155,13 +139,10 @@ export const useProfileStore = defineStore('profileStore', () => {
         }
     }
 
-    const removeFollower = async (username:string):Promise<FetchResponse> => {
+    const removeFollower = async (username: string): Promise<FetchResponse> => {
         const fetchParams: FetchDataParams<null, null> = {
             method: HttpVerbs.POST,
-            requestBody: null,
-            headers: {
-                'Authorization': getCurrentUserToken.value
-            }
+            requestBody: null
         }
 
         const response = await fetchData(fetchParams, DataObject.PROFILE, ApiEndpoints.REMOVE_FOLLOWER + username)
@@ -172,13 +153,10 @@ export const useProfileStore = defineStore('profileStore', () => {
         }
     }
 
-    const loadFollowings = async (endpoint: string):Promise<FetchDataResponse<Profile[]>> => {
+    const loadFollowings = async (endpoint: string): Promise<FetchDataResponse<Profile[]>> => {
         const fetchParams: FetchDataParams<null, Profile[]> = {
             method: HttpVerbs.GET,
-            requestBody: null,
-            headers: {
-                'Authorization': getCurrentUserToken.value
-            }
+            requestBody: null
         }
 
         return await fetchData(fetchParams, DataObject.PROFILE, endpoint)

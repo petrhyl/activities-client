@@ -1,4 +1,5 @@
 import type { Profile } from "./User"
+import type { PagedRequest } from "./auxillary/interfaces"
 
 export interface Activity {
   id: string,
@@ -48,4 +49,11 @@ export interface ChatPost {
 export interface ChatPostRequest {
   activityId: string,
   content: string
+}
+
+export interface ActivityListOptions extends PagedRequest{
+  hostedBy: string | null,
+  joinedBy: string | null,
+  dateFrom: Date | null,
+  dateTo: Date | null,
 }

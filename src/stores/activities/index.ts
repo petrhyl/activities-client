@@ -1,16 +1,16 @@
 import HttpVerbs from "@/utils/constanses/HttpVerbs";
 import { defineStore } from "pinia";
 import { computed, ref, type ComputedRef, type Ref } from "vue";
-import type { FetchDataParams, FetchResponse } from "@/models/auxillary/interfaces";
+import type { FetchDataParams, FetchResponse, PagedList } from "@/models/auxillary/interfaces";
 import { DataObject } from "@/utils/constanses/enums";
-import { fetchData } from "@/utils/fetchingFunction";
 import { ApiEndpoints } from "@/utils/constanses/ApiEndpoints";
-import type { Activity, ActivityCategory, ActivityRequest } from "@/models/Activity";
-import { useUserStore } from "../user";
+import type { Activity, ActivityCategory, ActivityListOptions, ActivityRequest } from "@/models/Activity";
+import { useFetchStore } from "../fetch";
+import { type ActivityListQuery } from "@/utils/objects/ActivityListQuery";
 
 export const useActivityStore = defineStore('activityStore', () => {
 
-    const userStore = useUserStore()
+    const { fetchData } = useFetchStore()
 
     const activities: Ref<Activity[]> = ref([]);
     const activity: Ref<Activity | null> = ref(null);
@@ -21,17 +21,19 @@ export const useActivityStore = defineStore('activityStore', () => {
      * @return {Promise<FetchResponse>} - if request was completed successfully return the property indicating success is true and error message null,
      *  otherwise false and reason in error message
      */
-    const loadActivities = async (): Promise<FetchResponse> => {
-        const fetchParams: FetchDataParams<Activity[], Activity[]> = {
+    const loadActivities = async (filterOptions: ActivityListQuery): Promise<FetchResponse> => {
+        const fetchParams: FetchDataParams<null, PagedList<Activity>> = {
             method: HttpVerbs.GET,
-            requestBody: null,
-            headers: null
+            requestBody: null
         };
 
-        const response = await fetchData(fetchParams, DataObject.ACTIVITIES, ApiEndpoints.ACTIVITIES);
+        const queryString = filterOptions.getUrlQueryString()
+
+        const response = await fetchData(fetchParams, DataObject.ACTIVITIES,
+            `${ApiEndpoints.ACTIVITIES}${(queryString === '' ? queryString : '?' + queryString)}`);
 
         if (response.isSuccessful) {
-            activities.value = response.data!;
+            activities.value = response.data!.items;
         }
 
         return {
@@ -49,8 +51,7 @@ export const useActivityStore = defineStore('activityStore', () => {
     const loadSingleActivity = async (idActivity: string): Promise<FetchResponse> => {
         const fetchParams: FetchDataParams<Activity, Activity> = {
             method: HttpVerbs.GET,
-            requestBody: null,
-            headers: null
+            requestBody: null
         };
 
         const response = await fetchData(fetchParams, DataObject.ACTIVITY, ApiEndpoints.ACTIVITY + idActivity);
@@ -78,8 +79,7 @@ export const useActivityStore = defineStore('activityStore', () => {
 
         const fetchParams: FetchDataParams<ActivityRequest, Activity> = {
             method: HttpVerbs.PUT,
-            requestBody: activityObject,
-            headers: { 'Authorization': userStore.getCurrentUserToken }
+            requestBody: activityObject
         };
 
         const response = await fetchData(fetchParams, DataObject.ACTIVITY, ApiEndpoints.ACTIVITY + activityObject.id);
@@ -99,8 +99,7 @@ export const useActivityStore = defineStore('activityStore', () => {
     const createActivity = async (activityObject: ActivityRequest): Promise<FetchResponse> => {
         const fetchParams: FetchDataParams<ActivityRequest, Activity> = {
             method: HttpVerbs.POST,
-            requestBody: activityObject,
-            headers: { 'Authorization': userStore.getCurrentUserToken }
+            requestBody: activityObject
         };
 
         const response = await fetchData(fetchParams, DataObject.ACTIVITY, ApiEndpoints.ACTIVITIES);
@@ -120,8 +119,7 @@ export const useActivityStore = defineStore('activityStore', () => {
     const deleteActivity = async (idActivity: string): Promise<FetchResponse> => {
         const fetchParams: FetchDataParams<null, Activity> = {
             method: HttpVerbs.DELETE,
-            requestBody: null,
-            headers: { 'Authorization': userStore.getCurrentUserToken }
+            requestBody: null
         };
 
         const response = await fetchData(fetchParams, DataObject.ACTIVITY, ApiEndpoints.ACTIVITY + idActivity);
@@ -136,8 +134,7 @@ export const useActivityStore = defineStore('activityStore', () => {
     const updateAttendance = async (activityId: string): Promise<FetchResponse> => {
         const fetchParams: FetchDataParams<null, Activity> = {
             method: HttpVerbs.PUT,
-            requestBody: null,
-            headers: { 'Authorization': userStore.getCurrentUserToken }
+            requestBody: null
         };
 
         const response = await fetchData(fetchParams, DataObject.ACTIVITY, ApiEndpoints.ACTIVITY_ATTEND + activityId);
@@ -151,8 +148,7 @@ export const useActivityStore = defineStore('activityStore', () => {
     const toggleCancelActivity = async (activityId: string): Promise<FetchResponse> => {
         const fetchParams: FetchDataParams<null, Activity> = {
             method: HttpVerbs.PUT,
-            requestBody: null,
-            headers: { 'Authorization': userStore.getCurrentUserToken }
+            requestBody: null
         };
 
         const response = await fetchData(fetchParams, DataObject.ACTIVITY, ApiEndpoints.ACTIVITY_CANCEL + activityId);
@@ -160,7 +156,7 @@ export const useActivityStore = defineStore('activityStore', () => {
         return {
             isSuccessful: response.isSuccessful,
             errorMessage: !response.isSuccessful ? response.errorMessage : null
-        }        
+        }
     }
 
     /**
@@ -171,8 +167,7 @@ export const useActivityStore = defineStore('activityStore', () => {
     const loadActivityCategories = async (): Promise<FetchResponse> => {
         const fetchParams: FetchDataParams<ActivityCategory[], ActivityCategory[]> = {
             method: HttpVerbs.GET,
-            requestBody: null,
-            headers: null
+            requestBody: null
         };
 
         const response = await fetchData(fetchParams, DataObject.ACTIVITY_CATEGORIES, ApiEndpoints.ACTIVITY_CATEGORIES);

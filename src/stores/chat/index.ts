@@ -1,6 +1,6 @@
 import type { ChatPost, ChatPostRequest } from "@/models/Activity";
 import { HttpTransportType, HubConnection, HubConnectionBuilder, HubConnectionState, LogLevel } from "@microsoft/signalr";
-import { defineStore } from "pinia";
+import { defineStore, storeToRefs } from "pinia";
 import { ref, type ComputedRef, type Ref, computed } from "vue";
 import { useUserStore } from "../user";
 import type { FetchResponse } from "@/models/auxillary/interfaces";
@@ -10,7 +10,7 @@ export const useChatStore = defineStore('chatStore', () => {
     const chatPosts: Ref<ChatPost[]> = ref([])
     const hubConnection: Ref<HubConnection | null> = ref(null)
 
-    const userStore = useUserStore()
+    const { getCurrentUserToken } = storeToRefs(useUserStore())
 
     const getChatPosts: ComputedRef<ChatPost[]> = computed(() => chatPosts.value)
 
@@ -20,7 +20,7 @@ export const useChatStore = defineStore('chatStore', () => {
                 skipNegotiation: true,
                 transport: HttpTransportType.WebSockets,
                 accessTokenFactory() {
-                    return userStore.getCurrentUserTokenWithoutBearer!
+                    return getCurrentUserToken.value ?? ''
                 }
             })
             .withAutomaticReconnect()
@@ -49,7 +49,7 @@ export const useChatStore = defineStore('chatStore', () => {
             return
         }
         console.log('disconecting');
-        
+
         hubConnection.value?.stop().catch(err => console.log('Error while stopping hub connection. ', err))
     }
 

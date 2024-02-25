@@ -20,6 +20,7 @@ import { useUserStore } from "@/stores/user";
 import type { SubmitResponse } from "@/models/auxillary/interfaces";
 import { onBeforeMount, reactive, ref, type Ref } from "vue";
 import { useRouter } from "vue-router";
+import { useFetchUserStore } from "@/stores/fetchingUser";
 
 
 const clearSubmitResponse = {
@@ -29,6 +30,7 @@ const clearSubmitResponse = {
 };
 
 const userStore = useUserStore()
+const fetchUserStore = useFetchUserStore()
 const router = useRouter()
 
 const submitResponse: SubmitResponse = reactive(clearSubmitResponse)
@@ -37,7 +39,7 @@ const isSubmitting: Ref<boolean> = ref(false)
 const handleCreateRegistration = async (user: UserRegistration): Promise<void> => {
     isSubmitting.value = true
 
-    const response = await userStore.registerUser(user)
+    const response = await fetchUserStore.registerUser(user)
 
     submitResponse.isResponded = true;
     submitResponse.isSuccessful = response.isSuccessful

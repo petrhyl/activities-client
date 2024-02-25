@@ -13,13 +13,12 @@ import NavBar from './components/definite/NavBar.vue';
 import { WindowWidth } from './utils/constanses/enums';
 import { keyProvidedModalState, keyProvidedWindowWidth } from './utils/providedKey';
 import { useUserStore } from './stores/user';
+import { useFetchUserStore } from "./stores/fetchingUser";
 import { ModalInState } from './utils/objects/ModalInState';
 import { OptionsParentElementsCount } from './utils/constanses/optionsPopupConsts';
-import { useRouter } from 'vue-router';
 
 
 const userStore = useUserStore()
-const router = useRouter()
 
 const currentWindowWidth: Ref<WindowWidth> = ref(WindowWidth.COMMON)
 const modalInState = reactive<ModalInState>(new ModalInState())
@@ -62,9 +61,9 @@ const handleCloseModal = (ev: Event) => {
   }
 }
 
-onBeforeMount(() => {
+onBeforeMount(async () => {
   addWindowWidthListeners()
-  userStore.loadApplicationUserFromCookies()
+  userStore.loadApplicationUserFromCookies()  
 })
 
 onMounted(() => {

@@ -23,9 +23,9 @@ export abstract class QueryParams implements QueryOptions{
     public readonly queryNames: ReadonlyArray<string>;
     protected queries:Map<string, string>
         
-    constructor(queryNames: string[]) {
+    constructor(queryNames: string[], initialQueries: Map<string, string>) {
         this.queryNames = queryNames
-        this.queries = new Map()
+        this.queries = initialQueries
     }
 
     getQueryValue(queryName: string): string | null {

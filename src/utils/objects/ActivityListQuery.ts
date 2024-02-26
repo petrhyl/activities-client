@@ -5,10 +5,10 @@ export class ActivityListQuery extends QueryParams implements QueryOptions, Page
     public pageSize: number;
     public pageNumber: number;
 
-    constructor() {
-        super(['hostedBy', 'joinedBy', 'dateFrom', 'dateTo', 'pageNumber', 'pageSize'])
-        this.queries = new Map()
-        this.pageSize = 10
-        this.pageNumber = 1
-    }    
+    constructor(pageSize: number = 20, pageNumber: number = 1) {
+        super(['hostedBy', 'joinedBy', 'dateFrom', 'dateTo', 'pageNumber', 'pageSize'],
+            new Map([['pageNumber', `${pageNumber}`], ['pageSize', `${pageSize}`]]))
+        this.pageSize = pageSize
+        this.pageNumber = pageNumber
+    }
 }

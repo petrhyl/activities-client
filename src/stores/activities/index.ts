@@ -12,9 +12,10 @@ export const useActivityStore = defineStore('activityStore', () => {
 
     const { fetchData } = useFetchStore()
 
-    const activities: Ref<Activity[]> = ref([]);
-    const activity: Ref<Activity | null> = ref(null);
-    const categories: Ref<ActivityCategory[]> = ref([]);
+    const activities: Ref<Activity[]> = ref([])
+    const activity: Ref<Activity | null> = ref(null)
+    const categories: Ref<ActivityCategory[]> = ref([])
+    const fechedActivitiesCount: Ref<number> = ref(0)
 
     /**
      * Create a request on the server to load list of the objects of <Activity>. The list is stored in the getter of this hook.
@@ -30,10 +31,11 @@ export const useActivityStore = defineStore('activityStore', () => {
         const queryString = filterOptions.getUrlQueryString()
 
         const response = await fetchData(fetchParams, DataObject.ACTIVITIES,
-            `${ApiEndpoints.ACTIVITIES}${(queryString === '' ? queryString : '?' + queryString)}`);
+            `${ApiEndpoints.ACTIVITIES}?${queryString}`);
 
         if (response.isSuccessful) {
-            activities.value = response.data!.items;
+            activities.value = [...activities.value, ...response.data!.items]
+            fechedActivitiesCount.value = response.data!.items.length
         }
 
         return {
@@ -124,6 +126,10 @@ export const useActivityStore = defineStore('activityStore', () => {
 
         const response = await fetchData(fetchParams, DataObject.ACTIVITY, ApiEndpoints.ACTIVITY + idActivity);
 
+        if (response.isSuccessful) {
+            activities.value = activities.value.filter(element => element.id !== idActivity)
+        }
+
         return {
             isSuccessful: response.isSuccessful,
             errorMessage: !response.isSuccessful ? response.errorMessage : null
@@ -182,10 +188,12 @@ export const useActivityStore = defineStore('activityStore', () => {
         }
     }
 
+    const resetFetchedCount = (): void => { fechedActivitiesCount.value = 0 }
 
-    const getActivity = computed(() => activity.value);
 
-    const getActivities = computed(() => activities.value);
+    const getActivity = computed(() => activity.value)
+
+    const getActivities = computed(() => activities.value)
 
     const getGroupedByDateActivities = computed(() => {
         return Object.entries(
@@ -197,7 +205,10 @@ export const useActivityStore = defineStore('activityStore', () => {
         );
     });
 
-    const getActivityCategories: ComputedRef<ActivityCategory[]> = computed(() => categories.value);
+    const getActivityCategories: ComputedRef<ActivityCategory[]> = computed(() => categories.value)
+
+    const getCurrentlyFechedCount: ComputedRef<number> = computed(() => fechedActivitiesCount.value)
+
 
     return {
         loadActivities,
@@ -208,10 +219,12 @@ export const useActivityStore = defineStore('activityStore', () => {
         updateAttendance,
         toggleCancelActivity,
         loadActivityCategories,
+        resetFetchedCount,
         getActivity,
         getActivities,
         getGroupedByDateActivities,
-        getActivityCategories
+        getActivityCategories,
+        getCurrentlyFechedCount
     }
 });
 
